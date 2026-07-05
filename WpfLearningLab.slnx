@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/01_Calculator.Tests/">
+    <Project Path="01_Calculator.Tests/Calculator.Tests.csproj" />
+  </Folder>
+  <Folder Name="/01_Calculator/">
+    <Project Path="01_Calculator/Calculator.csproj" />
+  </Folder>
+</Solution>
