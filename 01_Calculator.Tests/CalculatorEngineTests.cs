@@ -257,4 +257,124 @@ public class CalculatorEngineTests
 
         Assert.Equal("3.8", engine.Display);
     }
+
+    /// <summary>
+    /// パス条件: 0.6 から 0.2 を引くと、浮動小数点誤差(0.39999...)を起こさず "0.4" になること。
+    /// </summary>
+    [Fact]
+    public void InputEquals_DecimalSubtraction_AvoidsFloatingPointError()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.InputDigit("0");
+        engine.InputDecimalPoint();
+        engine.InputDigit("6");
+        engine.InputOperator("-");
+        engine.InputDigit("0");
+        engine.InputDecimalPoint();
+        engine.InputDigit("2");
+        engine.InputEquals();
+
+        Assert.Equal("0.4", engine.Display);
+    }
+
+    /// <summary>
+    /// パス条件: M+ でDisplayの値をメモリに加算した後、MR で呼び出すとその値が表示されること。
+    /// </summary>
+    [Fact]
+    public void MemoryAdd_ThenMemoryRecall_ShowsAddedValue()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.InputDigit("5");
+        engine.MemoryAdd();
+        engine.Clear();
+        engine.MemoryRecall();
+
+        Assert.Equal("5", engine.Display);
+    }
+
+    /// <summary>
+    /// パス条件: M+ を複数回行うと、メモリにDisplayの値が積算されること。
+    /// </summary>
+    [Fact]
+    public void MemoryAdd_CalledTwice_AccumulatesInMemory()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.InputDigit("5");
+        engine.MemoryAdd();
+        engine.Clear();
+        engine.InputDigit("3");
+        engine.MemoryAdd();
+        engine.Clear();
+        engine.MemoryRecall();
+
+        Assert.Equal("8", engine.Display);
+    }
+
+    /// <summary>
+    /// パス条件: M- でDisplayの値をメモリから減算できること。
+    /// </summary>
+    [Fact]
+    public void MemorySubtract_SubtractsDisplayValueFromMemory()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.InputDigit("5");
+        engine.MemoryAdd();
+        engine.Clear();
+        engine.InputDigit("2");
+        engine.MemorySubtract();
+        engine.Clear();
+        engine.MemoryRecall();
+
+        Assert.Equal("3", engine.Display);
+    }
+
+    /// <summary>
+    /// パス条件: MC でメモリをクリアすると、MR の呼び出し結果が "0" になること。
+    /// </summary>
+    [Fact]
+    public void MemoryClear_ResetsMemoryToZero()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.InputDigit("5");
+        engine.MemoryAdd();
+        engine.MemoryClear();
+        engine.MemoryRecall();
+
+        Assert.Equal("0", engine.Display);
+    }
+
+    /// <summary>
+    /// パス条件: 何もメモリに入れていない状態で MR を押すと "0" が表示されること。
+    /// </summary>
+    [Fact]
+    public void MemoryRecall_WhenMemoryIsEmpty_ShowsZero()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.MemoryRecall();
+
+        Assert.Equal("0", engine.Display);
+    }
+
+    /// <summary>
+    /// パス条件: MR で呼び出した直後に数字を入力すると、呼び出した値に連結されず
+    /// 新しい数値として上書きされること。
+    /// </summary>
+    [Fact]
+    public void MemoryRecall_ThenInputDigit_StartsNewNumber()
+    {
+        var engine = new CalculatorEngine();
+
+        engine.InputDigit("5");
+        engine.MemoryAdd();
+        engine.MemoryRecall();
+        engine.InputDigit("3");
+
+        Assert.Equal("3", engine.Display);
+    }
 }

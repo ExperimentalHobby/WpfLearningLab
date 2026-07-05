@@ -65,4 +65,37 @@ public partial class MainWindow : Window
         _engine.Clear();
         DisplayText.Text = _engine.Display;
     }
+
+    /// <summary>
+    /// M+ ボタンがクリックされたときの処理。表示中の値をメモリに加算する。
+    /// </summary>
+    private void MemoryAddButton_Click(object sender, RoutedEventArgs e)
+    {
+        _engine.MemoryAdd();
+    }
+
+    /// <summary>
+    /// M- ボタンがクリックされたときの処理。表示中の値をメモリから減算する。
+    /// </summary>
+    private void MemorySubtractButton_Click(object sender, RoutedEventArgs e)
+    {
+        _engine.MemorySubtract();
+    }
+
+    /// <summary>
+    /// MR ボタンがクリックされたときの処理。メモリの値を表示欄に呼び出す。
+    /// </summary>
+    private void MemoryRecallButton_Click(object sender, RoutedEventArgs e)
+    {
+        _engine.MemoryRecall();
+        DisplayText.Text = _engine.Display;
+    }
+
+    /// <summary>
+    /// MC ボタンがクリックされたときの処理。メモリの値を0にリセットする。
+    /// </summary>
+    private void MemoryClearButton_Click(object sender, RoutedEventArgs e)
+    {
+        _engine.MemoryClear();
+    }
 }

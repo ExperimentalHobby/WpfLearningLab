@@ -3,7 +3,7 @@ using System.Globalization;
 namespace Calculator;
 
 /// <summary>
-/// 電卓の状態(入力中の数値・保留中の演算子)を管理し、四則演算を実行するクラス。
+/// 電卓の状態(入力中の数値・保留中の演算子・メモリ)を管理し、四則演算を実行するクラス。
 /// UI(コードビハインド)からはボタン操作に対応するメソッドを呼び出すだけで済むようにする。
 /// </summary>
 public class CalculatorEngine
@@ -13,9 +13,12 @@ public class CalculatorEngine
     /// </summary>
     public string Display { get; private set; } = "0";
 
-    private double? _accumulator;
+    // 金額・小数計算で double を使うと 0.6 - 0.2 が 0.39999999999999997 のような
+    // 二進浮動小数点誤差を起こすため、10進数で正確に計算できる decimal を採用する。
+    private decimal? _accumulator;
     private string? _pendingOperator;
     private bool _shouldResetDisplayOnNextDigit;
+    private decimal _memory;
 
     /// <summary>
     /// 数字ボタンの入力を受け取り、Display に反映する。
@@ -62,12 +65,14 @@ public class CalculatorEngine
     /// <param name="op">入力された演算子("+", "-", "×", "÷")。</param>
     public void InputOperator(string op)
     {
+        // 演算子を連続で押した(例: + の直後に -)場合は shouldResetDisplayOnNextDigit が
+        // 立ったままになっているため Compute() を呼ばず、pendingOperator の上書きだけ行う。
         if (_pendingOperator != null && !_shouldResetDisplayOnNextDigit)
         {
             Compute();
         }
 
-        _accumulator = double.Parse(Display, CultureInfo.InvariantCulture);
+        _accumulator = decimal.Parse(Display, CultureInfo.InvariantCulture);
         _pendingOperator = op;
         _shouldResetDisplayOnNextDigit = true;
     }
@@ -82,7 +87,7 @@ public class CalculatorEngine
     }
 
     /// <summary>
-    /// C(クリア)ボタンの入力を受け取り、電卓の状態を初期状態に戻す。
+    /// C(クリア)ボタンの入力を受け取り、電卓の状態を初期状態に戻す。メモリの値は保持する。
     /// </summary>
     public void Clear()
     {
@@ -90,6 +95,42 @@ public class CalculatorEngine
         _accumulator = null;
         _pendingOperator = null;
         _shouldResetDisplayOnNextDigit = false;
+    }
+
+    /// <summary>
+    /// M+ ボタンの入力を受け取り、現在の Display の値をメモリに加算する。
+    /// </summary>
+    public void MemoryAdd()
+    {
+        _memory += decimal.Parse(Display, CultureInfo.InvariantCulture);
+        _shouldResetDisplayOnNextDigit = true;
+    }
+
+    /// <summary>
+    /// M- ボタンの入力を受け取り、現在の Display の値をメモリから減算する。
+    /// </summary>
+    public void MemorySubtract()
+    {
+        _memory -= decimal.Parse(Display, CultureInfo.InvariantCulture);
+        _shouldResetDisplayOnNextDigit = true;
+    }
+
+    /// <summary>
+    /// MR ボタンの入力を受け取り、メモリの値を Display に呼び出す。
+    /// 呼び出し後に数字を入力すると、続きではなく新しい数値として上書きされる。
+    /// </summary>
+    public void MemoryRecall()
+    {
+        Display = _memory.ToString(CultureInfo.InvariantCulture);
+        _shouldResetDisplayOnNextDigit = true;
+    }
+
+    /// <summary>
+    /// MC ボタンの入力を受け取り、メモリの値を 0 にリセットする。
+    /// </summary>
+    public void MemoryClear()
+    {
+        _memory = 0;
     }
 
     /// <summary>
@@ -103,8 +144,10 @@ public class CalculatorEngine
             return;
         }
 
-        var operand = double.Parse(Display, CultureInfo.InvariantCulture);
+        var operand = decimal.Parse(Display, CultureInfo.InvariantCulture);
 
+        // decimal の除算はゼロ除算で DivideByZeroException を送出するため、
+        // 例外に頼らず先に判定して "Error" 表示に倒す。
         if (_pendingOperator == "÷" && operand == 0)
         {
             Display = "Error";
