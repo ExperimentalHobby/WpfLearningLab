@@ -9,7 +9,7 @@ C#(.NET 10) / WPF の学習用アプリを30個作成するプロジェクト集
 
 ## アプリ一覧・進捗チェックリスト
 
-- [ ] [01_Calculator](01_Calculator/README.md) - 電卓アプリ
+- [x] [01_Calculator](01_Calculator/README.md) - 電卓アプリ
 - [ ] [02_UnitConverter](02_UnitConverter/README.md) - 単位変換ツール
 - [ ] [03_ToDoList](03_ToDoList/README.md) - ToDoリスト
 - [ ] [04_NotepadClone](04_NotepadClone/README.md) - メモ帳クローン
