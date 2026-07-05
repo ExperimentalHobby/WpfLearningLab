@@ -1,0 +1,40 @@
+<Window x:Class="UnitConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UnitConverter"
+        mc:Ignorable="d"
+        Title="単位変換ツール" Height="300" Width="420"
+        ResizeMode="NoResize">
+    <StackPanel Margin="16">
+        <TextBlock Text="カテゴリ" FontWeight="Bold" Margin="0,0,0,4"/>
+        <ComboBox x:Name="CategoryComboBox" FontSize="16" Margin="0,0,0,16"
+                  SelectionChanged="CategoryComboBox_SelectionChanged"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                <TextBlock Text="変換元"/>
+                <ComboBox x:Name="FromUnitComboBox" FontSize="16"
+                          SelectionChanged="UnitComboBox_SelectionChanged"/>
+                <TextBox x:Name="InputTextBox" FontSize="20" Margin="0,8,0,0"
+                         TextChanged="InputTextBox_TextChanged"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                <TextBlock Text="変換先"/>
+                <ComboBox x:Name="ToUnitComboBox" FontSize="16"
+                          SelectionChanged="UnitComboBox_SelectionChanged"/>
+                <TextBox x:Name="OutputTextBox" FontSize="20" Margin="0,8,0,0"
+                         IsReadOnly="True"
+                         AutomationProperties.Name="変換結果表示"
+                         AutomationProperties.AutomationId="OutputTextBox"/>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</Window>
