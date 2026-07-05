@@ -1,0 +1,12 @@
+<Project>
+
+  <!--
+    各プロジェクトの最終生成物(bin)をプロジェクトフォルダ配下ではなく、
+    リポジトリルートの bin/<プロジェクト名>/ 配下にまとめて出力する。
+    中間生成物(obj)は従来通り各プロジェクトフォルダ配下に残す。
+  -->
+  <PropertyGroup>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)bin\$(MSBuildProjectName)\</BaseOutputPath>
+  </PropertyGroup>
+
+</Project>
