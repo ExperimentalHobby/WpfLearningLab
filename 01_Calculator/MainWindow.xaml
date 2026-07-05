@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calculator"
         mc:Ignorable="d"
-        Title="電卓" Height="420" Width="300"
+        Title="電卓" Height="480" Width="300"
         ResizeMode="NoResize">
     <Grid Margin="8">
         <Grid.RowDefinitions>
@@ -24,6 +24,7 @@
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -53,8 +54,10 @@
 
             <Button Grid.Row="3" Grid.Column="0" Content="C" FontSize="20" Margin="4" Click="ClearButton_Click"/>
             <Button Grid.Row="3" Grid.Column="1" Content="0" FontSize="20" Margin="4" Click="DigitButton_Click"/>
-            <Button Grid.Row="3" Grid.Column="2" Content="=" FontSize="20" Margin="4" Click="EqualsButton_Click"/>
+            <Button Grid.Row="3" Grid.Column="2" Content="." FontSize="20" Margin="4" Click="DecimalPointButton_Click"/>
             <Button Grid.Row="3" Grid.Column="3" Content="+" FontSize="20" Margin="4" Click="OperatorButton_Click"/>
+
+            <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="=" FontSize="20" Margin="4" Click="EqualsButton_Click"/>
         </Grid>
     </Grid>
 </Window>
