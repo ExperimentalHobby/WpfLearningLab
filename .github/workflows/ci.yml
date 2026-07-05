@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.claude/**'
+      - 'LICENSE'
+      - 'WpfLearningLab.code-workspace'
+      - '.gitignore'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.claude/**'
+      - 'LICENSE'
+      - 'WpfLearningLab.code-workspace'
+      - '.gitignore'
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: "10.0.x"
+
+jobs:
+  build-and-test:
+    name: Build & Test (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build
+        shell: pwsh
+        run: |
+          $sln = Get-ChildItem -Path . -Filter *.sln -Recurse -File | Select-Object -First 1
+          if ($sln) {
+            dotnet build $sln.FullName --configuration Release
+          } else {
+            $projects = Get-ChildItem -Path . -Filter *.csproj -Recurse -File
+            if ($projects.Count -eq 0) {
+              Write-Host "No .sln or .csproj files found yet. Skipping build."
+            } else {
+              foreach ($proj in $projects) {
+                dotnet build $proj.FullName --configuration Release
+              }
+            }
+          }
+
+      - name: Test
+        shell: pwsh
+        run: |
+          $testProjects = Get-ChildItem -Path . -Filter "*Tests.csproj" -Recurse -File
+          if ($testProjects.Count -eq 0) {
+            Write-Host "No test projects found yet. Skipping tests."
+          } else {
+            foreach ($proj in $testProjects) {
+              dotnet test $proj.FullName --configuration Release
+            }
+          }
+
+  static-analysis:
+    name: Static Analysis
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: "C#: format check"
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $projects = Get-ChildItem -Path . -Filter *.csproj -Recurse -File
+          if ($projects.Count -eq 0) {
+            Write-Host "No .csproj files found yet. Skipping format check."
+          } else {
+            foreach ($proj in $projects) {
+              dotnet format $proj.FullName --verify-no-changes
+            }
+          }
