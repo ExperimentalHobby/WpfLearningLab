@@ -7,4 +7,8 @@
     <Project Path="02_UnitConverter/UnitConverter.csproj" />
     <Project Path="02_UnitConverter/test/UnitConverter.Tests.csproj" />
   </Folder>
+  <Folder Name="/03_ToDoList/">
+    <Project Path="03_ToDoList/ToDoList.csproj" />
+    <Project Path="03_ToDoList/test/ToDoList.Tests.csproj" />
+  </Folder>
 </Solution>
