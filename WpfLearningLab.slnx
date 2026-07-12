@@ -15,4 +15,8 @@
     <Project Path="04_NotepadClone/NotepadClone.csproj" />
     <Project Path="04_NotepadClone/test/NotepadClone.Tests.csproj" />
   </Folder>
+  <Folder Name="/05_BmiCalculator/">
+    <Project Path="05_BmiCalculator/BmiCalculator.csproj" />
+    <Project Path="05_BmiCalculator/test/BmiCalculator.Tests.csproj" />
+  </Folder>
 </Solution>
