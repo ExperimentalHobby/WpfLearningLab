@@ -1,9 +1,7 @@
 <Solution>
-  <Folder Name="/01_Calculator.Tests/">
-    <Project Path="01_Calculator.Tests/Calculator.Tests.csproj" />
-  </Folder>
   <Folder Name="/01_Calculator/">
     <Project Path="01_Calculator/Calculator.csproj" />
+    <Project Path="01_Calculator/test/Calculator.Tests.csproj" />
   </Folder>
   <Folder Name="/02_UnitConverter.Tests/">
     <Project Path="02_UnitConverter.Tests/UnitConverter.Tests.csproj" />
