@@ -11,6 +11,10 @@
     <Project Path="03_ToDoList/ToDoList.csproj" />
     <Project Path="03_ToDoList/test/ToDoList.Tests.csproj" />
   </Folder>
+  <Folder Name="/04_NotepadClone/">
+    <Project Path="04_NotepadClone/NotepadClone.csproj" />
+    <Project Path="04_NotepadClone/test/NotepadClone.Tests.csproj" />
+  </Folder>
   <Folder Name="/05_BmiCalculator/">
     <Project Path="05_BmiCalculator/BmiCalculator.csproj" />
     <Project Path="05_BmiCalculator/test/BmiCalculator.Tests.csproj" />
