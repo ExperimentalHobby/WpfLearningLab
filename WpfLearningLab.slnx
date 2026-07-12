@@ -11,4 +11,8 @@
     <Project Path="03_ToDoList/ToDoList.csproj" />
     <Project Path="03_ToDoList/test/ToDoList.Tests.csproj" />
   </Folder>
+  <Folder Name="/04_NotepadClone/">
+    <Project Path="04_NotepadClone/NotepadClone.csproj" />
+    <Project Path="04_NotepadClone/test/NotepadClone.Tests.csproj" />
+  </Folder>
 </Solution>
