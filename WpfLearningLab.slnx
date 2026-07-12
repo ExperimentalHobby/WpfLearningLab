@@ -19,4 +19,8 @@
     <Project Path="05_BmiCalculator/BmiCalculator.csproj" />
     <Project Path="05_BmiCalculator/test/BmiCalculator.Tests.csproj" />
   </Folder>
+  <Folder Name="/06_CountdownTimer/">
+    <Project Path="06_CountdownTimer/CountdownTimer.csproj" />
+    <Project Path="06_CountdownTimer/test/CountdownTimer.Tests.csproj" />
+  </Folder>
 </Solution>
