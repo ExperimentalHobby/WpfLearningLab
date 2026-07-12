@@ -14,7 +14,7 @@ C#（.NET 10）/ WPF の学習用アプリを 30 個作成するプロジェク�
 ### プロジェクト構成の規約
 
 - フォルダ名は `NN_AppName`（例: `01_Calculator`）だが、`.csproj` のプロジェクト名は数字プレフィックスなしの `AppName`（例: `Calculator.csproj`）
-- テストプロジェクトは `NN_AppName.Tests` フォルダに `AppName.Tests.csproj`（xUnit）として配置し、本体プロジェクトを参照する
+- テストプロジェクトは本体と同じ `NN_AppName` フォルダ配下の `test` サブフォルダに `AppName.Tests.csproj`（xUnit）として配置し、本体プロジェクトを参照する（`NN_AppName.Tests` のようにトップレベルで別フォルダに分けると管理対象フォルダ数が倍になるため、本体フォルダの子にまとめる）。本体側の `.csproj` には `<Compile Remove="test\**" />` を追加し、既定の再帰 glob でテストコードを二重コンパイルしないようにする
 - ビルド成果物（bin）はルートの `Directory.Build.props` により `bin/<プロジェクト名>/<Configuration>/<TargetFramework>/...` に統一される（各プロジェクトフォルダ配下には出力されない）。中間生成物（obj）は従来通り各プロジェクトフォルダ配下に残る。新規プロジェクト追加時は個別設定不要
 - 各アプリの実装は GitHub Issue 単位で管理する。実装前にプランを Issue コメントとして記録し、完了条件をチェックして PR 本文に `Closes #<Issue番号>` を記載する。Issue のスコープ外の追加実装（例: 学習ポイントにない機能追加）が発生した場合は別 Issue を起票し、元 Issue とは分けて追跡する
 

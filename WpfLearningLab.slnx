@@ -5,10 +5,8 @@
   <Folder Name="/01_Calculator/">
     <Project Path="01_Calculator/Calculator.csproj" />
   </Folder>
-  <Folder Name="/02_UnitConverter.Tests/">
-    <Project Path="02_UnitConverter.Tests/UnitConverter.Tests.csproj" />
-  </Folder>
   <Folder Name="/02_UnitConverter/">
     <Project Path="02_UnitConverter/UnitConverter.csproj" />
+    <Project Path="02_UnitConverter/test/UnitConverter.Tests.csproj" />
   </Folder>
 </Solution>
