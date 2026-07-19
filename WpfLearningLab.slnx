@@ -23,4 +23,8 @@
     <Project Path="06_CountdownTimer/CountdownTimer.csproj" />
     <Project Path="06_CountdownTimer/test/CountdownTimer.Tests.csproj" />
   </Folder>
+  <Folder Name="/07_ColorPalette/">
+    <Project Path="07_ColorPalette/ColorPalette.csproj" />
+    <Project Path="07_ColorPalette/test/ColorPalette.Tests.csproj" />
+  </Folder>
 </Solution>
