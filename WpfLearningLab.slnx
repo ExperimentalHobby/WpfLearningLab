@@ -27,4 +27,8 @@
     <Project Path="07_ColorPalette/ColorPalette.csproj" />
     <Project Path="07_ColorPalette/test/ColorPalette.Tests.csproj" />
   </Folder>
+  <Folder Name="/08_RockPaperScissors/">
+    <Project Path="08_RockPaperScissors/RockPaperScissors.csproj" />
+    <Project Path="08_RockPaperScissors/test/RockPaperScissors.Tests.csproj" />
+  </Folder>
 </Solution>
