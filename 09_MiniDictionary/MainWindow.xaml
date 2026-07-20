@@ -1,0 +1,27 @@
+<Window x:Class="MiniDictionary.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MiniDictionary"
+        mc:Ignorable="d"
+        Title="簡易電子辞書" Height="420" Width="360">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBox Grid.Row="0" x:Name="SearchTextBox" FontSize="16" Margin="0,0,0,8"
+                 TextChanged="SearchTextBox_TextChanged"
+                 AutomationProperties.AutomationId="SearchTextBox"/>
+
+        <ListBox Grid.Row="1" x:Name="WordListBox" Margin="0,0,0,8"
+                 SelectionChanged="WordListBox_SelectionChanged"
+                 AutomationProperties.AutomationId="WordListBox"/>
+
+        <TextBlock Grid.Row="2" x:Name="MeaningTextBlock" FontSize="16" TextWrapping="Wrap"
+                   AutomationProperties.AutomationId="MeaningTextBlock"/>
+    </Grid>
+</Window>

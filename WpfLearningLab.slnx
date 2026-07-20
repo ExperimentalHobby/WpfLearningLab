@@ -31,4 +31,8 @@
     <Project Path="08_RockPaperScissors/RockPaperScissors.csproj" />
     <Project Path="08_RockPaperScissors/test/RockPaperScissors.Tests.csproj" />
   </Folder>
+  <Folder Name="/09_MiniDictionary/">
+    <Project Path="09_MiniDictionary/MiniDictionary.csproj" />
+    <Project Path="09_MiniDictionary/test/MiniDictionary.Tests.csproj" />
+  </Folder>
 </Solution>
