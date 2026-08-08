@@ -35,4 +35,8 @@
     <Project Path="09_MiniDictionary/MiniDictionary.csproj" />
     <Project Path="09_MiniDictionary/test/MiniDictionary.Tests.csproj" />
   </Folder>
+  <Folder Name="/10_StickyNotes/">
+    <Project Path="10_StickyNotes/StickyNotes.csproj" />
+    <Project Path="10_StickyNotes/test/StickyNotes.Tests.csproj" />
+  </Folder>
 </Solution>
