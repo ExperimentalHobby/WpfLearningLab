@@ -39,4 +39,8 @@
     <Project Path="10_StickyNotes/StickyNotes.csproj" />
     <Project Path="10_StickyNotes/test/StickyNotes.Tests.csproj" />
   </Folder>
+  <Folder Name="/11_HouseholdBudget/">
+    <Project Path="11_HouseholdBudget/HouseholdBudget.csproj" />
+    <Project Path="11_HouseholdBudget/test/HouseholdBudget.Tests.csproj" />
+  </Folder>
 </Solution>
