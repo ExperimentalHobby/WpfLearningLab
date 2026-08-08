@@ -1,0 +1,14 @@
+<Window x:Class="StickyNotes.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StickyNotes"
+        mc:Ignorable="d"
+        Title="付箋アプリ" Height="150" Width="220">
+    <Grid>
+        <Button x:Name="NewNoteButton" Content="新規付箋" Click="NewNoteButton_Click"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Padding="16,8" FontSize="14"
+                AutomationProperties.AutomationId="NewNoteButton"/>
+    </Grid>
+</Window>
