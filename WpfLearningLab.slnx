@@ -75,4 +75,8 @@
     <Project Path="19_HabitTracker/HabitTracker.csproj" />
     <Project Path="19_HabitTracker/test/HabitTracker.Tests.csproj" />
   </Folder>
+  <Folder Name="/20_MarkdownMemo/">
+    <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
+    <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
+  </Folder>
 </Solution>
