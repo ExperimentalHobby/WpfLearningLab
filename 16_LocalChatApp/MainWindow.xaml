@@ -1,0 +1,103 @@
+<Window x:Class="LocalChatApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocalChatApp"
+        xmlns:conv="clr-namespace:LocalChatApp.Converters"
+        xmlns:models="clr-namespace:LocalChatApp.Models"
+        mc:Ignorable="d"
+        Title="簡易チャット" Height="520" Width="480">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 接続設定 -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,8"
+                    IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}">
+            <Grid Margin="0,0,0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="ポート:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBox Grid.Column="1" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                         Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.AutomationId="PortTextBox"/>
+                <Button Grid.Column="2" Content="サーバー開始" Padding="10,4"
+                        Command="{Binding StartServerCommand}"
+                        AutomationProperties.AutomationId="StartServerButton"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="接続先:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBox Grid.Column="1" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                         Text="{Binding HostAddress, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.AutomationId="HostAddressTextBox"/>
+                <Button Grid.Column="2" Content="接続" Padding="10,4"
+                        Command="{Binding ConnectCommand}"
+                        AutomationProperties.AutomationId="ConnectButton"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- 切断ボタン(接続中のみ表示) -->
+        <Button Grid.Row="0" Content="切断" Padding="10,4" HorizontalAlignment="Right" VerticalAlignment="Top"
+                Command="{Binding DisconnectCommand}"
+                Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                AutomationProperties.AutomationId="DisconnectButton"/>
+
+        <!-- メッセージ一覧 -->
+        <ListBox Grid.Row="1" Margin="0,8,0,8"
+                  ItemsSource="{Binding Messages}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  AutomationProperties.AutomationId="MessagesListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,2">
+                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Timestamp, StringFormat={}{0:HH:mm:ss}}" FontSize="10" Foreground="Gray"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Sender}" Value="{x:Static models:MessageSender.Local}">
+                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Sender}" Value="{x:Static models:MessageSender.System}">
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+        <!-- 送信欄 -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                     Text="{Binding MessageInput, UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.AutomationId="MessageInputTextBox"/>
+            <Button Grid.Column="1" Content="送信" Padding="12,4"
+                    Command="{Binding SendCommand}"
+                    AutomationProperties.AutomationId="SendButton"/>
+        </Grid>
+    </Grid>
+</Window>
