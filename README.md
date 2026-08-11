@@ -11,24 +11,24 @@ C#(.NET 10) / WPF の学習用アプリを30個作成するプロジェクト集
 
 - [x] [01_Calculator](01_Calculator/README.md) - 電卓アプリ
 - [x] [02_UnitConverter](02_UnitConverter/README.md) - 単位変換ツール
-- [ ] [03_ToDoList](03_ToDoList/README.md) - ToDoリスト
-- [ ] [04_NotepadClone](04_NotepadClone/README.md) - メモ帳クローン
-- [ ] [05_BmiCalculator](05_BmiCalculator/README.md) - BMI計算機
-- [ ] [06_CountdownTimer](06_CountdownTimer/README.md) - カウントダウンタイマー
-- [ ] [07_ColorPalette](07_ColorPalette/README.md) - 色選択パレット
-- [ ] [08_RockPaperScissors](08_RockPaperScissors/README.md) - じゃんけんゲーム
-- [ ] [09_MiniDictionary](09_MiniDictionary/README.md) - 簡易電子辞書
-- [ ] [10_StickyNotes](10_StickyNotes/README.md) - 付箋(Sticky Notes)アプリ
-- [ ] [11_HouseholdBudget](11_HouseholdBudget/README.md) - 家計簿アプリ
-- [ ] [12_KanbanTaskManager](12_KanbanTaskManager/README.md) - タスク管理(カンバン風)
-- [ ] [13_WeatherApp](13_WeatherApp/README.md) - 天気予報アプリ
-- [ ] [14_RssReader](14_RssReader/README.md) - RSSリーダー
-- [ ] [15_ImageViewer](15_ImageViewer/README.md) - 画像ビューア
-- [ ] [16_LocalChatApp](16_LocalChatApp/README.md) - 簡易チャットアプリ(ローカルSocket)
-- [ ] [17_PasswordManager](17_PasswordManager/README.md) - パスワード管理ツール
-- [ ] [18_StockMonitor](18_StockMonitor/README.md) - 株価/為替モニター
-- [ ] [19_HabitTracker](19_HabitTracker/README.md) - 習慣トラッカー
-- [ ] [20_MarkdownNoteApp](20_MarkdownNoteApp/README.md) - 簡易CMS風メモアプリ
+- [x] [03_ToDoList](03_ToDoList/README.md) - ToDoリスト
+- [x] [04_NotepadClone](04_NotepadClone/README.md) - メモ帳クローン
+- [x] [05_BmiCalculator](05_BmiCalculator/README.md) - BMI計算機
+- [x] [06_CountdownTimer](06_CountdownTimer/README.md) - カウントダウンタイマー
+- [x] [07_ColorPalette](07_ColorPalette/README.md) - 色選択パレット
+- [x] [08_RockPaperScissors](08_RockPaperScissors/README.md) - じゃんけんゲーム
+- [x] [09_MiniDictionary](09_MiniDictionary/README.md) - 簡易電子辞書
+- [x] [10_StickyNotes](10_StickyNotes/README.md) - 付箋(Sticky Notes)アプリ
+- [x] [11_HouseholdBudget](11_HouseholdBudget/README.md) - 家計簿アプリ
+- [x] [12_KanbanTaskManager](12_KanbanTaskManager/README.md) - タスク管理(カンバン風)
+- [x] [13_WeatherApp](13_WeatherApp/README.md) - 天気予報アプリ
+- [x] [14_RssReader](14_RssReader/README.md) - RSSリーダー
+- [x] [15_ImageViewer](15_ImageViewer/README.md) - 画像ビューア
+- [x] [16_LocalChatApp](16_LocalChatApp/README.md) - 簡易チャットアプリ(ローカルSocket)
+- [x] [17_PasswordManager](17_PasswordManager/README.md) - パスワード管理ツール
+- [x] [18_ExchangeRateMonitor](18_ExchangeRateMonitor/README.md) - 株価/為替モニター
+- [x] [19_HabitTracker](19_HabitTracker/README.md) - 習慣トラッカー
+- [x] [20_MarkdownMemo](20_MarkdownMemo/README.md) - 簡易CMS風メモアプリ
 - [ ] [21_PaintTool](21_PaintTool/README.md) - お絵かきツール(ペイント風)
 - [ ] [22_GameOfLife](22_GameOfLife/README.md) - ライフゲーム(Conway's Game of Life)
 - [ ] [23_MazeSolverVisualizer](23_MazeSolverVisualizer/README.md) - 迷路生成&探索ビジュアライザ
@@ -41,4 +41,4 @@ C#(.NET 10) / WPF の学習用アプリを30個作成するプロジェクト集
 - [ ] [30_LocalTaskScheduler](30_LocalTaskScheduler/README.md) - ローカルタスクスケジューラ
 
 ## フォルダ構成
-各フォルダに独立した .csproj を配置し、ソリューションファイル(.sln)で全体を管理しています。
+各フォルダに独立した .csproj を配置し、ソリューションファイル `WpfLearningLab.slnx`(.NET 10 / Visual Studio 2026 のXML形式ソリューション)で全体を管理しています。
