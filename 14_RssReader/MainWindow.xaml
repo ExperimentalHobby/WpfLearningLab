@@ -1,0 +1,81 @@
+<Window x:Class="RssReader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RssReader"
+        xmlns:conv="clr-namespace:RssReader.Converters"
+        mc:Ignorable="d"
+        Title="RSSリーダー" Height="560" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- フィードURL入力 -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="0,0,8,0" FontSize="14" VerticalContentAlignment="Center"
+                     Text="{Binding FeedUrl, UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.AutomationId="FeedUrlTextBox"/>
+            <Button Grid.Column="1" Content="取得" Padding="16,4"
+                    Command="{Binding FetchCommand}"
+                    AutomationProperties.AutomationId="FetchButton"/>
+        </Grid>
+
+        <!-- ローディング表示 -->
+        <ProgressBar Grid.Row="1" Margin="0,8,0,0" Height="4" IsIndeterminate="True"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     AutomationProperties.AutomationId="LoadingProgressBar"/>
+
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="2" Margin="0,8,0,0" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
+        <!-- 記事一覧 + 詳細 -->
+        <Grid Grid.Row="3" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <ListView Grid.Column="0" Margin="0,0,8,0"
+                      ItemsSource="{Binding Articles}"
+                      SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
+                      AutomationProperties.AutomationId="ArticlesListView">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="タイトル" Width="220" DisplayMemberBinding="{Binding Title}"/>
+                        <GridViewColumn Header="日時" Width="140" DisplayMemberBinding="{Binding PublishedDate, StringFormat={}{0:yyyy/MM/dd HH:mm}}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <DockPanel Grid.Column="1">
+                <Button DockPanel.Dock="Bottom" Content="ブラウザで開く" Padding="12,6" HorizontalAlignment="Left" Margin="0,8,0,0"
+                        Command="{Binding OpenLinkCommand}"
+                        CommandParameter="{Binding SelectedArticle.Link}"
+                        AutomationProperties.AutomationId="OpenLinkButton"/>
+                <TextBlock DockPanel.Dock="Top" Text="{Binding SelectedArticle.Title}" FontSize="16" FontWeight="Bold"
+                           TextWrapping="Wrap" Margin="0,0,0,8"
+                           AutomationProperties.AutomationId="DetailTitleText"/>
+                <ScrollViewer>
+                    <TextBlock Text="{Binding SelectedArticle.Summary}" TextWrapping="Wrap"
+                               AutomationProperties.AutomationId="DetailSummaryText"/>
+                </ScrollViewer>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>
