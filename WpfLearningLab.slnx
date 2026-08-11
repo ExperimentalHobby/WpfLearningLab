@@ -67,4 +67,8 @@
     <Project Path="17_PasswordManager/PasswordManager.csproj" />
     <Project Path="17_PasswordManager/test/PasswordManager.Tests.csproj" />
   </Folder>
+  <Folder Name="/18_ExchangeRateMonitor/">
+    <Project Path="18_ExchangeRateMonitor/ExchangeRateMonitor.csproj" />
+    <Project Path="18_ExchangeRateMonitor/test/ExchangeRateMonitor.Tests.csproj" />
+  </Folder>
 </Solution>

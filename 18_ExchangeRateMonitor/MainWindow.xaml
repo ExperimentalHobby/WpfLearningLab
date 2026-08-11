@@ -1,0 +1,106 @@
+<Window x:Class="ExchangeRateMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExchangeRateMonitor"
+        mc:Ignorable="d"
+        Title="為替モニター" Height="560" Width="640">
+    <Window.Resources>
+        <Style x:Key="RateTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Trend}" Value="Up">
+                    <Setter Property="Foreground" Value="#2E7D32"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Trend}" Value="Down">
+                    <Setter Property="Foreground" Value="#C62828"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ErrorTextStyle" TargetType="TextBlock">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ErrorMessage}" Value="">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 通貨ペア追加 -->
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" VerticalContentAlignment="Center" MaxLength="3"
+                     Text="{Binding InputBaseCurrency, UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.AutomationId="InputBaseCurrencyTextBox"/>
+            <TextBlock Grid.Column="1" Text="/" Margin="4,0" VerticalAlignment="Center" FontSize="16"/>
+            <TextBox Grid.Column="2" VerticalContentAlignment="Center" MaxLength="3"
+                     Text="{Binding InputQuoteCurrency, UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.AutomationId="InputQuoteCurrencyTextBox"/>
+            <Button Grid.Column="3" Content="追加" Padding="12,4" Margin="8,0,0,0"
+                    Command="{Binding AddPairCommand}"
+                    AutomationProperties.AutomationId="AddPairButton"/>
+        </Grid>
+
+        <!-- 監視銘柄一覧 -->
+        <ListBox Grid.Row="1" x:Name="WatchedPairsListBox"
+                  ItemsSource="{Binding WatchedPairs}"
+                  AutomationProperties.AutomationId="WatchedPairsListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName}" VerticalAlignment="Center" FontWeight="Bold"
+                                   AutomationProperties.AutomationId="PairDisplayNameText"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentRate, StringFormat={}{0:N4}}" VerticalAlignment="Center"
+                                   Style="{StaticResource RateTextStyle}"
+                                   AutomationProperties.AutomationId="PairRateText"/>
+                        <TextBlock Grid.Column="2" Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center"
+                                   TextWrapping="Wrap" Style="{StaticResource ErrorTextStyle}"
+                                   AutomationProperties.AutomationId="PairErrorText"/>
+                        <Button Grid.Column="3" Content="削除" Padding="6,2"
+                                Command="{Binding DataContext.RemovePairCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                AutomationProperties.AutomationId="RemovePairButton"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- 更新状況 -->
+        <Grid Grid.Row="2" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                       Text="{Binding LastUpdated, StringFormat={}最終更新: {0:yyyy/MM/dd HH:mm:ss}, TargetNullValue=最終更新: 未更新}"
+                       AutomationProperties.AutomationId="LastUpdatedText"/>
+            <Button Grid.Column="1" Content="今すぐ更新" Padding="12,4"
+                    Command="{Binding RefreshAllCommand}"
+                    AutomationProperties.AutomationId="RefreshNowButton"/>
+        </Grid>
+    </Grid>
+</Window>
