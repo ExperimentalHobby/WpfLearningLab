@@ -43,4 +43,8 @@
     <Project Path="11_HouseholdBudget/HouseholdBudget.csproj" />
     <Project Path="11_HouseholdBudget/test/HouseholdBudget.Tests.csproj" />
   </Folder>
+  <Folder Name="/12_KanbanTaskManager/">
+    <Project Path="12_KanbanTaskManager/KanbanTaskManager.csproj" />
+    <Project Path="12_KanbanTaskManager/test/KanbanTaskManager.Tests.csproj" />
+  </Folder>
 </Solution>
