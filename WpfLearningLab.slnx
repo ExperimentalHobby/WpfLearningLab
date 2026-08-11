@@ -59,4 +59,8 @@
     <Project Path="15_ImageViewer/ImageViewer.csproj" />
     <Project Path="15_ImageViewer/test/ImageViewer.Tests.csproj" />
   </Folder>
+  <Folder Name="/16_LocalChatApp/">
+    <Project Path="16_LocalChatApp/LocalChatApp.csproj" />
+    <Project Path="16_LocalChatApp/test/LocalChatApp.Tests.csproj" />
+  </Folder>
 </Solution>
