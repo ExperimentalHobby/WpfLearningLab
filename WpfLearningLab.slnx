@@ -51,4 +51,8 @@
     <Project Path="13_WeatherApp/WeatherApp.csproj" />
     <Project Path="13_WeatherApp/test/WeatherApp.Tests.csproj" />
   </Folder>
+  <Folder Name="/14_RssReader/">
+    <Project Path="14_RssReader/RssReader.csproj" />
+    <Project Path="14_RssReader/test/RssReader.Tests.csproj" />
+  </Folder>
 </Solution>
