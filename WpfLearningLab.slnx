@@ -63,4 +63,8 @@
     <Project Path="16_LocalChatApp/LocalChatApp.csproj" />
     <Project Path="16_LocalChatApp/test/LocalChatApp.Tests.csproj" />
   </Folder>
+  <Folder Name="/17_PasswordManager/">
+    <Project Path="17_PasswordManager/PasswordManager.csproj" />
+    <Project Path="17_PasswordManager/test/PasswordManager.Tests.csproj" />
+  </Folder>
 </Solution>
