@@ -55,4 +55,8 @@
     <Project Path="14_RssReader/RssReader.csproj" />
     <Project Path="14_RssReader/test/RssReader.Tests.csproj" />
   </Folder>
+  <Folder Name="/15_ImageViewer/">
+    <Project Path="15_ImageViewer/ImageViewer.csproj" />
+    <Project Path="15_ImageViewer/test/ImageViewer.Tests.csproj" />
+  </Folder>
 </Solution>
