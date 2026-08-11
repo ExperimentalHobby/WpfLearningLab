@@ -47,4 +47,8 @@
     <Project Path="12_KanbanTaskManager/KanbanTaskManager.csproj" />
     <Project Path="12_KanbanTaskManager/test/KanbanTaskManager.Tests.csproj" />
   </Folder>
+  <Folder Name="/13_WeatherApp/">
+    <Project Path="13_WeatherApp/WeatherApp.csproj" />
+    <Project Path="13_WeatherApp/test/WeatherApp.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -1,0 +1,66 @@
+<Window x:Class="WeatherApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherApp"
+        xmlns:conv="clr-namespace:WeatherApp.Converters"
+        mc:Ignorable="d"
+        Title="天気予報" Height="420" Width="380">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 検索 -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Margin="0,0,8,0" FontSize="16" VerticalContentAlignment="Center"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.AutomationId="SearchTextBox"/>
+            <Button Grid.Column="1" Content="検索" Padding="16,4"
+                    Command="{Binding SearchCommand}"
+                    AutomationProperties.AutomationId="SearchButton"/>
+        </Grid>
+
+        <!-- ローディング表示 -->
+        <ProgressBar Grid.Row="1" Margin="0,12,0,0" Height="4" IsIndeterminate="True"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     AutomationProperties.AutomationId="LoadingProgressBar"/>
+
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="2" Margin="0,12,0,0" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
+        <!-- 結果表示 -->
+        <StackPanel Grid.Row="3" Margin="0,16,0,0" HorizontalAlignment="Center"
+                    Visibility="{Binding ResolvedLocationName, Converter={StaticResource StringToVisibilityConverter}}">
+            <TextBlock Text="{Binding ResolvedLocationName}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"
+                       AutomationProperties.AutomationId="LocationNameText"/>
+            <TextBlock Text="{Binding WeatherIcon}" FontSize="48" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+            <TextBlock Text="{Binding WeatherDescription}" FontSize="16" HorizontalAlignment="Center"
+                       AutomationProperties.AutomationId="WeatherDescriptionText"/>
+            <TextBlock Text="{Binding Temperature, StringFormat={}{0:F1}℃}" FontSize="32" FontWeight="Bold"
+                       HorizontalAlignment="Center" Margin="0,8,0,0"
+                       AutomationProperties.AutomationId="TemperatureText"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                <TextBlock Text="{Binding Humidity, StringFormat=湿度 {0:F0}%}" Margin="0,0,16,0"
+                           AutomationProperties.AutomationId="HumidityText"/>
+                <TextBlock Text="{Binding WindSpeed, StringFormat=風速 {0:F1}km/h}"
+                           AutomationProperties.AutomationId="WindSpeedText"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
