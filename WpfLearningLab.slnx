@@ -71,4 +71,8 @@
     <Project Path="18_ExchangeRateMonitor/ExchangeRateMonitor.csproj" />
     <Project Path="18_ExchangeRateMonitor/test/ExchangeRateMonitor.Tests.csproj" />
   </Folder>
+  <Folder Name="/19_HabitTracker/">
+    <Project Path="19_HabitTracker/HabitTracker.csproj" />
+    <Project Path="19_HabitTracker/test/HabitTracker.Tests.csproj" />
+  </Folder>
 </Solution>
