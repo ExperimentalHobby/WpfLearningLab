@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/21_PaintTool/">
+    <Project Path="21_PaintTool/PaintTool.csproj" />
+    <Project Path="21_PaintTool/test/PaintTool.Tests.csproj" />
+  </Folder>
 </Solution>
