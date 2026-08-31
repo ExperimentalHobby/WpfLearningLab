@@ -1,0 +1,66 @@
+<Window x:Class="Simple3DViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simple3DViewer"
+        mc:Ignorable="d"
+        Title="簡易3Dモデルビューア" Height="520" Width="720">
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 操作パネル -->
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="オブジェクト" FontWeight="Bold" Margin="0,0,0,4"/>
+            <Button Content="立方体" Command="{Binding SelectCubeCommand}" Margin="0,0,0,4"
+                    AutomationProperties.AutomationId="CubeButton"/>
+            <Button Content="球" Command="{Binding SelectSphereCommand}" Margin="0,0,0,16"
+                    AutomationProperties.AutomationId="SphereButton"/>
+
+            <TextBlock Text="色" FontWeight="Bold" Margin="0,0,0,4"/>
+            <Button Content="青" Command="{Binding SetColorCommand}" CommandParameter="DodgerBlue" Margin="0,0,0,4"
+                    AutomationProperties.AutomationId="BlueColorButton"/>
+            <Button Content="赤" Command="{Binding SetColorCommand}" CommandParameter="Crimson" Margin="0,0,0,4"
+                    AutomationProperties.AutomationId="RedColorButton"/>
+            <Button Content="金" Command="{Binding SetColorCommand}" CommandParameter="Gold" Margin="0,0,0,16"
+                    AutomationProperties.AutomationId="GoldColorButton"/>
+
+            <CheckBox Content="自動回転" IsChecked="{Binding IsAutoRotating}" Margin="0,0,0,16"
+                      AutomationProperties.AutomationId="AutoRotateCheckBox"/>
+
+            <TextBlock Text="{Binding Azimuth, StringFormat=方位角: {0:F1}}"
+                       AutomationProperties.AutomationId="AzimuthText"/>
+            <TextBlock Text="{Binding Elevation, StringFormat=仰角: {0:F1}}"
+                       AutomationProperties.AutomationId="ElevationText"/>
+            <TextBlock Text="{Binding Distance, StringFormat=距離: {0:F2}}"
+                       AutomationProperties.AutomationId="DistanceText"/>
+        </StackPanel>
+
+        <!-- 3Dビュー -->
+        <Border Grid.Column="2" Background="#212121">
+            <Viewport3D x:Name="Viewport" ClipToBounds="True"
+                        MouseLeftButtonDown="Viewport_MouseLeftButtonDown"
+                        MouseMove="Viewport_MouseMove"
+                        MouseLeftButtonUp="Viewport_MouseLeftButtonUp"
+                        MouseWheel="Viewport_MouseWheel"
+                        AutomationProperties.AutomationId="Viewport3D">
+                <Viewport3D.Camera>
+                    <PerspectiveCamera x:Name="Camera" FieldOfView="45" LookDirection="0,0,-1" UpDirection="0,1,0"/>
+                </Viewport3D.Camera>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup>
+                            <AmbientLight Color="#404040"/>
+                            <DirectionalLight Color="White" Direction="-1,-1,-1"/>
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+                <ModelVisual3D x:Name="ObjectVisual"/>
+            </Viewport3D>
+        </Border>
+    </Grid>
+</Window>
