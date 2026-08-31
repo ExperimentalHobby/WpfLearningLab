@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/30_LocalTaskScheduler/">
+    <Project Path="30_LocalTaskScheduler/LocalTaskScheduler.csproj" />
+    <Project Path="30_LocalTaskScheduler/test/LocalTaskScheduler.Tests.csproj" />
+  </Folder>
 </Solution>
