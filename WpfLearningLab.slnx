@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/32_LogStreamAggregator/">
+    <Project Path="32_LogStreamAggregator/LogStreamAggregator.csproj" />
+    <Project Path="32_LogStreamAggregator/test/LogStreamAggregator.Tests.csproj" />
+  </Folder>
 </Solution>
