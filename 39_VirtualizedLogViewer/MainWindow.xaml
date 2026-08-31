@@ -1,0 +1,79 @@
+<Window x:Class="VirtualizedLogViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VirtualizedLogViewer"
+        mc:Ignorable="d"
+        Title="大量ログビューア(仮想化)" Height="600" Width="800">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 生成 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="生成行数:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <TextBox Width="100" Text="{Binding LineCountInput, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="0,0,8,0"
+                     AutomationProperties.AutomationId="LineCountTextBox"/>
+            <Button Content="生成" Command="{Binding GenerateCommand}" Padding="10,4" Margin="0,0,16,0"
+                    AutomationProperties.AutomationId="GenerateButton"/>
+            <CheckBox Content="UI仮想化を有効にする" IsChecked="{Binding IsVirtualizationEnabled}" VerticalAlignment="Center"
+                      AutomationProperties.AutomationId="VirtualizationCheckBox"/>
+        </StackPanel>
+
+        <!-- フィルタ -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="キーワード:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <TextBox Width="160" Text="{Binding KeywordFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="0,0,8,0"
+                     AutomationProperties.AutomationId="KeywordTextBox"/>
+            <TextBlock Text="レベル:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <ComboBox Width="100" ItemsSource="{Binding LevelOptions}" SelectedItem="{Binding LevelFilter}" Margin="0,0,8,0"
+                      AutomationProperties.AutomationId="LevelComboBox"/>
+            <Button Content="絞り込み" Command="{Binding ApplyFilterCommand}" Padding="10,4"
+                    AutomationProperties.AutomationId="ApplyFilterButton"/>
+        </StackPanel>
+
+        <!-- ログ一覧(UI仮想化) -->
+        <ListView x:Name="LogListView" Grid.Row="2" ItemsSource="{Binding DisplayedLines}"
+                  VirtualizingPanel.IsVirtualizing="{Binding IsVirtualizationEnabled}"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  ScrollViewer.CanContentScroll="True"
+                  AutomationProperties.AutomationId="LogListView">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="行番号" DisplayMemberBinding="{Binding LineNumber}" Width="70"/>
+                    <GridViewColumn Header="レベル" DisplayMemberBinding="{Binding Level}" Width="70"/>
+                    <GridViewColumn Header="メッセージ" DisplayMemberBinding="{Binding Message}" Width="500"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- ジャンプ -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
+            <TextBlock Text="行番号ジャンプ:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <TextBox Width="100" Text="{Binding JumpLineInput, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="0,0,8,0"
+                     AutomationProperties.AutomationId="JumpLineTextBox"/>
+            <Button Content="ジャンプ" Command="{Binding JumpToLineCommand}" Padding="10,4" Margin="0,0,16,0"
+                    AutomationProperties.AutomationId="JumpButton"/>
+            <Button Content="実体化コンテナ数を数える" Click="CountRealizedContainers_Click" Padding="10,4"
+                    AutomationProperties.AutomationId="CountRealizedButton"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Margin="0,8,0,0">
+            <TextBlock Text="{Binding StatusText}" Foreground="Gray" TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="StatusText"/>
+            <TextBlock x:Name="RealizedCountText" Foreground="Gray" TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="RealizedCountText"/>
+        </StackPanel>
+    </Grid>
+</Window>
