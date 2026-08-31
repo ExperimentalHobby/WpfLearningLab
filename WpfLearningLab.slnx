@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/26_ChartVisualization/">
+    <Project Path="26_ChartVisualization/ChartVisualization.csproj" />
+    <Project Path="26_ChartVisualization/test/ChartVisualization.Tests.csproj" />
+  </Folder>
 </Solution>
