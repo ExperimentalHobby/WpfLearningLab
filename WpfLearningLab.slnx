@@ -79,4 +79,9 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/34_CustomGaugeControl/">
+    <Project Path="34_CustomGaugeControl/CustomGaugeControl.csproj" />
+    <Project Path="34_CustomGaugeControl/GaugeControlLib/GaugeControlLib.csproj" />
+    <Project Path="34_CustomGaugeControl/test/GaugeControlLib.Tests.csproj" />
+  </Folder>
 </Solution>
