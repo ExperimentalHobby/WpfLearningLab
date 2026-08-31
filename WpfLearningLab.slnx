@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/38_DragDropFileTagger/">
+    <Project Path="38_DragDropFileTagger/DragDropFileTagger.csproj" />
+    <Project Path="38_DragDropFileTagger/test/DragDropFileTagger.Tests.csproj" />
+  </Folder>
 </Solution>
