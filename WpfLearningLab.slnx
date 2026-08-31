@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/24_MusicPlayer/">
+    <Project Path="24_MusicPlayer/MusicPlayer.csproj" />
+    <Project Path="24_MusicPlayer/test/MusicPlayer.Tests.csproj" />
+  </Folder>
 </Solution>
