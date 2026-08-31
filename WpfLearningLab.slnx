@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/40_SystemTrayUtility/">
+    <Project Path="40_SystemTrayUtility/SystemTrayUtility.csproj" />
+    <Project Path="40_SystemTrayUtility/test/SystemTrayUtility.Tests.csproj" />
+  </Folder>
 </Solution>
