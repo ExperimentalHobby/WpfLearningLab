@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/23_MazeSolverVisualizer/">
+    <Project Path="23_MazeSolverVisualizer/MazeSolverVisualizer.csproj" />
+    <Project Path="23_MazeSolverVisualizer/test/MazeSolverVisualizer.Tests.csproj" />
+  </Folder>
 </Solution>
