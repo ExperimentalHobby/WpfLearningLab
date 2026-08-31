@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/25_FileOrganizer/">
+    <Project Path="25_FileOrganizer/FileOrganizer.csproj" />
+    <Project Path="25_FileOrganizer/test/FileOrganizer.Tests.csproj" />
+  </Folder>
 </Solution>
