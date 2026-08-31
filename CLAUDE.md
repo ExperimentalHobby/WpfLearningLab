@@ -4,12 +4,13 @@
 
 ## プロジェクト概要
 
-C#（.NET 10）/ WPF の学習用アプリを 30 個作成するプロジェクト集。
+C#（.NET 10）/ WPF の学習用アプリを 42 個作成するプロジェクト集。
 
-- 各フォルダ（`01_Calculator` 〜 `30_LocalTaskScheduler`）に独立した `.csproj` を配置し、ソリューションファイル `WpfLearningLab.slnx`（.NET 10 / Visual Studio 2026 のXML形式ソリューション、リポジトリルートに配置）で全体を管理する
+- 各フォルダ（`01_Calculator` 〜 `42_AccessibleNoteApp`）に独立した `.csproj` を配置し、ソリューションファイル `WpfLearningLab.slnx`（.NET 10 / Visual Studio 2026 のXML形式ソリューション、リポジトリルートに配置）で全体を管理する
 - 01〜10: XAML 基本 + イベント処理
 - 11〜20: MVVM パターン + 外部リソース連携（API/DB）
 - 21〜30: 描画・並行処理・アーキテクチャ設計
+- 31〜42: 並行処理・カスタムUI・アーキテクチャ・デバイス連携等の応用技術（`31_ParallelImageProcessor` 〜 `42_AccessibleNoteApp`。この範囲のみ、リポジトリ全体の連番でIssue番号が採番された都合上、**フォルダ番号とGitHub Issue番号が一致しない**（例: フォルダ `31_ParallelImageProcessor` の実装Issueは `#57`）。実装時は `Closes #<Issue番号>` に正しい実番号を使うこと）
 
 ### プロジェクト構成の規約
 
