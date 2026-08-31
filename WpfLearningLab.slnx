@@ -79,4 +79,10 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/28_PluginNoteApp/">
+    <Project Path="28_PluginNoteApp/PluginNoteApp.csproj" />
+    <Project Path="28_PluginNoteApp/Contracts/PluginNoteApp.Contracts.csproj" />
+    <Project Path="28_PluginNoteApp/Plugins/CharacterCountPlugin/CharacterCountPlugin.csproj" />
+    <Project Path="28_PluginNoteApp/test/PluginNoteApp.Tests.csproj" />
+  </Folder>
 </Solution>
