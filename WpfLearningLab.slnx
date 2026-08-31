@@ -79,4 +79,8 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/31_ParallelImageProcessor/">
+    <Project Path="31_ParallelImageProcessor/ParallelImageProcessor.csproj" />
+    <Project Path="31_ParallelImageProcessor/test/ParallelImageProcessor.Tests.csproj" />
+  </Folder>
 </Solution>
