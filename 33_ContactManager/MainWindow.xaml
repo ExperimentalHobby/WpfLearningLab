@@ -1,0 +1,72 @@
+<Window x:Class="ContactManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ContactManager"
+        xmlns:conv="clr-namespace:ContactManager.Converters"
+        mc:Ignorable="d"
+        Title="連絡先管理" Height="520" Width="720">
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 連絡先一覧 -->
+        <DockPanel Grid.Column="0">
+            <TextBlock DockPanel.Dock="Top" Text="連絡先一覧" FontWeight="Bold" Margin="0,0,0,4"/>
+            <ListBox ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}"
+                     AutomationProperties.AutomationId="ContactsListBox">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,2">
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding PhoneNumber}" Foreground="Gray"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- 追加・編集フォーム -->
+        <StackPanel Grid.Column="2">
+            <GroupBox Header="新規追加" Margin="0,0,0,16">
+                <StackPanel Margin="8">
+                    <TextBlock Text="氏名"/>
+                    <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                              AutomationProperties.AutomationId="NewNameTextBox"/>
+                    <TextBlock Text="電話番号"/>
+                    <TextBox Text="{Binding NewPhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                              AutomationProperties.AutomationId="NewPhoneNumberTextBox"/>
+                    <TextBlock Text="メールアドレス"/>
+                    <TextBox Text="{Binding NewEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                              AutomationProperties.AutomationId="NewEmailTextBox"/>
+                    <Button Content="追加" Padding="10,4" HorizontalAlignment="Left" Command="{Binding AddCommand}"
+                            AutomationProperties.AutomationId="AddButton"/>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="選択中の連絡先を編集" IsEnabled="{Binding SelectedContact, Converter={x:Static conv:NullToBooleanConverter.Instance}}">
+                <StackPanel Margin="8">
+                    <TextBlock Text="氏名"/>
+                    <TextBox Text="{Binding SelectedContact.Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                              AutomationProperties.AutomationId="EditNameTextBox"/>
+                    <TextBlock Text="電話番号"/>
+                    <TextBox Text="{Binding SelectedContact.PhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                              AutomationProperties.AutomationId="EditPhoneNumberTextBox"/>
+                    <TextBlock Text="メールアドレス"/>
+                    <TextBox Text="{Binding SelectedContact.Email, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                              AutomationProperties.AutomationId="EditEmailTextBox"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="更新" Padding="10,4" Margin="0,0,8,0" Command="{Binding UpdateCommand}"
+                                AutomationProperties.AutomationId="UpdateButton"/>
+                        <Button Content="削除" Padding="10,4" Command="{Binding DeleteCommand}"
+                                AutomationProperties.AutomationId="DeleteButton"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</Window>
