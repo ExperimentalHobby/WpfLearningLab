@@ -1,11 +1,12 @@
 ﻿# WPF Learning Lab
 
-C#(.NET 10) / WPF の学習用アプリを30個作成するプロジェクト集です。
+C#(.NET 10) / WPF の学習用アプリを42個作成するプロジェクト集です。
 
 ## 進め方
 1. 01〜10: XAML基本+イベント処理
 2. 11〜20: MVVMパターン+外部リソース連携(API/DB)
 3. 21〜30: 描画・並行処理・アーキテクチャ設計
+4. 31〜42: 並行処理・カスタムUI・アーキテクチャ・デバイス連携等の応用技術
 
 ## アプリ一覧・進捗チェックリスト
 
@@ -39,6 +40,18 @@ C#(.NET 10) / WPF の学習用アプリを30個作成するプロジェクト集
 - [ ] [28_PluginNoteApp](28_PluginNoteApp/README.md) - プラグイン対応メモアプリ
 - [ ] [29_MiniCodeEditor](29_MiniCodeEditor/README.md) - 簡易IDE/コードエディタ
 - [ ] [30_LocalTaskScheduler](30_LocalTaskScheduler/README.md) - ローカルタスクスケジューラ
+- [ ] [31_ParallelImageProcessor](31_ParallelImageProcessor/README.md) - 並列画像バッチ処理ツール
+- [ ] [32_LogStreamAggregator](32_LogStreamAggregator/README.md) - ログストリーム集計ツール
+- [ ] [33_ContactManager](33_ContactManager/README.md) - 連絡先管理アプリ(DIコンテナ構成)
+- [ ] [34_CustomGaugeControl](34_CustomGaugeControl/README.md) - 自作ゲージコントロール
+- [ ] [35_CustomMarkupExtension](35_CustomMarkupExtension/README.md) - カスタムMarkupExtensionサンプル集
+- [ ] [36_AnimatedDashboard](36_AnimatedDashboard/README.md) - アニメーションダッシュボード
+- [ ] [37_Simple3DViewer](37_Simple3DViewer/README.md) - 簡易3Dモデルビューア
+- [ ] [38_DragDropFileTagger](38_DragDropFileTagger/README.md) - ドラッグ&ドロップ ファイルタグ付けツール
+- [ ] [39_VirtualizedLogViewer](39_VirtualizedLogViewer/README.md) - 大量ログビューア(仮想化)
+- [ ] [40_SystemTrayUtility](40_SystemTrayUtility/README.md) - システムトレイ常駐ユーティリティ
+- [ ] [41_GlobalHotkeyLauncher](41_GlobalHotkeyLauncher/README.md) - グローバルホットキーランチャー
+- [ ] [42_AccessibleNoteApp](42_AccessibleNoteApp/README.md) - アクセシビリティ対応メモアプリ
 
 ## フォルダ構成
 各フォルダに独立した .csproj を配置し、ソリューションファイル `WpfLearningLab.slnx`(.NET 10 / Visual Studio 2026 のXML形式ソリューション)で全体を管理しています。
