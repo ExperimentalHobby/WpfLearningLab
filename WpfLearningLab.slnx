@@ -87,4 +87,8 @@
     <Project Path="22_GameOfLife/GameOfLife.csproj" />
     <Project Path="22_GameOfLife/test/GameOfLife.Tests.csproj" />
   </Folder>
+  <Folder Name="/23_MazeSolverVisualizer/">
+    <Project Path="23_MazeSolverVisualizer/MazeSolverVisualizer.csproj" />
+    <Project Path="23_MazeSolverVisualizer/test/MazeSolverVisualizer.Tests.csproj" />
+  </Folder>
 </Solution>
