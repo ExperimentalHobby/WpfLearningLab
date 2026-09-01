@@ -1,0 +1,59 @@
+<Window x:Class="PaintTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PaintTool"
+        mc:Ignorable="d"
+        Title="お絵かきツール" Height="640" Width="900">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ツールバー -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Width="28" Height="28" Margin="0,0,4,0" Background="Black"
+                    Command="{Binding SelectColorCommand}" CommandParameter="Black"
+                    AutomationProperties.AutomationId="ColorBlackButton"/>
+            <Button Width="28" Height="28" Margin="0,0,4,0" Background="Red"
+                    Command="{Binding SelectColorCommand}" CommandParameter="Red"
+                    AutomationProperties.AutomationId="ColorRedButton"/>
+            <Button Width="28" Height="28" Margin="0,0,4,0" Background="Blue"
+                    Command="{Binding SelectColorCommand}" CommandParameter="Blue"
+                    AutomationProperties.AutomationId="ColorBlueButton"/>
+            <Button Width="28" Height="28" Margin="0,0,16,0" Background="Green"
+                    Command="{Binding SelectColorCommand}" CommandParameter="Green"
+                    AutomationProperties.AutomationId="ColorGreenButton"/>
+
+            <TextBlock Text="太さ:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <Slider Width="100" Minimum="1" Maximum="30" VerticalAlignment="Center" Margin="0,0,16,0"
+                    Value="{Binding PenWidth}"
+                    AutomationProperties.AutomationId="PenWidthSlider"/>
+
+            <ToggleButton Content="消しゴム" Padding="8,4" Margin="0,0,16,0"
+                          IsChecked="{Binding IsEraserMode}"
+                          AutomationProperties.AutomationId="EraserToggleButton"/>
+
+            <Button Content="元に戻す" Padding="8,4" Margin="0,0,4,0"
+                    Command="{Binding UndoCommand}"
+                    AutomationProperties.AutomationId="UndoButton"/>
+            <Button Content="やり直す" Padding="8,4" Margin="0,0,16,0"
+                    Command="{Binding RedoCommand}"
+                    AutomationProperties.AutomationId="RedoButton"/>
+
+            <Button Content="全消去" Padding="8,4" Margin="0,0,4,0"
+                    Command="{Binding ClearAllCommand}"
+                    AutomationProperties.AutomationId="ClearAllButton"/>
+            <Button Content="保存" Padding="8,4"
+                    Command="{Binding SaveCommand}"
+                    AutomationProperties.AutomationId="SaveButton"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1">
+            <InkCanvas x:Name="DrawingCanvas" Background="White"
+                       AutomationProperties.AutomationId="DrawingCanvas"/>
+        </Border>
+    </Grid>
+</Window>
