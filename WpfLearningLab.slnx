@@ -91,4 +91,8 @@
     <Project Path="23_MazeSolverVisualizer/MazeSolverVisualizer.csproj" />
     <Project Path="23_MazeSolverVisualizer/test/MazeSolverVisualizer.Tests.csproj" />
   </Folder>
+  <Folder Name="/24_MusicPlayer/">
+    <Project Path="24_MusicPlayer/MusicPlayer.csproj" />
+    <Project Path="24_MusicPlayer/test/MusicPlayer.Tests.csproj" />
+  </Folder>
 </Solution>
