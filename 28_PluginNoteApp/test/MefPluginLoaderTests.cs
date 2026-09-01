@@ -28,13 +28,16 @@ public class MefPluginLoaderTests : IDisposable
 	/// テストプロジェクトが参照しているビルド済みプラグインDLLの実際の出力パスを返す。
 	/// CharacterCountPlugin.csproj/PluginNoteApp.Contracts.csprojをProjectReferenceしているため、
 	/// テスト実行前に必ずビルドされている。
+	/// Configuration(Debug/Release)はテストアセンブリ自身の出力パスから取得し、
+	/// CI(Release実行)とローカル(Debug実行)の両方で解決できるようにする。
 	/// </summary>
 	private static string GetBuiltDllPath(string projectName, string fileName)
 	{
 		var testAssemblyDir = Path.GetDirectoryName(typeof(MefPluginLoaderTests).Assembly.Location)!;
-		// bin/PluginNoteApp.Tests/Debug/net10.0-windows/ -> bin/<projectName>/Debug/<tfm>/
-		var binDir = Directory.GetParent(testAssemblyDir)!.Parent!.Parent!.FullName;
-		return Path.Combine(binDir, projectName, "Debug", "net10.0", fileName);
+		// bin/PluginNoteApp.Tests/<Configuration>/net10.0-windows/ -> bin/<projectName>/<Configuration>/<tfm>/
+		var configurationDir = Directory.GetParent(testAssemblyDir)!;
+		var binDir = configurationDir.Parent!.Parent!.FullName;
+		return Path.Combine(binDir, projectName, configurationDir.Name, "net10.0", fileName);
 	}
 
 	private static string GetCharacterCountPluginDllPath() =>
