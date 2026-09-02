@@ -99,4 +99,8 @@
     <Project Path="25_FileOrganizer/FileOrganizer.csproj" />
     <Project Path="25_FileOrganizer/test/FileOrganizer.Tests.csproj" />
   </Folder>
+  <Folder Name="/26_ChartVisualization/">
+    <Project Path="26_ChartVisualization/ChartVisualization.csproj" />
+    <Project Path="26_ChartVisualization/test/ChartVisualization.Tests.csproj" />
+  </Folder>
 </Solution>
