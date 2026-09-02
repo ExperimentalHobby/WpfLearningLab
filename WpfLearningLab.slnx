@@ -95,4 +95,8 @@
     <Project Path="24_MusicPlayer/MusicPlayer.csproj" />
     <Project Path="24_MusicPlayer/test/MusicPlayer.Tests.csproj" />
   </Folder>
+  <Folder Name="/25_FileOrganizer/">
+    <Project Path="25_FileOrganizer/FileOrganizer.csproj" />
+    <Project Path="25_FileOrganizer/test/FileOrganizer.Tests.csproj" />
+  </Folder>
 </Solution>
