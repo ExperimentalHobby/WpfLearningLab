@@ -103,4 +103,8 @@
     <Project Path="26_ChartVisualization/ChartVisualization.csproj" />
     <Project Path="26_ChartVisualization/test/ChartVisualization.Tests.csproj" />
   </Folder>
+  <Folder Name="/27_NetworkMonitor/">
+    <Project Path="27_NetworkMonitor/NetworkMonitor.csproj" />
+    <Project Path="27_NetworkMonitor/test/NetworkMonitor.Tests.csproj" />
+  </Folder>
 </Solution>
