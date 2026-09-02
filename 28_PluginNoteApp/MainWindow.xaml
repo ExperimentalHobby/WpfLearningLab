@@ -1,0 +1,63 @@
+<Window x:Class="PluginNoteApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PluginNoteApp"
+        xmlns:conv="clr-namespace:PluginNoteApp.Converters"
+        mc:Ignorable="d"
+        Title="プラグイン対応メモ" Height="520" Width="600">
+    <Window.Resources>
+        <conv:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="メモ:" FontWeight="Bold" Margin="0,0,0,4"/>
+
+        <!-- メモ本文 -->
+        <TextBox Grid.Row="1" Margin="0,0,0,8"
+                 AcceptsReturn="True" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 Text="{Binding MemoText, UpdateSourceTrigger=PropertyChanged}"
+                 AutomationProperties.AutomationId="MemoTextBox"/>
+
+        <!-- プラグイン選択・実行 -->
+        <Grid Grid.Row="2" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                      ItemsSource="{Binding Plugins}" DisplayMemberPath="Name"
+                      SelectedItem="{Binding SelectedPlugin}"
+                      AutomationProperties.AutomationId="PluginComboBox"/>
+            <Button Grid.Column="1" Content="実行" Padding="10,4"
+                    Command="{Binding RunPluginCommand}"
+                    AutomationProperties.AutomationId="RunPluginButton"/>
+        </Grid>
+
+        <!-- 実行結果 -->
+        <TextBlock Grid.Row="3" Text="{Binding PluginOutput}" TextWrapping="Wrap" Margin="0,0,0,8"
+                   AutomationProperties.AutomationId="PluginOutputTextBlock"/>
+
+        <!-- プラグイン読込エラー -->
+        <StackPanel Grid.Row="4" Visibility="{Binding LoadErrors.Count, Converter={StaticResource CountToVisibilityConverter}}">
+            <TextBlock Text="プラグイン読込エラー:" FontWeight="Bold" Foreground="Red" Margin="0,0,0,4"/>
+            <ItemsControl ItemsSource="{Binding LoadErrors}"
+                          AutomationProperties.AutomationId="LoadErrorsList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Foreground="Red" TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</Window>
