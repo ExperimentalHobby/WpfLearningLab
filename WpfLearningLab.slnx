@@ -117,4 +117,8 @@
     <Project Path="29_MiniCodeEditor/MiniCodeEditor.csproj" />
     <Project Path="29_MiniCodeEditor/test/MiniCodeEditor.Tests.csproj" />
   </Folder>
+  <Folder Name="/30_LocalTaskScheduler/">
+    <Project Path="30_LocalTaskScheduler/LocalTaskScheduler.csproj" />
+    <Project Path="30_LocalTaskScheduler/test/LocalTaskScheduler.Tests.csproj" />
+  </Folder>
 </Solution>
