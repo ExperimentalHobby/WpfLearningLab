@@ -125,4 +125,8 @@
     <Project Path="31_ParallelImageProcessor/ParallelImageProcessor.csproj" />
     <Project Path="31_ParallelImageProcessor/test/ParallelImageProcessor.Tests.csproj" />
   </Folder>
+  <Folder Name="/32_LogStreamAggregator/">
+    <Project Path="32_LogStreamAggregator/LogStreamAggregator.csproj" />
+    <Project Path="32_LogStreamAggregator/test/LogStreamAggregator.Tests.csproj" />
+  </Folder>
 </Solution>
