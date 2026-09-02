@@ -113,4 +113,8 @@
     <Project Path="28_PluginNoteApp/Plugins/CharacterCountPlugin/CharacterCountPlugin.csproj" />
     <Project Path="28_PluginNoteApp/test/PluginNoteApp.Tests.csproj" />
   </Folder>
+  <Folder Name="/29_MiniCodeEditor/">
+    <Project Path="29_MiniCodeEditor/MiniCodeEditor.csproj" />
+    <Project Path="29_MiniCodeEditor/test/MiniCodeEditor.Tests.csproj" />
+  </Folder>
 </Solution>
