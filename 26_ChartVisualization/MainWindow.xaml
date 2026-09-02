@@ -1,0 +1,87 @@
+<Window x:Class="ChartVisualization.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChartVisualization"
+        xmlns:conv="clr-namespace:ChartVisualization.Converters"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Title="簡易グラフ描画" Height="560" Width="640">
+    <Window.Resources>
+        <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- データ入力 -->
+        <GroupBox Grid.Row="0" Header="データ点の追加" Margin="0,0,0,8">
+            <Grid Margin="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="ラベル:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBox Grid.Column="1" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                         Text="{Binding NewLabel, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.AutomationId="NewLabelTextBox"/>
+                <TextBlock Grid.Column="2" Text="値:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBox Grid.Column="3" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                         Text="{Binding NewValueInput, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.AutomationId="NewValueTextBox"/>
+                <Button Grid.Column="4" Content="追加" Padding="10,4"
+                        Command="{Binding AddDataPointCommand}"
+                        AutomationProperties.AutomationId="AddDataPointButton"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- グラフ種類切り替え -->
+        <GroupBox Grid.Row="1" Header="グラフ種類" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" Margin="8">
+                <RadioButton Content="棒グラフ" GroupName="ChartTypeGroup" Margin="0,0,16,0"
+                             IsChecked="{Binding SelectedChartType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Bar}"
+                             AutomationProperties.AutomationId="ChartTypeBarRadioButton"/>
+                <RadioButton Content="折れ線グラフ" GroupName="ChartTypeGroup" Margin="0,0,16,0"
+                             IsChecked="{Binding SelectedChartType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Line}"
+                             AutomationProperties.AutomationId="ChartTypeLineRadioButton"/>
+                <RadioButton Content="円グラフ" GroupName="ChartTypeGroup"
+                             IsChecked="{Binding SelectedChartType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Pie}"
+                             AutomationProperties.AutomationId="ChartTypePieRadioButton"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- データ一覧 -->
+        <ListBox Grid.Row="2" ItemsSource="{Binding DataPoints}" MaxHeight="100" Margin="0,0,0,8"
+                  AutomationProperties.AutomationId="DataPointsListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Label}"/>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Value}"/>
+                        <Button Grid.Column="2" Content="削除" Padding="8,2"
+                                Command="{Binding DataContext.RemoveDataPointCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"
+                                AutomationProperties.AutomationId="RemoveDataPointButton"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- グラフ表示 -->
+        <oxy:PlotView Grid.Row="3" Model="{Binding PlotModel}"
+                      AutomationProperties.AutomationId="ChartPlotView"/>
+    </Grid>
+</Window>
