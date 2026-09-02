@@ -121,4 +121,8 @@
     <Project Path="30_LocalTaskScheduler/LocalTaskScheduler.csproj" />
     <Project Path="30_LocalTaskScheduler/test/LocalTaskScheduler.Tests.csproj" />
   </Folder>
+  <Folder Name="/31_ParallelImageProcessor/">
+    <Project Path="31_ParallelImageProcessor/ParallelImageProcessor.csproj" />
+    <Project Path="31_ParallelImageProcessor/test/ParallelImageProcessor.Tests.csproj" />
+  </Folder>
 </Solution>
