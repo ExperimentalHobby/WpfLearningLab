@@ -146,4 +146,8 @@
     <Project Path="36_AnimatedDashboard/AnimatedDashboard.csproj" />
     <Project Path="36_AnimatedDashboard/test/AnimatedDashboard.Tests.csproj" />
   </Folder>
+  <Folder Name="/37_Simple3DViewer/">
+    <Project Path="37_Simple3DViewer/Simple3DViewer.csproj" />
+    <Project Path="37_Simple3DViewer/test/Simple3DViewer.Tests.csproj" />
+  </Folder>
 </Solution>
