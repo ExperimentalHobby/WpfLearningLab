@@ -142,4 +142,8 @@
     <Project Path="35_CustomMarkupExtension/CustomMarkupExtension.csproj" />
     <Project Path="35_CustomMarkupExtension/test/CustomMarkupExtension.Tests.csproj" />
   </Folder>
+  <Folder Name="/36_AnimatedDashboard/">
+    <Project Path="36_AnimatedDashboard/AnimatedDashboard.csproj" />
+    <Project Path="36_AnimatedDashboard/test/AnimatedDashboard.Tests.csproj" />
+  </Folder>
 </Solution>
