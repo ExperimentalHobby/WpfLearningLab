@@ -1,0 +1,51 @@
+<Window x:Class="CustomGaugeControl.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomGaugeControl"
+        xmlns:gauge="clr-namespace:GaugeControlLib;assembly=GaugeControlLib"
+        mc:Ignorable="d"
+        Title="自作ゲージコントロール デモ" Height="480" Width="640">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 2つのゲージ(再利用可能なカスタムコントロールを異なるMinimum/Maximumで使用) -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,16">
+            <StackPanel Margin="0,0,32,0">
+                <TextBlock Text="温度 (℃)" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
+                <gauge:GaugeControl x:Name="TemperatureGauge"
+                                     Value="{Binding Temperature}" Minimum="0" Maximum="100" Threshold="80"
+                                     ThresholdExceeded="TemperatureGauge_ThresholdExceeded"
+                                     AutomationProperties.AutomationId="TemperatureGauge"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="CPU使用コア数" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,4"/>
+                <gauge:GaugeControl x:Name="CpuGauge"
+                                     Value="{Binding CpuUsage}" Minimum="0" Maximum="10" Threshold="8"
+                                     ThresholdExceeded="CpuGauge_ThresholdExceeded"
+                                     AutomationProperties.AutomationId="CpuGauge"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- スライダーで値を操作 -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,16">
+            <TextBlock Text="温度"/>
+            <Slider Minimum="0" Maximum="100" Value="{Binding Temperature}"
+                     AutomationProperties.AutomationId="TemperatureSlider"/>
+            <TextBlock Text="CPU使用コア数" Margin="0,8,0,0"/>
+            <Slider Minimum="0" Maximum="10" Value="{Binding CpuUsage}"
+                     AutomationProperties.AutomationId="CpuSlider"/>
+        </StackPanel>
+
+        <!-- しきい値超過イベントのログ(カスタムルーテッドイベントの動作確認用) -->
+        <DockPanel Grid.Row="2">
+            <TextBlock DockPanel.Dock="Top" Text="しきい値超過ログ" FontWeight="Bold" Margin="0,0,0,4"/>
+            <ListBox ItemsSource="{Binding EventLog}" AutomationProperties.AutomationId="EventLogListBox"/>
+        </DockPanel>
+    </Grid>
+</Window>
