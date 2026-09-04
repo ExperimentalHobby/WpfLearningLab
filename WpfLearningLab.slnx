@@ -133,4 +133,9 @@
     <Project Path="33_ContactManager/ContactManager.csproj" />
     <Project Path="33_ContactManager/test/ContactManager.Tests.csproj" />
   </Folder>
+  <Folder Name="/34_CustomGaugeControl/">
+    <Project Path="34_CustomGaugeControl/CustomGaugeControl.csproj" />
+    <Project Path="34_CustomGaugeControl/GaugeControlLib/GaugeControlLib.csproj" />
+    <Project Path="34_CustomGaugeControl/test/GaugeControlLib.Tests.csproj" />
+  </Folder>
 </Solution>
