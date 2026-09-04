@@ -158,4 +158,8 @@
     <Project Path="39_VirtualizedLogViewer/VirtualizedLogViewer.csproj" />
     <Project Path="39_VirtualizedLogViewer/test/VirtualizedLogViewer.Tests.csproj" />
   </Folder>
+  <Folder Name="/40_SystemTrayUtility/">
+    <Project Path="40_SystemTrayUtility/SystemTrayUtility.csproj" />
+    <Project Path="40_SystemTrayUtility/test/SystemTrayUtility.Tests.csproj" />
+  </Folder>
 </Solution>
