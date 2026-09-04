@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:GaugeControlLib">
+
+    <Style TargetType="{x:Type local:GaugeControl}">
+        <Setter Property="Width" Value="200"/>
+        <Setter Property="Height" Value="150"/>
+        <Setter Property="Foreground" Value="#D32F2F"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:GaugeControl}">
+                    <Canvas Width="200" Height="150">
+                        <!-- 目盛りの円弧(Minimum〜Maximumの範囲を表す半円) -->
+                        <Path Data="M 10,110 A 90,90 0 1 1 190,110"
+                              Stroke="#B0BEC5" StrokeThickness="12" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Fill="Transparent"/>
+
+                        <!-- 針: AnimatedAngleに応じてCanvas(100,110)を中心に回転する -->
+                        <Line X1="100" Y1="110" X2="100" Y2="30"
+                              Stroke="{TemplateBinding Foreground}" StrokeThickness="4"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                            <Line.RenderTransform>
+                                <RotateTransform CenterX="100" CenterY="110"
+                                                  Angle="{Binding AnimatedAngle, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Line.RenderTransform>
+                        </Line>
+
+                        <!-- 中心の軸 -->
+                        <Ellipse Canvas.Left="92" Canvas.Top="102" Width="16" Height="16" Fill="#455A64"/>
+
+                        <!-- 現在値の数値表示 -->
+                        <TextBlock Canvas.Left="0" Canvas.Top="120" Width="200" TextAlignment="Center" FontSize="16" FontWeight="Bold"
+                                   Text="{TemplateBinding Value}"/>
+                    </Canvas>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

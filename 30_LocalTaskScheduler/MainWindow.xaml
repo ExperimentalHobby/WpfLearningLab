@@ -1,0 +1,118 @@
+<Window x:Class="LocalTaskScheduler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocalTaskScheduler"
+        xmlns:conv="clr-namespace:LocalTaskScheduler.Converters"
+        mc:Ignorable="d"
+        Title="ローカルタスクスケジューラ" Height="600" Width="700">
+    <Window.Resources>
+        <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+        <conv:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+
+        <!-- タスク登録フォーム -->
+        <GroupBox Grid.Row="0" Header="タスクの登録" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="タスク名:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBox Grid.Column="1" VerticalContentAlignment="Center"
+                             Text="{Binding NewTaskName, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.AutomationId="NewTaskNameTextBox"/>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <RadioButton Content="指定時刻に1回実行" GroupName="ScheduleTypeGroup" Margin="0,0,16,0"
+                                 IsChecked="{Binding NewTaskScheduleType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Once}"
+                                 AutomationProperties.AutomationId="ScheduleTypeOnceRadioButton"/>
+                    <RadioButton Content="一定間隔で繰り返し実行" GroupName="ScheduleTypeGroup"
+                                 IsChecked="{Binding NewTaskScheduleType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Interval}"
+                                 AutomationProperties.AutomationId="ScheduleTypeIntervalRadioButton"/>
+                </StackPanel>
+                <Grid Margin="0,0,0,8"
+                      Visibility="{Binding NewTaskScheduleType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Once}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="実行日時(yyyy-MM-dd HH:mm):" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBox Grid.Column="1" VerticalContentAlignment="Center"
+                             Text="{Binding NewTaskExecuteAt, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.AutomationId="NewTaskExecuteAtTextBox"/>
+                </Grid>
+                <Grid Margin="0,0,0,8"
+                      Visibility="{Binding NewTaskScheduleType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Interval}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="実行間隔(分):" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBox Grid.Column="1" VerticalContentAlignment="Center"
+                             Text="{Binding NewTaskIntervalMinutes, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.AutomationId="NewTaskIntervalMinutesTextBox"/>
+                </Grid>
+                <Button Content="タスク追加" Padding="10,4" HorizontalAlignment="Left"
+                        Command="{Binding AddTaskCommand}"
+                        AutomationProperties.AutomationId="AddTaskButton"/>
+            </StackPanel>
+        </GroupBox>
+
+        <TextBlock Grid.Row="1" Text="タスク一覧" FontWeight="Bold" Margin="0,0,0,4"/>
+
+        <!-- タスク一覧 -->
+        <ListBox Grid.Row="2" ItemsSource="{Binding Tasks}" Margin="0,0,0,8"
+                  AutomationProperties.AutomationId="TasksListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ScheduleType}" Value="Once">
+                                            <Setter Property="Text" Value="{Binding ExecuteAt, StringFormat={}指定時刻: {0:yyyy-MM-dd HH:mm}}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ScheduleType}" Value="Interval">
+                                            <Setter Property="Text" Value="{Binding Interval, StringFormat={}間隔: {0:mm}分}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Foreground="Gray" Margin="8,0,0,0"
+                                   Text="{Binding LastExecutedAt, StringFormat={}最終実行: {0:HH:mm:ss}, TargetNullValue=未実行}"/>
+                        <Button Grid.Column="3" Content="削除" Padding="8,2"
+                                Command="{Binding DataContext.RemoveTaskCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"
+                                AutomationProperties.AutomationId="RemoveTaskButton"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="3" Text="実行ログ" FontWeight="Bold" Margin="0,0,0,4"/>
+
+        <!-- 実行ログ -->
+        <ListBox Grid.Row="4" ItemsSource="{Binding ExecutionLog}"
+                  AutomationProperties.AutomationId="ExecutionLogListBox"/>
+    </Grid>
+</Window>
