@@ -1,0 +1,8 @@
+<Application x:Class="SingleInstanceLauncher.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:SingleInstanceLauncher">
+    <Application.Resources>
+
+    </Application.Resources>
+</Application>

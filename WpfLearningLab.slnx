@@ -170,4 +170,8 @@
     <Project Path="42_AccessibleNoteApp/AccessibleNoteApp.csproj" />
     <Project Path="42_AccessibleNoteApp/test/AccessibleNoteApp.Tests.csproj" />
   </Folder>
+  <Folder Name="/50_SingleInstanceLauncher/">
+    <Project Path="50_SingleInstanceLauncher/SingleInstanceLauncher.csproj" />
+    <Project Path="50_SingleInstanceLauncher/test/SingleInstanceLauncher.Tests.csproj" />
+  </Folder>
 </Solution>
