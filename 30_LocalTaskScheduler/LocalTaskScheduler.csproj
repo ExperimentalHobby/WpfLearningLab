@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- Microsoft.Toolkit.Uwp.NotificationsのShow()拡張メソッド(Windows Runtime依存)を解決するため、
+         他アプリの"net10.0-windows"と異なりWindows SDKバージョン付きのTFMを指定する -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- System.Drawing.Commonへの明示的なバージョン上書き(脆弱性回避目的)に対する
+         「プラットフォーム提供パッケージのため不要」という誤検知(NU1510)のみを抑制する -->
+    <NoWarn>$(NoWarn);NU1510</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+    <!-- Microsoft.Toolkit.Uwp.Notificationsが推移的に参照するSystem.Drawing.Common 4.7.0に
+         既知の重大な脆弱性(GHSA-rxg9-xrhp-64gj)があるため、安全なバージョンに明示的に上書きする。
+         SDKの「プラットフォーム提供パッケージのため不要」という判定(NU1510)は今回の脆弱性回避目的では
+         誤検知のため、このパッケージに限定して抑制する -->
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
