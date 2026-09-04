@@ -79,6 +79,85 @@
     <Project Path="20_MarkdownMemo/MarkdownMemo.csproj" />
     <Project Path="20_MarkdownMemo/test/MarkdownMemo.Tests.csproj" />
   </Folder>
+  <Folder Name="/21_PaintTool/">
+    <Project Path="21_PaintTool/PaintTool.csproj" />
+    <Project Path="21_PaintTool/test/PaintTool.Tests.csproj" />
+  </Folder>
+  <Folder Name="/22_GameOfLife/">
+    <Project Path="22_GameOfLife/GameOfLife.csproj" />
+    <Project Path="22_GameOfLife/test/GameOfLife.Tests.csproj" />
+  </Folder>
+  <Folder Name="/23_MazeSolverVisualizer/">
+    <Project Path="23_MazeSolverVisualizer/MazeSolverVisualizer.csproj" />
+    <Project Path="23_MazeSolverVisualizer/test/MazeSolverVisualizer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/24_MusicPlayer/">
+    <Project Path="24_MusicPlayer/MusicPlayer.csproj" />
+    <Project Path="24_MusicPlayer/test/MusicPlayer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/25_FileOrganizer/">
+    <Project Path="25_FileOrganizer/FileOrganizer.csproj" />
+    <Project Path="25_FileOrganizer/test/FileOrganizer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/26_ChartVisualization/">
+    <Project Path="26_ChartVisualization/ChartVisualization.csproj" />
+    <Project Path="26_ChartVisualization/test/ChartVisualization.Tests.csproj" />
+  </Folder>
+  <Folder Name="/27_NetworkMonitor/">
+    <Project Path="27_NetworkMonitor/NetworkMonitor.csproj" />
+    <Project Path="27_NetworkMonitor/test/NetworkMonitor.Tests.csproj" />
+  </Folder>
+  <Folder Name="/28_PluginNoteApp/">
+    <Project Path="28_PluginNoteApp/PluginNoteApp.csproj" />
+    <Project Path="28_PluginNoteApp/Contracts/PluginNoteApp.Contracts.csproj" />
+    <Project Path="28_PluginNoteApp/Plugins/CharacterCountPlugin/CharacterCountPlugin.csproj" />
+    <Project Path="28_PluginNoteApp/test/PluginNoteApp.Tests.csproj" />
+  </Folder>
+  <Folder Name="/29_MiniCodeEditor/">
+    <Project Path="29_MiniCodeEditor/MiniCodeEditor.csproj" />
+    <Project Path="29_MiniCodeEditor/test/MiniCodeEditor.Tests.csproj" />
+  </Folder>
+  <Folder Name="/30_LocalTaskScheduler/">
+    <Project Path="30_LocalTaskScheduler/LocalTaskScheduler.csproj" />
+    <Project Path="30_LocalTaskScheduler/test/LocalTaskScheduler.Tests.csproj" />
+  </Folder>
+  <Folder Name="/31_ParallelImageProcessor/">
+    <Project Path="31_ParallelImageProcessor/ParallelImageProcessor.csproj" />
+    <Project Path="31_ParallelImageProcessor/test/ParallelImageProcessor.Tests.csproj" />
+  </Folder>
+  <Folder Name="/32_LogStreamAggregator/">
+    <Project Path="32_LogStreamAggregator/LogStreamAggregator.csproj" />
+    <Project Path="32_LogStreamAggregator/test/LogStreamAggregator.Tests.csproj" />
+  </Folder>
+  <Folder Name="/33_ContactManager/">
+    <Project Path="33_ContactManager/ContactManager.csproj" />
+    <Project Path="33_ContactManager/test/ContactManager.Tests.csproj" />
+  </Folder>
+  <Folder Name="/34_CustomGaugeControl/">
+    <Project Path="34_CustomGaugeControl/CustomGaugeControl.csproj" />
+    <Project Path="34_CustomGaugeControl/GaugeControlLib/GaugeControlLib.csproj" />
+    <Project Path="34_CustomGaugeControl/test/GaugeControlLib.Tests.csproj" />
+  </Folder>
+  <Folder Name="/35_CustomMarkupExtension/">
+    <Project Path="35_CustomMarkupExtension/CustomMarkupExtension.csproj" />
+    <Project Path="35_CustomMarkupExtension/test/CustomMarkupExtension.Tests.csproj" />
+  </Folder>
+  <Folder Name="/36_AnimatedDashboard/">
+    <Project Path="36_AnimatedDashboard/AnimatedDashboard.csproj" />
+    <Project Path="36_AnimatedDashboard/test/AnimatedDashboard.Tests.csproj" />
+  </Folder>
+  <Folder Name="/37_Simple3DViewer/">
+    <Project Path="37_Simple3DViewer/Simple3DViewer.csproj" />
+    <Project Path="37_Simple3DViewer/test/Simple3DViewer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/38_DragDropFileTagger/">
+    <Project Path="38_DragDropFileTagger/DragDropFileTagger.csproj" />
+    <Project Path="38_DragDropFileTagger/test/DragDropFileTagger.Tests.csproj" />
+  </Folder>
+  <Folder Name="/39_VirtualizedLogViewer/">
+    <Project Path="39_VirtualizedLogViewer/VirtualizedLogViewer.csproj" />
+    <Project Path="39_VirtualizedLogViewer/test/VirtualizedLogViewer.Tests.csproj" />
+  </Folder>
   <Folder Name="/40_SystemTrayUtility/">
     <Project Path="40_SystemTrayUtility/SystemTrayUtility.csproj" />
     <Project Path="40_SystemTrayUtility/test/SystemTrayUtility.Tests.csproj" />
