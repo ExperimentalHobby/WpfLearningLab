@@ -162,6 +162,10 @@
     <Project Path="40_SystemTrayUtility/SystemTrayUtility.csproj" />
     <Project Path="40_SystemTrayUtility/test/SystemTrayUtility.Tests.csproj" />
   </Folder>
+  <Folder Name="/41_GlobalHotkeyLauncher/">
+    <Project Path="41_GlobalHotkeyLauncher/GlobalHotkeyLauncher.csproj" />
+    <Project Path="41_GlobalHotkeyLauncher/test/GlobalHotkeyLauncher.Tests.csproj" />
+  </Folder>
   <Folder Name="/42_AccessibleNoteApp/">
     <Project Path="42_AccessibleNoteApp/AccessibleNoteApp.csproj" />
     <Project Path="42_AccessibleNoteApp/test/AccessibleNoteApp.Tests.csproj" />
