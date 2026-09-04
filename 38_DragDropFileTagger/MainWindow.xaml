@@ -1,0 +1,78 @@
+<Window x:Class="DragDropFileTagger.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DragDropFileTagger"
+        xmlns:conv="clr-namespace:DragDropFileTagger.Converters"
+        mc:Ignorable="d"
+        Title="ドラッグ&amp;ドロップ ファイルタグ付けツール" Height="520" Width="720"
+        AllowDrop="True" Drop="Window_Drop" DragOver="Window_DragOver">
+    <Window.Resources>
+        <conv:FileSizeConverter x:Key="FileSizeConverter"/>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="エクスプローラーからファイルをこのウィンドウへドラッグ&amp;ドロップして取り込めます。一覧内のドラッグで並び替えもできます。"
+                   TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <ListBox Grid.Column="0" ItemsSource="{Binding DisplayedFiles}" SelectedItem="{Binding SelectedFile}"
+                      AutomationProperties.AutomationId="FilesListBox">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="AutomationProperties.AutomationId" Value="{Binding FileName}"/>
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_PreviewMouseLeftButtonDown"/>
+                        <EventSetter Event="PreviewMouseMove" Handler="ListBoxItem_PreviewMouseMove"/>
+                        <EventSetter Event="Drop" Handler="ListBoxItem_Drop"/>
+                        <Setter Property="AllowDrop" Value="True"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding FileName}" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Grid.Column="1" Text="{Binding SizeBytes, Converter={StaticResource FileSizeConverter}}" Foreground="Gray"/>
+                            <TextBlock Grid.Column="2" Text="{Binding TagsDisplay}" Foreground="#1565C0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="絞り込みタグ" FontWeight="Bold" Margin="0,0,0,4"/>
+                <TextBox Text="{Binding FilterTag, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,16"
+                          AutomationProperties.AutomationId="FilterTagTextBox"/>
+
+                <TextBlock Text="タグ追加(カンマ区切り)" FontWeight="Bold" Margin="0,0,0,4"/>
+                <TextBox Text="{Binding NewTagInput, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"
+                          AutomationProperties.AutomationId="NewTagTextBox"/>
+                <Button Content="タグを追加" Command="{Binding AddTagCommand}" Margin="0,0,0,16"
+                        AutomationProperties.AutomationId="AddTagButton"/>
+
+                <Button Content="選択ファイルを削除" Command="{Binding RemoveFileCommand}"
+                        AutomationProperties.AutomationId="RemoveFileButton"/>
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Margin="0,8,0,0" Foreground="Gray"
+                   Text="{Binding Files.Count, StringFormat=取り込み済み: {0}件}"
+                   AutomationProperties.AutomationId="FileCountText"/>
+    </Grid>
+</Window>

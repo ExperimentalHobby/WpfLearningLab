@@ -150,4 +150,8 @@
     <Project Path="37_Simple3DViewer/Simple3DViewer.csproj" />
     <Project Path="37_Simple3DViewer/test/Simple3DViewer.Tests.csproj" />
   </Folder>
+  <Folder Name="/38_DragDropFileTagger/">
+    <Project Path="38_DragDropFileTagger/DragDropFileTagger.csproj" />
+    <Project Path="38_DragDropFileTagger/test/DragDropFileTagger.Tests.csproj" />
+  </Folder>
 </Solution>
