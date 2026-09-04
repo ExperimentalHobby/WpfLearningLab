@@ -138,4 +138,8 @@
     <Project Path="34_CustomGaugeControl/GaugeControlLib/GaugeControlLib.csproj" />
     <Project Path="34_CustomGaugeControl/test/GaugeControlLib.Tests.csproj" />
   </Folder>
+  <Folder Name="/35_CustomMarkupExtension/">
+    <Project Path="35_CustomMarkupExtension/CustomMarkupExtension.csproj" />
+    <Project Path="35_CustomMarkupExtension/test/CustomMarkupExtension.Tests.csproj" />
+  </Folder>
 </Solution>
