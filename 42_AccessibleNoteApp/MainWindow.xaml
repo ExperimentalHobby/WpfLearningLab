@@ -1,0 +1,68 @@
+<Window x:Class="AccessibleNoteApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AccessibleNoteApp"
+        xmlns:controls="clr-namespace:AccessibleNoteApp.Controls"
+        mc:Ignorable="d"
+        Title="アクセシブルメモ帳" Height="500" Width="800"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewMemoCommand}"/>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"/>
+    </Window.InputBindings>
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- メモ一覧 -->
+        <DockPanel Grid.Column="0">
+            <TextBlock x:Name="MemoListLabel" DockPanel.Dock="Top" Text="メモ一覧" FontWeight="Bold" Margin="0,0,0,4"/>
+            <Border DockPanel.Dock="Top" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1">
+                <controls:MemoListControl x:Name="MemoList"
+                                           ItemsSource="{Binding Memos}"
+                                           SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                           MinHeight="300"
+                                           AutomationProperties.Name="メモ一覧"
+                                           AutomationProperties.AutomationId="MemoListControl"
+                                           AutomationProperties.LabeledBy="{Binding ElementName=MemoListLabel}"
+                                           AutomationProperties.HelpText="上下キーで選択、Enterでタイトル入力欄へ移動、Deleteで削除"/>
+            </Border>
+        </DockPanel>
+
+        <!-- メモ編集フォーム -->
+        <DockPanel Grid.Column="2">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                <Button Content="_新規" Padding="10,4" Margin="0,0,8,0"
+                        Command="{Binding NewMemoCommand}"
+                        AutomationProperties.HelpText="新しいメモの入力を開始します(Ctrl+N)"
+                        AutomationProperties.AutomationId="NewMemoButton"/>
+                <Button Content="_保存" Padding="10,4" Margin="0,0,8,0"
+                        Command="{Binding SaveCommand}"
+                        AutomationProperties.HelpText="入力中の内容を保存します(Ctrl+S)"
+                        AutomationProperties.AutomationId="SaveButton"/>
+                <Button Content="_削除" Padding="10,4"
+                        Command="{Binding DeleteCommand}"
+                        AutomationProperties.HelpText="選択中のメモを削除します"
+                        AutomationProperties.AutomationId="DeleteButton"/>
+            </StackPanel>
+
+            <TextBlock x:Name="TitleLabel" DockPanel.Dock="Top" Text="タイトル:" Margin="0,0,0,4"/>
+            <TextBox x:Name="TitleTextBox" DockPanel.Dock="Top" Margin="0,0,0,8"
+                     Text="{Binding TitleInput, UpdateSourceTrigger=PropertyChanged}"
+                     AutomationProperties.LabeledBy="{Binding ElementName=TitleLabel}"
+                     AutomationProperties.AutomationId="TitleTextBox"/>
+
+            <TextBlock x:Name="BodyLabel" DockPanel.Dock="Top" Text="本文:" Margin="0,0,0,4"/>
+            <TextBox Text="{Binding BodyInput, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     AutomationProperties.LabeledBy="{Binding ElementName=BodyLabel}"
+                     AutomationProperties.AutomationId="BodyTextBox"/>
+        </DockPanel>
+    </Grid>
+</Window>
