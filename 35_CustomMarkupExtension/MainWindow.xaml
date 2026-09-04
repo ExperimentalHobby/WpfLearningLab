@@ -1,0 +1,45 @@
+<Window x:Class="CustomMarkupExtension.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomMarkupExtension"
+        xmlns:me="clr-namespace:CustomMarkupExtension.MarkupExtensions"
+        xmlns:models="clr-namespace:CustomMarkupExtension.Models"
+        mc:Ignorable="d"
+        Title="カスタムMarkupExtensionサンプル集" Height="420" Width="560">
+    <StackPanel Margin="16">
+
+        <!-- 1. EnumValuesExtension: 列挙型の値一覧をComboBoxへ直接バインド -->
+        <GroupBox Header="1. EnumValuesExtension" Margin="0,0,0,16">
+            <StackPanel Margin="8">
+                <TextBlock Text="優先度(Priority列挙型の全値):" Margin="0,0,0,4"/>
+                <ComboBox ItemsSource="{me:EnumValues {x:Type models:Priority}}" SelectedIndex="0"
+                          AutomationProperties.AutomationId="PriorityComboBox"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- 2. UnitConversionExtension: XAML上で単位変換した数値を直接指定 -->
+        <GroupBox Header="2. UnitConversionExtension" Margin="0,0,0,16">
+            <StackPanel Margin="8">
+                <TextBlock Text="幅5cmを換算したRectangle(Width={me:UnitConversion Value=5, From=Centimeter, To=Pixel}):" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                <Rectangle Width="{me:UnitConversion Value=5, From=Centimeter, To=Pixel}" Height="30" Fill="SteelBlue" HorizontalAlignment="Left"
+                           AutomationProperties.AutomationId="ConvertedRectangle"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- 3. BoolToVisibilityExtension: バインディングと組み合わせたユースケース -->
+        <GroupBox Header="3. BoolToVisibilityExtension">
+            <StackPanel Margin="8">
+                <CheckBox x:Name="ShowPanelCheckBox" Content="下のパネルを表示する" IsChecked="True"
+                          AutomationProperties.AutomationId="ShowPanelCheckBox"/>
+                <Border Visibility="{me:BoolToVisibility Path=IsChecked, ElementName=ShowPanelCheckBox}"
+                        Background="#E3F2FD" Padding="8" Margin="0,8,0,0"
+                        AutomationProperties.AutomationId="TogglePanel">
+                    <TextBlock Text="チェックボックスの状態にBinding+Converterで連動して表示/非表示が切り替わるパネルです。"
+                               TextWrapping="Wrap"/>
+                </Border>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</Window>
