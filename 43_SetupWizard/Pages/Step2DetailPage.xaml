@@ -1,0 +1,39 @@
+<Page x:Class="SetupWizard.Pages.Step2DetailPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Step2DetailPage">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Step 2 / 3 : 詳細設定" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
+
+        <TextBlock Grid.Row="1" Text="部署" Margin="0,0,0,4" />
+        <ComboBox Grid.Row="2" x:Name="DepartmentComboBox" AutomationProperties.AutomationId="DepartmentComboBox" Margin="0,0,0,12">
+            <ComboBoxItem Content="一般" />
+            <ComboBoxItem Content="開発" />
+            <ComboBoxItem Content="営業" />
+            <ComboBoxItem Content="管理" />
+        </ComboBox>
+
+        <CheckBox Grid.Row="3" x:Name="EnableNotificationsCheckBox" AutomationProperties.AutomationId="EnableNotificationsCheckBox" Content="通知を有効にする" Margin="0,0,0,12" />
+
+        <TextBlock Grid.Row="4" Text="コメント(任意)" Margin="0,0,0,4" />
+        <TextBox Grid.Row="5" x:Name="CommentTextBox" AutomationProperties.AutomationId="CommentTextBox" Margin="0,0,0,12" AcceptsReturn="True" Height="60" TextWrapping="Wrap" />
+
+        <TextBlock Grid.Row="6" x:Name="ErrorTextBlock" AutomationProperties.AutomationId="ErrorTextBlock" Foreground="Red" TextWrapping="Wrap" VerticalAlignment="Top" />
+
+        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="BackButton" AutomationProperties.AutomationId="BackButton" Content="戻る" Width="80" Margin="0,0,8,0" Click="BackButton_Click" />
+            <Button x:Name="NextButton" AutomationProperties.AutomationId="NextButton" Content="次へ" Width="80" Click="NextButton_Click" />
+        </StackPanel>
+    </Grid>
+</Page>
