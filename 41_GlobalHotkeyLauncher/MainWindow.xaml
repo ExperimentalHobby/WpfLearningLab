@@ -1,0 +1,108 @@
+<Window x:Class="GlobalHotkeyLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GlobalHotkeyLauncher"
+        mc:Ignorable="d"
+        Title="グローバルホットキーランチャー" Height="640" Width="720">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+
+        <!-- ホットキー登録フォーム -->
+        <GroupBox Grid.Row="0" Header="ホットキーの登録" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <CheckBox Content="Ctrl" Margin="0,0,12,0" VerticalAlignment="Center"
+                              IsChecked="{Binding IsCtrlSelected}"
+                              AutomationProperties.AutomationId="CtrlCheckBox"/>
+                    <CheckBox Content="Alt" Margin="0,0,12,0" VerticalAlignment="Center"
+                              IsChecked="{Binding IsAltSelected}"
+                              AutomationProperties.AutomationId="AltCheckBox"/>
+                    <CheckBox Content="Shift" Margin="0,0,12,0" VerticalAlignment="Center"
+                              IsChecked="{Binding IsShiftSelected}"
+                              AutomationProperties.AutomationId="ShiftCheckBox"/>
+                    <CheckBox Content="Win" Margin="0,0,12,0" VerticalAlignment="Center"
+                              IsChecked="{Binding IsWinSelected}"
+                              AutomationProperties.AutomationId="WinCheckBox"/>
+                    <TextBlock Text="+" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <ComboBox Width="80" VerticalContentAlignment="Center"
+                              ItemsSource="{Binding AvailableKeys}"
+                              SelectedItem="{Binding SelectedKey}"
+                              AutomationProperties.AutomationId="KeyComboBox"/>
+                </StackPanel>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="説明:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBox Grid.Column="1" VerticalContentAlignment="Center"
+                             Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.AutomationId="LabelTextBox"/>
+                </Grid>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="実行対象(パス/URL):" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBox Grid.Column="1" VerticalContentAlignment="Center"
+                             Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.AutomationId="TargetTextBox"/>
+                </Grid>
+                <Button Content="登録" Padding="10,4" HorizontalAlignment="Left"
+                        Command="{Binding AddHotKeyCommand}"
+                        AutomationProperties.AutomationId="AddHotKeyButton"/>
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,4,0,0" TextWrapping="Wrap"
+                           AutomationProperties.AutomationId="ErrorMessageTextBlock"/>
+            </StackPanel>
+        </GroupBox>
+
+        <TextBlock Grid.Row="1" Text="登録済みホットキー" FontWeight="Bold" Margin="0,0,0,4"/>
+
+        <!-- 登録済みホットキー一覧 -->
+        <ListBox Grid.Row="2" ItemsSource="{Binding Bindings}" Margin="0,0,0,8"
+                  AutomationProperties.AutomationId="BindingsListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold"
+                                   Text="{Binding Combination.DisplayString}"/>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                            <Run Text="{Binding Label, Mode=OneWay}"/>
+                            <Run Text=" → "/>
+                            <Run Text="{Binding Target, Mode=OneWay}" Foreground="Gray"/>
+                        </TextBlock>
+                        <Button Grid.Column="2" Content="編集" Padding="8,2" Margin="0,0,4,0"
+                                Command="{Binding DataContext.EditHotKeyCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"
+                                AutomationProperties.AutomationId="EditHotKeyButton"/>
+                        <Button Grid.Column="3" Content="削除" Padding="8,2"
+                                Command="{Binding DataContext.RemoveHotKeyCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"
+                                AutomationProperties.AutomationId="RemoveHotKeyButton"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="3" Text="実行ログ" FontWeight="Bold" Margin="0,0,0,4"/>
+
+        <!-- 実行ログ(アプリが非アクティブでもホットキーが機能していることの確認用) -->
+        <ListBox Grid.Row="4" ItemsSource="{Binding ExecutionLog}"
+                  AutomationProperties.AutomationId="ExecutionLogListBox"/>
+    </Grid>
+</Window>
