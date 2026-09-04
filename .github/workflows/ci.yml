@@ -25,7 +25,11 @@ on:
 env:
   DOTNET_VERSION: "10.0.x"
   # このいずれかが変更されている場合は、通常時のpush/pull_requestであっても全プロジェクトを対象にする
-  COMMON_FILES: "Directory.Build.props,WpfLearningLab.slnx,.github/workflows/ci.yml"
+  # 注意: WpfLearningLab.slnxは含めない。各プロジェクトはフォルダ単位で個別にビルドしており
+  # （ソリューション全体のビルドは行わない）、.slnxの内容はIDE/dotnet CLIでの一覧管理用でしか
+  # なく個々のビルド結果に影響しない。含めてしまうと、新規アプリ追加時（.slnx登録必須）に
+  # 毎回全体フォールバックが発生し、差分実行が機能しなくなる
+  COMMON_FILES: "Directory.Build.props,.github/workflows/ci.yml"
 
 jobs:
   detect-changes:
