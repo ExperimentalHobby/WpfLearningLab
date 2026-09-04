@@ -76,7 +76,14 @@ jobs:
             }
           }
 
-          $allProjects = @(Get-ChildItem -Directory -Name | Where-Object { $_ -match '^\d{2}_' } | Sort-Object)
+          # フォルダ名が命名規則(NN_AppName)に合致していても、.csprojがまだ存在しない
+          # 未実装のプレースホルダー（READMEのみ等)はビルド対象から除外する
+          $allProjects = @(
+            Get-ChildItem -Directory -Name |
+              Where-Object { $_ -match '^\d{2}_' } |
+              Where-Object { (Get-ChildItem -Path $_ -Filter '*.csproj' -File -ErrorAction SilentlyContinue).Count -gt 0 } |
+              Sort-Object
+          )
 
           if ($full) {
             $targetProjects = $allProjects
