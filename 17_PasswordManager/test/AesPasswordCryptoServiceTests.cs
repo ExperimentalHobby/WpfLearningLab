@@ -68,4 +68,24 @@ public class AesPasswordCryptoServiceTests
 
 		Assert.ThrowsAny<CryptographicException>(() => service.Decrypt(cipherText, wrongKey));
 	}
+
+	/// <summary>
+	/// パス条件: 異なる鍵の組み合わせで何度試行しても、必ず例外がスローされること
+	/// (認証なしのAES-CBCだと、パディングが偶然妥当な形になり約1/256の確率で例外がすり抜けていた。
+	/// 認証付き暗号への変更によりこれが確率的ではなく常に検知されることを確認する回帰テスト)
+	/// </summary>
+	[Fact]
+	public void Decrypt_異なる鍵での複数回試行が常に例外になる()
+	{
+		var service = new AesPasswordCryptoService();
+
+		for (var i = 0; i < 50; i++)
+		{
+			var correctKey = service.DeriveKey($"correct-password-{i}", service.GenerateSalt());
+			var wrongKey = service.DeriveKey($"wrong-password-{i}", service.GenerateSalt());
+			var cipherText = service.Encrypt("P@ssw0rd!", correctKey);
+
+			Assert.ThrowsAny<CryptographicException>(() => service.Decrypt(cipherText, wrongKey));
+		}
+	}
 }
