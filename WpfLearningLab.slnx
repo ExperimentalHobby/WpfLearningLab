@@ -129,4 +129,8 @@
     <Project Path="32_LogStreamAggregator/LogStreamAggregator.csproj" />
     <Project Path="32_LogStreamAggregator/test/LogStreamAggregator.Tests.csproj" />
   </Folder>
+  <Folder Name="/33_ContactManager/">
+    <Project Path="33_ContactManager/ContactManager.csproj" />
+    <Project Path="33_ContactManager/test/ContactManager.Tests.csproj" />
+  </Folder>
 </Solution>
