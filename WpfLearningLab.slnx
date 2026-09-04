@@ -154,4 +154,8 @@
     <Project Path="38_DragDropFileTagger/DragDropFileTagger.csproj" />
     <Project Path="38_DragDropFileTagger/test/DragDropFileTagger.Tests.csproj" />
   </Folder>
+  <Folder Name="/39_VirtualizedLogViewer/">
+    <Project Path="39_VirtualizedLogViewer/VirtualizedLogViewer.csproj" />
+    <Project Path="39_VirtualizedLogViewer/test/VirtualizedLogViewer.Tests.csproj" />
+  </Folder>
 </Solution>
