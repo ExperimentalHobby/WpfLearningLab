@@ -103,8 +103,10 @@ jobs:
           if ($targetProjects.Count -eq 0) {
             $json = "[]"
           } else {
+            # ConvertTo-Jsonは配列をそのまま渡しても正しく配列JSONを返すため、要素数1でも
+            # 追加でラップしない(誤って二重ラップすると[["A"]]のような壊れたJSONになり、
+            # 後続のfromJson(...)でmatrix.projectが文字列ではなく配列になってしまう)。
             $json = ConvertTo-Json -InputObject $targetProjects -Compress
-            if ($targetProjects.Count -eq 1) { $json = "[$json]" }
           }
 
           Write-Host "full=$full"
