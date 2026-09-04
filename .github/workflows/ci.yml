@@ -29,7 +29,12 @@ env:
   # （ソリューション全体のビルドは行わない）、.slnxの内容はIDE/dotnet CLIでの一覧管理用でしか
   # なく個々のビルド結果に影響しない。含めてしまうと、新規アプリ追加時（.slnx登録必須）に
   # 毎回全体フォールバックが発生し、差分実行が機能しなくなる
-  COMMON_FILES: "Directory.Build.props,.github/workflows/ci.yml"
+  # 注意: .github/workflows/ci.ymlも含めない。このワークフロー自体の修正(本ファイルの変更)ごとに
+  # 毎回全プロジェクトの再ビルドが走ると、差分実行本来の目的(変更のない大多数のプロジェクトを
+  # スキップして高速化する)が果たせなくなる。ワークフローの変更が実際に全プロジェクトへ
+  # 影響するかどうかはPRの内容次第であり、影響範囲が広いと判断した場合は手動でworkflow_dispatch
+  # (常に全プロジェクト対象)を実行して確認する運用とする
+  COMMON_FILES: "Directory.Build.props"
 
 jobs:
   detect-changes:
@@ -103,8 +108,10 @@ jobs:
           if ($targetProjects.Count -eq 0) {
             $json = "[]"
           } else {
+            # ConvertTo-Jsonは配列をそのまま渡しても正しく配列JSONを返すため、要素数1でも
+            # 追加でラップしない(誤って二重ラップすると[["A"]]のような壊れたJSONになり、
+            # 後続のfromJson(...)でmatrix.projectが文字列ではなく配列になってしまう)。
             $json = ConvertTo-Json -InputObject $targetProjects -Compress
-            if ($targetProjects.Count -eq 1) { $json = "[$json]" }
           }
 
           Write-Host "full=$full"
