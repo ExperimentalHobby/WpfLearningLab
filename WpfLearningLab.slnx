@@ -202,4 +202,8 @@
     <Project Path="50_SingleInstanceLauncher/SingleInstanceLauncher.csproj" />
     <Project Path="50_SingleInstanceLauncher/test/SingleInstanceLauncher.Tests.csproj" />
   </Folder>
+  <Folder Name="/51_MemoryLeakLab/">
+    <Project Path="51_MemoryLeakLab/MemoryLeakLab.csproj" />
+    <Project Path="51_MemoryLeakLab/test/MemoryLeakLab.Tests.csproj" />
+  </Folder>
 </Solution>

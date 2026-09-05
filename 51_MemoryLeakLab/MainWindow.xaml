@@ -1,0 +1,50 @@
+<Window x:Class="MemoryLeakLab.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="メモリリーク検証ラボ" Height="360" Width="480">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="モード: " VerticalAlignment="Center" FontWeight="Bold" />
+            <RadioButton x:Name="BadModeRadio" Content="Bad版(強参照購読・解除なし)"
+                         GroupName="Mode" IsChecked="True" Margin="8,0,0,0"
+                         Checked="ModeRadio_Checked" />
+            <RadioButton x:Name="GoodModeRadio" Content="Good版(WeakEventManager)"
+                         GroupName="Mode" Margin="8,0,0,0"
+                         Checked="ModeRadio_Checked" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Margin="0,0,0,12"
+                   Text="「生成」で購読者を10件作成し、「参照解放」で一覧側の強参照を切り、「GC実行」で強制GC後の生存数を再計測します。" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,12">
+            <Button Content="生成" Padding="12,4" Click="GenerateButton_Click" />
+            <Button Content="参照解放" Padding="12,4" Margin="8,0,0,0" Click="ReleaseButton_Click" />
+            <Button Content="GC実行" Padding="12,4" Margin="8,0,0,0" Click="CollectGarbageButton_Click" />
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="総生成数(TotalCount)" FontWeight="Bold" />
+                <TextBlock x:Name="TotalCountText" FontSize="28" Text="0"
+                           AutomationProperties.AutomationId="TotalCountText" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="生存数(AliveCount)" FontWeight="Bold" />
+                <TextBlock x:Name="AliveCountText" FontSize="28" Text="0"
+                           AutomationProperties.AutomationId="AliveCountText" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
