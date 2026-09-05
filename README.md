@@ -61,8 +61,8 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編12個の計54個�
 - [ ] [48_ReactiveSearch](48_ReactiveSearch/README.md) - リアクティブ検索アプリ
 - [ ] [49_BehaviorGallery](49_BehaviorGallery/README.md) - 添付ビヘイビアギャラリー
 - [ ] [50_SingleInstanceLauncher](50_SingleInstanceLauncher/README.md) - 単一インスタンス起動+IPCランチャー
-- [ ] [51_MemoryLeakLab](51_MemoryLeakLab/README.md) - メモリリーク検証ラボ
-- [ ] [52_ScreenCaptureTool](52_ScreenCaptureTool/README.md) - スクリーンキャプチャツール
+- [x] [51_MemoryLeakLab](51_MemoryLeakLab/README.md) - メモリリーク検証ラボ
+- [x] [52_ScreenCaptureTool](52_ScreenCaptureTool/README.md) - スクリーンキャプチャツール
 - [x] [53_BreakoutGame](53_BreakoutGame/README.md) - ブロック崩しゲーム
 - [ ] [54_ClaudeChatClient](54_ClaudeChatClient/README.md) - Claude APIチャットクライアント
 
