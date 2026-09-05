@@ -5,8 +5,6 @@ namespace RockPaperScissors;
 /// </summary>
 public class RockPaperScissorsEngine
 {
-	private static readonly Random SharedRandom = new();
-
 	private readonly Func<Hand> _cpuHandSelector;
 
 	/// <summary>
@@ -32,7 +30,7 @@ public class RockPaperScissorsEngine
 	/// <summary>
 	/// CPUの手を実際の乱数で決定するエンジンを初期化する。
 	/// </summary>
-	public RockPaperScissorsEngine() : this(() => (Hand)SharedRandom.Next(3))
+	public RockPaperScissorsEngine() : this(() => (Hand)Random.Shared.Next(3))
 	{
 	}
 

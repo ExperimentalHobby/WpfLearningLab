@@ -79,6 +79,9 @@ public partial class MainWindow : Window
 		Hand.Rock => "グー",
 		Hand.Scissors => "チョキ",
 		Hand.Paper => "パー",
-		_ => hand.ToString(),
+		// Hand列挙型はRock/Scissors/Paperの3値のみを想定しており、ここには到達しないはず。
+		// (byte)99等の不正なキャストで到達した場合は、ToString()で曖昧に処理するのではなく
+		// 早期に気づけるよう例外を送出する。
+		_ => throw new ArgumentOutOfRangeException(nameof(hand), hand, "未対応の手です。"),
 	};
 }
