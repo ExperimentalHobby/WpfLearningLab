@@ -30,8 +30,28 @@ public partial class MainWindow : Window
 		var optionsBuilder = new DbContextOptionsBuilder<HabitTrackerDbContext>();
 		optionsBuilder.UseSqlite($"Data Source={DbPath}");
 		var context = new HabitTrackerDbContext(optionsBuilder.Options);
-		context.Database.Migrate();
+
+		try
+		{
+			context.Database.Migrate();
+		}
+		catch (Exception ex)
+		{
+			// DB破損・権限エラー等でマイグレーションに失敗すると、WPFの既定の未処理例外
+			// ダイアログで唐突に終了してしまう。DBが使えない以上アプリを続行できないため、
+			// せめて分かりやすいエラーを表示してから正常終了させる。起動時の致命的エラーで
+			// あり復旧手段がないため、ここでは例外の種類を絞らず広く捕捉する。
+			MessageBox.Show(
+				$"データベースを開始できませんでした。\n{ex.Message}",
+				"習慣トラッカー",
+				MessageBoxButton.OK,
+				MessageBoxImage.Error);
+			context.Dispose();
+			Application.Current.Shutdown();
+			return;
+		}
 
 		DataContext = new MainViewModel(new EfHabitRepository(context));
+		Closed += (_, _) => context.Dispose();
 	}
 }

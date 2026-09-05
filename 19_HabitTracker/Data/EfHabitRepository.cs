@@ -46,7 +46,11 @@ public class EfHabitRepository : IHabitRepository
 	/// <inheritdoc/>
 	public void SetLog(int habitId, DateOnly date, bool isCompleted)
 	{
-		var log = _context.HabitLogs.SingleOrDefault(l => l.HabitId == habitId && l.Date == date);
+		// (HabitId, Date)には一意インデックスを設定しており、通常はSetLog経由で重複行が
+		// 作成されることはないが、DBの手動編集やスキーマ不整合等の外部要因で万一重複行が
+		// 存在した場合にSingleOrDefaultだとInvalidOperationExceptionでクラッシュしてしまう。
+		// FirstOrDefaultにすることで、その場合でもクラッシュせず先頭の1件を扱う。
+		var log = _context.HabitLogs.FirstOrDefault(l => l.HabitId == habitId && l.Date == date);
 		if (log is null)
 		{
 			_context.HabitLogs.Add(new HabitLog { HabitId = habitId, Date = date, IsCompleted = isCompleted });
