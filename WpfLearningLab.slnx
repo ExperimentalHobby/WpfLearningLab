@@ -198,4 +198,8 @@
     <Project Path="49_BehaviorGallery/BehaviorGallery.csproj" />
     <Project Path="49_BehaviorGallery/test/BehaviorGallery.Tests.csproj" />
   </Folder>
+  <Folder Name="/50_SingleInstanceLauncher/">
+    <Project Path="50_SingleInstanceLauncher/SingleInstanceLauncher.csproj" />
+    <Project Path="50_SingleInstanceLauncher/test/SingleInstanceLauncher.Tests.csproj" />
+  </Folder>
 </Solution>
