@@ -93,4 +93,27 @@ public class UnitConverterEngineTests
 
 		Assert.Equal(1000m, result);
 	}
+
+	/// <summary>
+	/// パス条件: 未対応のカテゴリを指定して GetUnits を呼ぶと ArgumentException が送出されること
+	/// (辞書インデクサ由来の KeyNotFoundException ではなく統一された例外にする)。
+	/// </summary>
+	[Fact]
+	public void GetUnits_UnknownCategory_ThrowsArgumentException()
+	{
+		var engine = new UnitConverterEngine();
+
+		Assert.Throws<ArgumentException>(() => engine.GetUnits("未対応カテゴリ"));
+	}
+
+	/// <summary>
+	/// パス条件: 未対応のカテゴリを指定して Convert を呼ぶと ArgumentException が送出されること。
+	/// </summary>
+	[Fact]
+	public void Convert_UnknownCategory_ThrowsArgumentException()
+	{
+		var engine = new UnitConverterEngine();
+
+		Assert.Throws<ArgumentException>(() => engine.Convert("未対応カテゴリ", 1m, "a", "b"));
+	}
 }
