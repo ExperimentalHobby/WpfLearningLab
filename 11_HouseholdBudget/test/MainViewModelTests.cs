@@ -71,6 +71,26 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: 金額は有効でもカテゴリが空(または空白のみ)の場合、AddCommandが実行不可になること
+	/// </summary>
+	[Theory]
+	[InlineData("")]
+	[InlineData("   ")]
+	public void AddCommand_カテゴリが空の場合CanExecuteがfalseになる(string category)
+	{
+		var repository = new FakeTransactionRepository();
+		var viewModel = new MainViewModel(repository)
+		{
+			InputCategory = category,
+			InputAmount = "1500",
+		};
+
+		var canExecute = viewModel.AddCommand.CanExecute(null);
+
+		Assert.False(canExecute);
+	}
+
+	/// <summary>
 	/// パス条件: 取引を選択してDeleteCommandを実行すると、リポジトリとTransactionsの両方から削除されること
 	/// </summary>
 	[Fact]
@@ -112,10 +132,11 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
-	/// パス条件: 同一カテゴリの取引が複数ある場合、カテゴリ別集計で金額が合算されること
+	/// パス条件: 同一カテゴリの取引が複数ある場合、カテゴリ別集計で符号付き金額が合算されること
+	/// (docコメント通り、支出は負として合算される)
 	/// </summary>
 	[Fact]
-	public void カテゴリ別集計_同一カテゴリの金額が合算される()
+	public void カテゴリ別集計_同一カテゴリの金額が符号付きで合算される()
 	{
 		var repository = new FakeTransactionRepository(
 		[
@@ -126,8 +147,27 @@ public class MainViewModelTests
 
 		var viewModel = new MainViewModel(repository);
 
-		Assert.Equal(1500m, viewModel.CategorySummary.Single(c => c.Category == "食費").Amount);
-		Assert.Equal(300m, viewModel.CategorySummary.Single(c => c.Category == "交通費").Amount);
+		Assert.Equal(-1500m, viewModel.CategorySummary.Single(c => c.Category == "食費").Amount);
+		Assert.Equal(-300m, viewModel.CategorySummary.Single(c => c.Category == "交通費").Amount);
+	}
+
+	/// <summary>
+	/// パス条件: 同一カテゴリに収入と支出が混在する場合、単純加算ではなく符号付きで
+	/// 相殺された正味の金額が集計されること
+	/// (収入5000・支出2000が同カテゴリの場合、単純加算の7000ではなく差額の3000になる)
+	/// </summary>
+	[Fact]
+	public void カテゴリ別集計_収入と支出が同一カテゴリに混在する場合正味の金額が集計される()
+	{
+		var repository = new FakeTransactionRepository(
+		[
+			new Transaction { Date = new DateTime(2026, 8, 1), Type = TransactionType.Income, Category = "小遣い", Amount = 5000m },
+			new Transaction { Date = new DateTime(2026, 8, 2), Type = TransactionType.Expense, Category = "小遣い", Amount = 2000m },
+		]);
+
+		var viewModel = new MainViewModel(repository);
+
+		Assert.Equal(3000m, viewModel.CategorySummary.Single(c => c.Category == "小遣い").Amount);
 	}
 
 	/// <summary>

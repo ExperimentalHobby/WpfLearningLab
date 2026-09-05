@@ -63,7 +63,13 @@ public class MainViewModel : ObservableObject
 	public string InputCategory
 	{
 		get => _inputCategory;
-		set => SetProperty(ref _inputCategory, value);
+		set
+		{
+			if (SetProperty(ref _inputCategory, value))
+			{
+				AddCommand.RaiseCanExecuteChanged();
+			}
+		}
 	}
 
 	/// <summary>入力フォーム: 金額(文字列。数値変換前のテキストボックス直結値)。</summary>
@@ -99,7 +105,7 @@ public class MainViewModel : ObservableObject
 	public IReadOnlyList<CategoryAmount> CategorySummary =>
 		Transactions
 			.GroupBy(t => t.Category)
-			.Select(g => new CategoryAmount(g.Key, g.Sum(t => t.Amount)))
+			.Select(g => new CategoryAmount(g.Key, g.Sum(t => t.SignedAmount)))
 			.ToList();
 
 	/// <summary>DataGridで選択中の取引。</summary>
@@ -125,7 +131,9 @@ public class MainViewModel : ObservableObject
 	/// </summary>
 	public RelayCommand DeleteCommand { get; }
 
-	private bool CanAdd() => decimal.TryParse(InputAmount, out var amount) && amount > 0;
+	private bool CanAdd() =>
+		!string.IsNullOrWhiteSpace(InputCategory) &&
+		decimal.TryParse(InputAmount, out var amount) && amount > 0;
 
 	private void Add()
 	{
