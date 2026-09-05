@@ -54,4 +54,33 @@ public class MainViewModelTests
 		Assert.Contains(task, viewModel.DoneColumn.Tasks);
 		Assert.Equal(KanbanStatus.Done, task.Status);
 	}
+
+	/// <summary>
+	/// パス条件: MoveTaskCommand.CanExecute(null)がfalseを返すこと
+	/// (nullパラメータではUIから実行不可であるべき)
+	/// </summary>
+	[Fact]
+	public void MoveTaskCommand_CanExecuteにnullを渡すとfalseを返す()
+	{
+		var viewModel = new MainViewModel();
+
+		var canExecute = viewModel.MoveTaskCommand.CanExecute(null);
+
+		Assert.False(canExecute);
+	}
+
+	/// <summary>
+	/// パス条件: MoveTaskCommand.Execute(null)を呼んでも例外を投げないこと
+	/// (公開コマンドとしてDragDropBehavior以外から誤って呼ばれても、
+	/// CanExecuteを経由しない直接呼び出しに対しクラッシュしない防御が必要)
+	/// </summary>
+	[Fact]
+	public void MoveTaskCommand_Executeにnullを渡しても例外を投げない()
+	{
+		var viewModel = new MainViewModel();
+
+		var exception = Record.Exception(() => viewModel.MoveTaskCommand.Execute(null));
+
+		Assert.Null(exception);
+	}
 }

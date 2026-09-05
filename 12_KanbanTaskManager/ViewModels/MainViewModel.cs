@@ -24,7 +24,19 @@ public class MainViewModel : ObservableObject
 		TodoColumn = new TaskColumnViewModel("未着手", KanbanStatus.Todo);
 		InProgressColumn = new TaskColumnViewModel("対応中", KanbanStatus.InProgress);
 		DoneColumn = new TaskColumnViewModel("完了", KanbanStatus.Done);
-		MoveTaskCommand = new RelayCommand<MoveTaskRequest>(request => MoveTask(request!.Task, request.TargetStatus));
+		MoveTaskCommand = new RelayCommand<MoveTaskRequest>(
+			request =>
+			{
+				// CanExecuteはnullでfalseを返すが、Executeが直接呼ばれた場合にも
+				// 備えて念のため防御的にガードする(公開コマンドとして誤用され得るため)。
+				if (request is null)
+				{
+					return;
+				}
+
+				MoveTask(request.Task, request.TargetStatus);
+			},
+			request => request is not null);
 	}
 
 	/// <summary>未着手カラム。</summary>
