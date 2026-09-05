@@ -29,17 +29,45 @@ public class GameOfLifeEngine
 	/// <summary>
 	/// 指定セルが生存しているかどうかを取得する。
 	/// </summary>
-	public bool IsAlive(int x, int y) => _cells[x, y];
+	/// <exception cref="ArgumentOutOfRangeException">座標が盤面の範囲外の場合。</exception>
+	public bool IsAlive(int x, int y)
+	{
+		ValidateCoordinates(x, y);
+		return _cells[x, y];
+	}
 
 	/// <summary>
 	/// 指定セルの生死を設定する。
 	/// </summary>
-	public void SetAlive(int x, int y, bool alive) => _cells[x, y] = alive;
+	/// <exception cref="ArgumentOutOfRangeException">座標が盤面の範囲外の場合。</exception>
+	public void SetAlive(int x, int y, bool alive)
+	{
+		ValidateCoordinates(x, y);
+		_cells[x, y] = alive;
+	}
 
 	/// <summary>
 	/// 指定セルの生死を反転する。
 	/// </summary>
-	public void ToggleCell(int x, int y) => _cells[x, y] = !_cells[x, y];
+	/// <exception cref="ArgumentOutOfRangeException">座標が盤面の範囲外の場合。</exception>
+	public void ToggleCell(int x, int y)
+	{
+		ValidateCoordinates(x, y);
+		_cells[x, y] = !_cells[x, y];
+	}
+
+	private void ValidateCoordinates(int x, int y)
+	{
+		if (x < 0 || x >= Width)
+		{
+			throw new ArgumentOutOfRangeException(nameof(x), x, "盤面の範囲外の座標が指定されました。");
+		}
+
+		if (y < 0 || y >= Height)
+		{
+			throw new ArgumentOutOfRangeException(nameof(y), y, "盤面の範囲外の座標が指定されました。");
+		}
+	}
 
 	/// <summary>
 	/// 全セルを死亡状態にする。

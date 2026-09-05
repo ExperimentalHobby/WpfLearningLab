@@ -20,16 +20,21 @@ public class MainViewModel : ObservableObject
 	/// </summary>
 	/// <param name="width">盤面の幅(セル数)。</param>
 	/// <param name="height">盤面の高さ(セル数)。</param>
+	private readonly GameOfLifeEngine _engine;
+
 	public MainViewModel(int width, int height)
 	{
-		Engine = new GameOfLifeEngine(width, height);
+		_engine = new GameOfLifeEngine(width, height);
 
 		PlayPauseCommand = new RelayCommand(() => IsRunning = !IsRunning);
 		ResetCommand = new RelayCommand(Reset);
 	}
 
-	/// <summary>盤面の状態を保持するルールエンジン。View層はこれを直接参照して描画する。</summary>
-	public GameOfLifeEngine Engine { get; }
+	/// <summary>盤面の幅(セル数)。</summary>
+	public int Width => _engine.Width;
+
+	/// <summary>盤面の高さ(セル数)。</summary>
+	public int Height => _engine.Height;
 
 	/// <summary>
 	/// 盤面の内容が変化した(1世代進んだ、またはリセットされた)ときに発火する。
@@ -70,14 +75,29 @@ public class MainViewModel : ObservableObject
 	/// </summary>
 	public void AdvanceGeneration()
 	{
-		Engine.AdvanceGeneration();
+		_engine.AdvanceGeneration();
 		Generation++;
 		BoardChanged?.Invoke(this, EventArgs.Empty);
 	}
 
+	/// <summary>
+	/// 指定セルが生存しているかどうかを取得する。Viewの描画で使う。
+	/// </summary>
+	public bool IsCellAlive(int x, int y) => _engine.IsAlive(x, y);
+
+	/// <summary>
+	/// 指定セルの生死を設定する。初期パターンの配置などで使う。
+	/// </summary>
+	public void SetCellAlive(int x, int y, bool alive) => _engine.SetAlive(x, y, alive);
+
+	/// <summary>
+	/// 指定セルの生死を反転する。マウスクリックによるセル編集で使う。
+	/// </summary>
+	public void ToggleCell(int x, int y) => _engine.ToggleCell(x, y);
+
 	private void Reset()
 	{
-		Engine.Clear();
+		_engine.Clear();
 		Generation = 0;
 		IsRunning = false;
 		BoardChanged?.Invoke(this, EventArgs.Empty);

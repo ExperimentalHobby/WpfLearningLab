@@ -24,6 +24,10 @@ public partial class MainWindow : Window
 	private readonly DispatcherTimer _timer = new();
 	private readonly Rectangle[,] _cells = new Rectangle[GridWidth, GridHeight];
 
+	// 直近に描画した生死状態のキャッシュ。nullは「未描画」を表し、初回のRedrawAllで
+	// 全セルを強制的に塗り直すために使う。2回目以降は値が変化したセルのみ更新する。
+	private readonly bool?[,] _lastRendered = new bool?[GridWidth, GridHeight];
+
 	public MainWindow()
 	{
 		InitializeComponent();
@@ -43,6 +47,9 @@ public partial class MainWindow : Window
 
 		_viewModel.PropertyChanged += OnViewModelPropertyChanged;
 		_viewModel.BoardChanged += (_, _) => RedrawAll();
+
+		// 自動進行中にウィンドウを閉じてもタイマーが動き続けないよう停止する。
+		Closed += (_, _) => _timer.Stop();
 	}
 
 	private void BuildGrid()
@@ -75,7 +82,14 @@ public partial class MainWindow : Window
 		{
 			for (var y = 0; y < GridHeight; y++)
 			{
-				_cells[x, y].Fill = _viewModel.Engine.IsAlive(x, y) ? Brushes.Black : Brushes.White;
+				var alive = _viewModel.IsCellAlive(x, y);
+				if (_lastRendered[x, y] == alive)
+				{
+					continue;
+				}
+
+				_cells[x, y].Fill = alive ? Brushes.Black : Brushes.White;
+				_lastRendered[x, y] = alive;
 			}
 		}
 	}
@@ -90,8 +104,10 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		_viewModel.Engine.ToggleCell(x, y);
-		_cells[x, y].Fill = _viewModel.Engine.IsAlive(x, y) ? Brushes.Black : Brushes.White;
+		_viewModel.ToggleCell(x, y);
+		var alive = _viewModel.IsCellAlive(x, y);
+		_cells[x, y].Fill = alive ? Brushes.Black : Brushes.White;
+		_lastRendered[x, y] = alive;
 	}
 
 	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

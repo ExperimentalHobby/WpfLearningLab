@@ -145,4 +145,49 @@ public class GameOfLifeEngineTests
 
 		Assert.True(engine.IsAlive(0, 0));
 	}
+
+	/// <summary>
+	/// パス条件: IsAliveに範囲外の座標を指定するとArgumentOutOfRangeExceptionを投げること
+	/// </summary>
+	[Theory]
+	[InlineData(-1, 0)]
+	[InlineData(0, -1)]
+	[InlineData(3, 0)]
+	[InlineData(0, 3)]
+	public void IsAlive_範囲外の座標を指定するとArgumentOutOfRangeExceptionを投げる(int x, int y)
+	{
+		var engine = new GameOfLifeEngine(3, 3);
+
+		Assert.Throws<ArgumentOutOfRangeException>(() => engine.IsAlive(x, y));
+	}
+
+	/// <summary>
+	/// パス条件: SetAliveに範囲外の座標を指定するとArgumentOutOfRangeExceptionを投げること
+	/// </summary>
+	[Theory]
+	[InlineData(-1, 0)]
+	[InlineData(0, -1)]
+	[InlineData(3, 0)]
+	[InlineData(0, 3)]
+	public void SetAlive_範囲外の座標を指定するとArgumentOutOfRangeExceptionを投げる(int x, int y)
+	{
+		var engine = new GameOfLifeEngine(3, 3);
+
+		Assert.Throws<ArgumentOutOfRangeException>(() => engine.SetAlive(x, y, true));
+	}
+
+	/// <summary>
+	/// パス条件: ToggleCellに範囲外の座標を指定するとArgumentOutOfRangeExceptionを投げること
+	/// </summary>
+	[Theory]
+	[InlineData(-1, 0)]
+	[InlineData(0, -1)]
+	[InlineData(3, 0)]
+	[InlineData(0, 3)]
+	public void ToggleCell_範囲外の座標を指定するとArgumentOutOfRangeExceptionを投げる(int x, int y)
+	{
+		var engine = new GameOfLifeEngine(3, 3);
+
+		Assert.Throws<ArgumentOutOfRangeException>(() => engine.ToggleCell(x, y));
+	}
 }

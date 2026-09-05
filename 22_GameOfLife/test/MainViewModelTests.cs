@@ -29,14 +29,14 @@ public class MainViewModelTests
 	public void AdvanceGeneration_呼び出すとGenerationがインクリメントされ盤面が進む()
 	{
 		var viewModel = new MainViewModel(3, 3);
-		viewModel.Engine.SetAlive(0, 0, true);
-		viewModel.Engine.SetAlive(1, 0, true);
-		viewModel.Engine.SetAlive(0, 1, true);
+		viewModel.SetCellAlive(0, 0, true);
+		viewModel.SetCellAlive(1, 0, true);
+		viewModel.SetCellAlive(0, 1, true);
 
 		viewModel.AdvanceGeneration();
 
 		Assert.Equal(1, viewModel.Generation);
-		Assert.True(viewModel.Engine.IsAlive(1, 1));
+		Assert.True(viewModel.IsCellAlive(1, 1));
 	}
 
 	/// <summary>
@@ -46,13 +46,13 @@ public class MainViewModelTests
 	public void ResetCommand_実行すると盤面と状態が初期化される()
 	{
 		var viewModel = new MainViewModel(3, 3);
-		viewModel.Engine.SetAlive(1, 1, true);
+		viewModel.SetCellAlive(1, 1, true);
 		viewModel.AdvanceGeneration();
 		viewModel.PlayPauseCommand.Execute(null);
 
 		viewModel.ResetCommand.Execute(null);
 
-		Assert.False(viewModel.Engine.IsAlive(1, 1));
+		Assert.False(viewModel.IsCellAlive(1, 1));
 		Assert.Equal(0, viewModel.Generation);
 		Assert.False(viewModel.IsRunning);
 	}
