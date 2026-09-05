@@ -205,5 +205,8 @@
   <Folder Name="/52_ScreenCaptureTool/">
     <Project Path="52_ScreenCaptureTool/ScreenCaptureTool.csproj" />
     <Project Path="52_ScreenCaptureTool/test/ScreenCaptureTool.Tests.csproj" />
+  <Folder Name="/51_MemoryLeakLab/">
+    <Project Path="51_MemoryLeakLab/MemoryLeakLab.csproj" />
+    <Project Path="51_MemoryLeakLab/test/MemoryLeakLab.Tests.csproj" />
   </Folder>
 </Solution>
