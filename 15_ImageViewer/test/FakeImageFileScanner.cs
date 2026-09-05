@@ -8,6 +8,15 @@ namespace ImageViewer.Tests;
 public class FakeImageFileScanner : IImageFileScanner
 {
 	public IReadOnlyList<string> FilePathsToReturn { get; set; } = [];
+	public Exception? ExceptionToThrow { get; set; }
 
-	public IReadOnlyList<string> GetImageFilePaths(string folderPath) => FilePathsToReturn;
+	public IReadOnlyList<string> GetImageFilePaths(string folderPath)
+	{
+		if (ExceptionToThrow is not null)
+		{
+			throw ExceptionToThrow;
+		}
+
+		return FilePathsToReturn;
+	}
 }

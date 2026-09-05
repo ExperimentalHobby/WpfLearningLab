@@ -31,6 +31,24 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: フォルダ読込中に例外(権限エラー等)が発生しても、例外を投げずErrorMessageが
+	/// 設定されること(BrowseFolderCommandはAsyncRelayCommand経由のasync voidのため、
+	/// ここで捕捉し損ねると未処理例外でアプリ全体がクラッシュする)。
+	/// </summary>
+	[Fact]
+	public async Task BrowseFolderCommand_フォルダ読込で例外発生時ErrorMessageが設定される()
+	{
+		var folderPicker = new FakeFolderPicker { FolderToReturn = @"C:\Photos" };
+		var scanner = new FakeImageFileScanner { ExceptionToThrow = new UnauthorizedAccessException("アクセス拒否") };
+		var viewModel = CreateViewModel(folderPicker, scanner);
+
+		viewModel.BrowseFolderCommand.Execute(null);
+		await Task.Delay(50);
+
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: フォルダ選択がキャンセルされた場合(PickFolderがnullを返す)、ImageFilesが変化しないこと
 	/// </summary>
 	[Fact]

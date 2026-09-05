@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using ImageViewer.Services;
 
 namespace ImageViewer.ViewModels;
@@ -15,6 +16,7 @@ public class MainViewModel : ObservableObject
 	private string _selectedFolderPath = string.Empty;
 	private bool _isLoading;
 	private ImageFileViewModel? _selectedImage;
+	private string _errorMessage = string.Empty;
 
 	/// <summary>
 	/// ViewModelを初期化する。
@@ -44,6 +46,13 @@ public class MainViewModel : ObservableObject
 	{
 		get => _isLoading;
 		private set => SetProperty(ref _isLoading, value);
+	}
+
+	/// <summary>エラーメッセージ。エラーが無い場合は空文字。</summary>
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		private set => SetProperty(ref _errorMessage, value);
 	}
 
 	/// <summary>プレビュー表示中の画像。</summary>
@@ -107,9 +116,24 @@ public class MainViewModel : ObservableObject
 
 		SelectedFolderPath = folder;
 		IsLoading = true;
+		ErrorMessage = string.Empty;
 		try
 		{
-			var filePaths = _scanner.GetImageFilePaths(folder);
+			IReadOnlyList<string> filePaths;
+			try
+			{
+				filePaths = _scanner.GetImageFilePaths(folder);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				// フォルダへのアクセス権限がない等の理由で列挙に失敗しても、
+				// BrowseFolderCommand(AsyncRelayCommand)のExecuteはasync void実装で
+				// catchを持たないため、ここで捕捉し損ねると未処理例外でアプリ全体が
+				// クラッシュしてしまう。
+				ErrorMessage = $"フォルダを読み込めませんでした。\n{ex.Message}";
+				return;
+			}
+
 			ImageFiles.Clear();
 			var imageFileViewModels = filePaths.Select(filePath => new ImageFileViewModel(filePath)).ToList();
 			foreach (var imageFile in imageFileViewModels)
