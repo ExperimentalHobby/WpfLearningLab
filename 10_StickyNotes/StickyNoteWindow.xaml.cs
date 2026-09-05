@@ -68,11 +68,26 @@ public partial class StickyNoteWindow : Window
 	}
 
 	/// <summary>
-	/// 付箋の背景色をHEXコードから適用する。
+	/// 付箋の背景色を表す既定色(黄色)。保存データのColorHexが不正な場合のフォールバック用。
+	/// </summary>
+	private const string DefaultColorHex = "#FFF9C4";
+
+	/// <summary>
+	/// 付箋の背景色をHEXコードから適用する。保存ファイルの破損等でHEXコードとして
+	/// 不正な文字列が渡された場合、FormatExceptionを投げて起動そのものを失敗させる
+	/// のではなく、既定色にフォールバックする。
 	/// </summary>
 	private void ApplyColor(string colorHex)
 	{
-		RootBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorHex));
+		try
+		{
+			RootBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorHex));
+		}
+		catch (FormatException)
+		{
+			_currentColorHex = DefaultColorHex;
+			RootBorder.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(DefaultColorHex));
+		}
 	}
 
 	/// <summary>
