@@ -20,7 +20,12 @@ public class WeightConverter : IUnitConverter
 	/// <inheritdoc />
 	public decimal Convert(decimal value, string fromUnit, string toUnit)
 	{
-		var kilograms = value * KilogramsPerUnit[fromUnit];
-		return kilograms / KilogramsPerUnit[toUnit];
+		var kilograms = value * GetFactor(fromUnit);
+		return kilograms / GetFactor(toUnit);
 	}
+
+	private static decimal GetFactor(string unit) =>
+		KilogramsPerUnit.TryGetValue(unit, out var factor)
+			? factor
+			: throw new ArgumentException($"未対応の単位です: {unit}", nameof(unit));
 }

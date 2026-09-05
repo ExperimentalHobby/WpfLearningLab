@@ -21,7 +21,12 @@ public class LengthConverter : IUnitConverter
 	/// <inheritdoc />
 	public decimal Convert(decimal value, string fromUnit, string toUnit)
 	{
-		var meters = value * MetersPerUnit[fromUnit];
-		return meters / MetersPerUnit[toUnit];
+		var meters = value * GetFactor(fromUnit);
+		return meters / GetFactor(toUnit);
 	}
+
+	private static decimal GetFactor(string unit) =>
+		MetersPerUnit.TryGetValue(unit, out var factor)
+			? factor
+			: throw new ArgumentException($"未対応の単位です: {unit}", nameof(unit));
 }

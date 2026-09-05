@@ -22,7 +22,7 @@ public class UnitConverterEngine
 	/// 指定したカテゴリで選択可能な単位の一覧を返す。
 	/// </summary>
 	/// <param name="category"><see cref="Categories"/> に含まれるカテゴリ名。</param>
-	public IReadOnlyList<string> GetUnits(string category) => _converters[category].Units;
+	public IReadOnlyList<string> GetUnits(string category) => GetConverter(category).Units;
 
 	/// <summary>
 	/// 指定したカテゴリのコンバータに変換処理を委譲する。
@@ -32,5 +32,10 @@ public class UnitConverterEngine
 	/// <param name="fromUnit">変換元の単位。</param>
 	/// <param name="toUnit">変換先の単位。</param>
 	public decimal Convert(string category, decimal value, string fromUnit, string toUnit) =>
-		_converters[category].Convert(value, fromUnit, toUnit);
+		GetConverter(category).Convert(value, fromUnit, toUnit);
+
+	private IUnitConverter GetConverter(string category) =>
+		_converters.TryGetValue(category, out var converter)
+			? converter
+			: throw new ArgumentException($"未対応のカテゴリです: {category}", nameof(category));
 }
