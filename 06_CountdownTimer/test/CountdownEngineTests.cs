@@ -194,4 +194,59 @@ public class CountdownEngineTests
 		Assert.Equal(TimeSpan.FromSeconds(10), engine.RemainingTime);
 		Assert.Equal(CountdownState.Stopped, engine.State);
 	}
+
+	/// <summary>
+	/// パス条件: 妥当な範囲の時分秒を指定すると、例外を投げずtrueを返し、
+	/// RemainingTimeがその値に設定されること。
+	/// </summary>
+	[Fact]
+	public void TrySetInitialTimeFromParts_ValidValues_ReturnsTrueAndSetsRemainingTime()
+	{
+		var engine = new CountdownEngine();
+
+		var result = engine.TrySetInitialTimeFromParts(1, 30, 0);
+
+		Assert.True(result);
+		Assert.Equal(new TimeSpan(1, 30, 0), engine.RemainingTime);
+	}
+
+	/// <summary>
+	/// パス条件: TimeSpanの表現範囲を超える巨大な時間を指定しても、例外を投げずfalseを
+	/// 返し、RemainingTimeが変化しないこと(ArgumentOutOfRangeExceptionによるクラッシュ防止)。
+	/// </summary>
+	[Fact]
+	public void TrySetInitialTimeFromParts_HugeHours_ReturnsFalseWithoutThrowing()
+	{
+		var engine = new CountdownEngine();
+
+		var result = engine.TrySetInitialTimeFromParts(999999999, 0, 0);
+
+		Assert.False(result);
+		Assert.Equal(TimeSpan.Zero, engine.RemainingTime);
+	}
+
+	/// <summary>
+	/// パス条件: 1時間未満の残り時間は "00:mm:ss" 形式でフォーマットされること。
+	/// </summary>
+	[Fact]
+	public void FormatRemainingTime_LessThanOneHour_ReturnsZeroPaddedHhMmSs()
+	{
+		var engine = new CountdownEngine();
+		engine.SetInitialTime(TimeSpan.FromSeconds(5));
+
+		Assert.Equal("00:00:05", engine.FormatRemainingTime());
+	}
+
+	/// <summary>
+	/// パス条件: 24時間以上の残り時間でも、時間部分が切り捨てられず正しく表示されること
+	/// (hh\:mm\:ss形式では日をまたぐと表示が壊れるため)。
+	/// </summary>
+	[Fact]
+	public void FormatRemainingTime_MoreThan24Hours_ShowsTotalHoursNotClippedToDay()
+	{
+		var engine = new CountdownEngine();
+		engine.SetInitialTime(TimeSpan.FromHours(25));
+
+		Assert.Equal("25:00:00", engine.FormatRemainingTime());
+	}
 }

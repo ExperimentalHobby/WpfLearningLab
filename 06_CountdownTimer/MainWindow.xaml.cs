@@ -21,6 +21,7 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 		_timer.Tick += Timer_Tick;
+		Closed += (_, _) => _timer.Tick -= Timer_Tick;
 		UpdateDisplay();
 		UpdateButtonStates();
 	}
@@ -36,7 +37,15 @@ public partial class MainWindow : Window
 			var hours = ParseNonNegativeInt(HourTextBox.Text);
 			var minutes = ParseNonNegativeInt(MinuteTextBox.Text);
 			var seconds = ParseNonNegativeInt(SecondTextBox.Text);
-			_engine.SetInitialTime(new TimeSpan(hours, minutes, seconds));
+			if (!_engine.TrySetInitialTimeFromParts(hours, minutes, seconds))
+			{
+				MessageBox.Show(
+					"入力された時間が大きすぎます。値を小さくしてください。",
+					"カウントダウンタイマー",
+					MessageBoxButton.OK,
+					MessageBoxImage.Warning);
+				return;
+			}
 		}
 
 		_engine.Start();
@@ -92,7 +101,7 @@ public partial class MainWindow : Window
 	/// </summary>
 	private static int ParseNonNegativeInt(string text)
 	{
-		return int.TryParse(text, out var value) && value > 0 ? value : 0;
+		return int.TryParse(text, out var value) && value >= 0 ? value : 0;
 	}
 
 	/// <summary>
@@ -100,7 +109,7 @@ public partial class MainWindow : Window
 	/// </summary>
 	private void UpdateDisplay()
 	{
-		TimeDisplayTextBlock.Text = _engine.RemainingTime.ToString(@"hh\:mm\:ss");
+		TimeDisplayTextBlock.Text = _engine.FormatRemainingTime();
 	}
 
 	/// <summary>
