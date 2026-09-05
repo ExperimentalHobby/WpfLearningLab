@@ -174,4 +174,8 @@
     <Project Path="43_SetupWizard/SetupWizard.csproj" />
     <Project Path="43_SetupWizard/test/SetupWizard.Tests.csproj" />
   </Folder>
+  <Folder Name="/44_FileTreeExplorer/">
+    <Project Path="44_FileTreeExplorer/FileTreeExplorer.csproj" />
+    <Project Path="44_FileTreeExplorer/test/FileTreeExplorer.Tests.csproj" />
+  </Folder>
 </Solution>
