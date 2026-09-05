@@ -50,5 +50,18 @@ public partial class MainWindow : Window
 		{
 			InputPasswordBox.Password = _viewModel.InputPassword;
 		}
+
+		// LockCommand実行時にMasterPasswordInput/MasterPasswordConfirmInputがクリアされるが、
+		// PasswordBoxは(セキュリティ上バインドできないため)コードビハインドで同期しており、
+		// これを怠るとロック後もマスターパスワードの入力内容が画面に残ってしまう。
+		if (e.PropertyName == nameof(MainViewModel.MasterPasswordInput) && MasterPasswordBox.Password != _viewModel.MasterPasswordInput)
+		{
+			MasterPasswordBox.Password = _viewModel.MasterPasswordInput;
+		}
+
+		if (e.PropertyName == nameof(MainViewModel.MasterPasswordConfirmInput) && MasterPasswordConfirmBox.Password != _viewModel.MasterPasswordConfirmInput)
+		{
+			MasterPasswordConfirmBox.Password = _viewModel.MasterPasswordConfirmInput;
+		}
 	}
 }

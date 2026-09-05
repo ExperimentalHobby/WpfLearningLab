@@ -12,12 +12,14 @@ public class MainViewModelTests
 	private static MainViewModel CreateViewModel(
 		FakePasswordEntryRepository? repository = null,
 		FakeMasterKeyStore? masterKeyStore = null,
-		FakeClipboardService? clipboardService = null) =>
+		FakeClipboardService? clipboardService = null,
+		FakeDelayedActionScheduler? scheduler = null) =>
 		new(
 			repository ?? new FakePasswordEntryRepository(),
 			masterKeyStore ?? new FakeMasterKeyStore(),
 			new AesPasswordCryptoService(),
-			clipboardService ?? new FakeClipboardService());
+			clipboardService ?? new FakeClipboardService(),
+			scheduler ?? new FakeDelayedActionScheduler());
 
 	/// <summary>
 	/// パス条件: マスターキーが未初期化の場合、IsFirstRunがtrueになること
@@ -102,6 +104,47 @@ public class MainViewModelTests
 		Assert.Single(viewModel.Entries);
 		Assert.Equal("example.com", viewModel.Entries[0].Site);
 		Assert.Equal("P@ssw0rd!", viewModel.Entries[0].Password);
+	}
+
+	/// <summary>
+	/// パス条件: 1件だけ復号できない(別の鍵で暗号化された、または破損した)エントリが
+	/// 混ざっていても、例外を投げずロック解除でき、他の正常なエントリは復号表示され、
+	/// 復号できなかったエントリはプレースホルダ表示になること
+	/// (1件の破損データが原因で、ロック解除自体がクラッシュしてはならないため)
+	/// </summary>
+	[Fact]
+	public void UnlockCommand_復号できないエントリが混在してもクラッシュせず他は表示される()
+	{
+		var repository = new FakePasswordEntryRepository();
+		var masterKeyStore = new FakeMasterKeyStore();
+		var crypto = new AesPasswordCryptoService();
+		var salt = crypto.GenerateSalt();
+		var key = crypto.DeriveKey("master-password", salt);
+		masterKeyStore.Initialize(salt, crypto.Encrypt("PASSWORD_MANAGER_VERIFY_V1", key));
+		repository.Add(new Models.PasswordEntry
+		{
+			Site = "good.example.com",
+			Username = "user1",
+			EncryptedPassword = crypto.Encrypt("P@ssw0rd!", key),
+		});
+		// 別の鍵で暗号化された(=正しい鍵では復号できない)壊れたエントリを混入させる。
+		var otherKey = crypto.DeriveKey("different-password", crypto.GenerateSalt());
+		repository.Add(new Models.PasswordEntry
+		{
+			Site = "broken.example.com",
+			Username = "user2",
+			EncryptedPassword = crypto.Encrypt("Secret!", otherKey),
+		});
+		var viewModel = CreateViewModel(repository, masterKeyStore);
+		viewModel.MasterPasswordInput = "master-password";
+
+		var exception = Record.Exception(() => viewModel.UnlockCommand.Execute(null));
+
+		Assert.Null(exception);
+		Assert.True(viewModel.IsUnlocked);
+		Assert.Equal(2, viewModel.Entries.Count);
+		Assert.Equal("P@ssw0rd!", viewModel.Entries.Single(e => e.Site == "good.example.com").Password);
+		Assert.NotEqual("Secret!", viewModel.Entries.Single(e => e.Site == "broken.example.com").Password);
 	}
 
 	/// <summary>
@@ -193,6 +236,31 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: UpdateCommand実行後、入力欄がクリアされること(AddCommand実行後と対称的な挙動にする)
+	/// </summary>
+	[Fact]
+	public void UpdateCommand_実行後に入力欄がクリアされる()
+	{
+		var viewModel = CreateViewModel();
+		viewModel.MasterPasswordInput = "master-password";
+		viewModel.MasterPasswordConfirmInput = "master-password";
+		viewModel.UnlockCommand.Execute(null);
+		viewModel.InputSite = "example.com";
+		viewModel.InputUsername = "user1";
+		viewModel.InputPassword = "P@ssw0rd!";
+		viewModel.AddCommand.Execute(null);
+		viewModel.SelectedEntry = viewModel.Entries[0];
+		viewModel.InputUsername = "user2";
+		viewModel.InputPassword = "NewP@ssw0rd!";
+
+		viewModel.UpdateCommand.Execute(null);
+
+		Assert.Equal(string.Empty, viewModel.InputSite);
+		Assert.Equal(string.Empty, viewModel.InputUsername);
+		Assert.Equal(string.Empty, viewModel.InputPassword);
+	}
+
+	/// <summary>
 	/// パス条件: DeleteCommand実行で選択中エントリがリポジトリと一覧の両方から削除されること
 	/// </summary>
 	[Fact]
@@ -249,6 +317,60 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: CopyPasswordCommand実行時に、一定時間後クリップボードを自動クリアする
+	/// 処理がスケジュールされ、その時間が経過するとクリップボードがクリアされること
+	/// (平文パスワードがクリップボードに残り続けるのを防ぐため)
+	/// </summary>
+	[Fact]
+	public void CopyPasswordCommand_実行後一定時間でクリップボードが自動クリアされる()
+	{
+		var clipboardService = new FakeClipboardService();
+		var scheduler = new FakeDelayedActionScheduler();
+		var viewModel = CreateViewModel(clipboardService: clipboardService, scheduler: scheduler);
+		viewModel.MasterPasswordInput = "master-password";
+		viewModel.MasterPasswordConfirmInput = "master-password";
+		viewModel.UnlockCommand.Execute(null);
+		viewModel.InputSite = "example.com";
+		viewModel.InputUsername = "user1";
+		viewModel.InputPassword = "P@ssw0rd!";
+		viewModel.AddCommand.Execute(null);
+
+		viewModel.CopyPasswordCommand.Execute(viewModel.Entries[0]);
+		Assert.Equal("P@ssw0rd!", clipboardService.CopiedText);
+		Assert.False(clipboardService.WasCleared);
+
+		scheduler.RunAll();
+
+		Assert.True(clipboardService.WasCleared);
+		Assert.Null(clipboardService.CopiedText);
+	}
+
+	/// <summary>
+	/// パス条件: クリップボード自動クリアが実行される前に、ユーザーが別の内容を
+	/// クリップボードにコピーしていた場合は、それを上書きしてクリアしないこと
+	/// </summary>
+	[Fact]
+	public void CopyPasswordCommand_自動クリア前に別の内容がコピーされていたら上書きしない()
+	{
+		var clipboardService = new FakeClipboardService();
+		var scheduler = new FakeDelayedActionScheduler();
+		var viewModel = CreateViewModel(clipboardService: clipboardService, scheduler: scheduler);
+		viewModel.MasterPasswordInput = "master-password";
+		viewModel.MasterPasswordConfirmInput = "master-password";
+		viewModel.UnlockCommand.Execute(null);
+		viewModel.InputSite = "example.com";
+		viewModel.InputUsername = "user1";
+		viewModel.InputPassword = "P@ssw0rd!";
+		viewModel.AddCommand.Execute(null);
+		viewModel.CopyPasswordCommand.Execute(viewModel.Entries[0]);
+
+		clipboardService.SetText("別の内容");
+		scheduler.RunAll();
+
+		Assert.Equal("別の内容", clipboardService.CopiedText);
+	}
+
+	/// <summary>
 	/// パス条件: エントリを選択するとPasswordVisibleの切り替えができ、対象エントリのIsPasswordVisibleが反転すること
 	/// </summary>
 	[Fact]
@@ -267,5 +389,48 @@ public class MainViewModelTests
 		entry.IsPasswordVisible = true;
 
 		Assert.True(entry.IsPasswordVisible);
+	}
+
+	/// <summary>
+	/// パス条件: LockCommand実行でIsUnlockedがfalseに戻り、復号済みエントリ一覧
+	/// (平文パスワードを含む)がクリアされること(再ロック機能)
+	/// </summary>
+	[Fact]
+	public void LockCommand_実行するとIsUnlockedがfalseに戻りEntriesがクリアされる()
+	{
+		var viewModel = CreateViewModel();
+		viewModel.MasterPasswordInput = "master-password";
+		viewModel.MasterPasswordConfirmInput = "master-password";
+		viewModel.UnlockCommand.Execute(null);
+		viewModel.InputSite = "example.com";
+		viewModel.InputUsername = "user1";
+		viewModel.InputPassword = "P@ssw0rd!";
+		viewModel.AddCommand.Execute(null);
+
+		viewModel.LockCommand.Execute(null);
+
+		Assert.False(viewModel.IsUnlocked);
+		Assert.Empty(viewModel.Entries);
+	}
+
+	/// <summary>
+	/// パス条件: LockCommand実行後、再度正しいマスターパスワードでUnlockCommandを実行すると
+	/// 再度ロック解除できること(セッションキーのクリア後も再ロック解除に支障がないこと)
+	/// </summary>
+	[Fact]
+	public void LockCommand_実行後に再度正しいパスワードでUnlockCommandを実行すると解除できる()
+	{
+		var repository = new FakePasswordEntryRepository();
+		var masterKeyStore = new FakeMasterKeyStore();
+		var viewModel = CreateViewModel(repository, masterKeyStore);
+		viewModel.MasterPasswordInput = "master-password";
+		viewModel.MasterPasswordConfirmInput = "master-password";
+		viewModel.UnlockCommand.Execute(null);
+		viewModel.LockCommand.Execute(null);
+
+		viewModel.MasterPasswordInput = "master-password";
+		viewModel.UnlockCommand.Execute(null);
+
+		Assert.True(viewModel.IsUnlocked);
 	}
 }

@@ -72,11 +72,16 @@
         <!-- 解除後画面(一覧+入力フォーム) -->
         <Grid Visibility="{Binding IsUnlocked, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ListBox Grid.Row="0" x:Name="EntriesListBox" Margin="0,0,0,8"
+            <Button Grid.Row="0" Content="ロック" Padding="12,4" HorizontalAlignment="Right" Margin="0,0,0,8"
+                    Command="{Binding LockCommand}"
+                    AutomationProperties.AutomationId="LockButton"/>
+
+            <ListBox Grid.Row="1" x:Name="EntriesListBox" Margin="0,0,0,8"
                       ItemsSource="{Binding Entries}"
                       SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
                       AutomationProperties.AutomationId="EntriesListBox">
@@ -116,7 +121,7 @@
             </ListBox>
 
             <!-- 入力フォーム(追加/編集共通。一覧で選択すると内容が反映される) -->
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
