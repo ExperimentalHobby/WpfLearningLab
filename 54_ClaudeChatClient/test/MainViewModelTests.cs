@@ -112,6 +112,8 @@ public class MainViewModelTests
 	/// <summary>
 	/// パス条件: 送信中にCancelCommandを実行すると、進行中のリクエストのCancellationTokenが
 	/// キャンセルされ、それ以降のテキスト更新が止まること。
+	/// 1件目のチャンクを受信しゲート待機に入ったタイミングを<see cref="FakeClaudeApiClient.WaitUntilWaitingAtGateAsync"/>
+	/// で確実に待ってからキャンセルすることで、タイミングに依存しない決定的な検証にしている。
 	/// </summary>
 	[Fact]
 	public async Task CancelCommand_DuringSend_CancelsInFlightRequest()
@@ -121,14 +123,16 @@ public class MainViewModelTests
 		vm.ApiKeyInput = "sk-ant-test-key";
 		vm.SetupCommand.Execute(null);
 		apiClient.ChunksToYield = ["A", "B", "C"];
-		apiClient.YieldBeforeEachChunk = true;
+		apiClient.UseGateAfterFirstChunk = true;
 		vm.InputText = "test";
 
 		var sendTask = vm.SendAsync();
+		await apiClient.WaitUntilWaitingAtGateAsync();
+
 		vm.CancelCommand.Execute(null);
 		await sendTask;
 
 		Assert.True(apiClient.LastCancellationToken.IsCancellationRequested);
-		Assert.DoesNotContain("C", vm.Messages[1].Content);
+		Assert.Equal("A", vm.Messages[1].Content);
 	}
 }
