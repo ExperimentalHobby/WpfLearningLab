@@ -16,10 +16,14 @@ public class MainViewModel : ObservableObject
 	/// </summary>
 	private const string VerificationPlainText = "PASSWORD_MANAGER_VERIFY_V1";
 
+	/// <summary>クリップボードにコピーしたパスワードを自動クリアするまでの時間。</summary>
+	private static readonly TimeSpan ClipboardAutoClearDelay = TimeSpan.FromSeconds(30);
+
 	private readonly IPasswordEntryRepository _repository;
 	private readonly IMasterKeyStore _masterKeyStore;
 	private readonly IPasswordCryptoService _cryptoService;
 	private readonly IClipboardService _clipboardService;
+	private readonly IDelayedActionScheduler _clipboardClearScheduler;
 
 	private byte[]? _sessionKey;
 	private bool _isUnlocked;
@@ -38,34 +42,56 @@ public class MainViewModel : ObservableObject
 	/// <param name="masterKeyStore">マスターキー設定の永続化を担うストア。</param>
 	/// <param name="cryptoService">暗号化・鍵導出を担うサービス。</param>
 	/// <param name="clipboardService">クリップボードコピーを担うサービス。</param>
+	/// <param name="clipboardClearScheduler">
+	/// クリップボード自動クリアの遅延実行を担うスケジューラ。省略時は実時間で動作する既定の実装を使う。
+	/// </param>
 	public MainViewModel(
 		IPasswordEntryRepository repository,
 		IMasterKeyStore masterKeyStore,
 		IPasswordCryptoService cryptoService,
-		IClipboardService clipboardService)
+		IClipboardService clipboardService,
+		IDelayedActionScheduler? clipboardClearScheduler = null)
 	{
 		_repository = repository;
 		_masterKeyStore = masterKeyStore;
 		_cryptoService = cryptoService;
 		_clipboardService = clipboardService;
+		_clipboardClearScheduler = clipboardClearScheduler ?? new TimerDelayedActionScheduler();
 
 		IsFirstRun = !_masterKeyStore.IsInitialized();
 
 		UnlockCommand = new RelayCommand(Unlock, CanUnlock);
+		LockCommand = new RelayCommand(Lock, () => IsUnlocked);
 		AddCommand = new RelayCommand(Add, CanAddOrUpdate);
 		UpdateCommand = new RelayCommand(Update, () => SelectedEntry is not null && CanAddOrUpdate());
 		DeleteCommand = new RelayCommand(Delete, () => SelectedEntry is not null);
 		CopyPasswordCommand = new RelayCommand<PasswordEntryItem>(CopyPassword);
 	}
 
-	/// <summary>マスターパスワードが未設定(初回起動)かどうか。</summary>
-	public bool IsFirstRun { get; }
+	private bool _isFirstRun;
+
+	/// <summary>
+	/// マスターパスワードが未設定(初回起動)かどうか。初回セットアップが完了すると
+	/// falseになり、以後LockCommandで再ロックしても(初回セットアップ画面には戻らず)
+	/// 常に既存のマスターパスワードでの解除を求めるようになる。
+	/// </summary>
+	public bool IsFirstRun
+	{
+		get => _isFirstRun;
+		private set => SetProperty(ref _isFirstRun, value);
+	}
 
 	/// <summary>ロックが解除され、一覧を操作できる状態かどうか。</summary>
 	public bool IsUnlocked
 	{
 		get => _isUnlocked;
-		private set => SetProperty(ref _isUnlocked, value);
+		private set
+		{
+			if (SetProperty(ref _isUnlocked, value))
+			{
+				LockCommand.RaiseCanExecuteChanged();
+			}
+		}
 	}
 
 	/// <summary>マスターパスワード入力欄。</summary>
@@ -167,6 +193,11 @@ public class MainViewModel : ObservableObject
 	/// <summary>初回はマスターパスワードを新規設定し、2回目以降は入力内容でロックを解除するコマンド。</summary>
 	public RelayCommand UnlockCommand { get; }
 
+	/// <summary>
+	/// 再度ロックするコマンド。セッションキーをゼロクリアし、復号済みのエントリ一覧を破棄する。
+	/// </summary>
+	public RelayCommand LockCommand { get; }
+
 	/// <summary>入力フォームの内容を新規エントリとして追加するコマンド。</summary>
 	public RelayCommand AddCommand { get; }
 
@@ -203,6 +234,7 @@ public class MainViewModel : ObservableObject
 
 			_sessionKey = key;
 			IsUnlocked = true;
+			IsFirstRun = false;
 			LoadEntries();
 			return;
 		}
@@ -221,6 +253,36 @@ public class MainViewModel : ObservableObject
 		LoadEntries();
 	}
 
+	/// <summary>
+	/// 再度ロックし、セッションキーと復号済みエントリ一覧を破棄する。
+	/// </summary>
+	/// <remarks>
+	/// セッションキー(<see cref="_sessionKey"/>、byte[])は<see cref="Array.Clear(Array)"/>で
+	/// 内容を確実にゼロクリアしてから破棄する。一方、復号済みパスワードを保持する
+	/// <see cref="PasswordEntryItem.Password"/>はC#の文字列(不変)であるため、byte[]と同様に
+	/// メモリ上の内容を確実にゼロクリアすることはできない。真に安全な実装には
+	/// <see cref="System.Security.SecureString"/>または<c>char[]</c>ベースへの全面的な設計変更
+	/// (XAMLバインディング・PasswordBox連携を含む)が必要であり、今回は見送る。
+	/// <see cref="Entries"/>をクリアして参照を切ることで、GC対象にする(露出時間を短縮する)
+	/// という限定的な緩和にとどめる。
+	/// </remarks>
+	private void Lock()
+	{
+		if (_sessionKey is not null)
+		{
+			Array.Clear(_sessionKey, 0, _sessionKey.Length);
+			_sessionKey = null;
+		}
+
+		Entries.Clear();
+		SelectedEntry = null;
+		ClearInputs();
+		MasterPasswordInput = string.Empty;
+		MasterPasswordConfirmInput = string.Empty;
+		ErrorMessage = string.Empty;
+		IsUnlocked = false;
+	}
+
 	private bool TryVerify(byte[] key)
 	{
 		try
@@ -237,12 +299,28 @@ public class MainViewModel : ObservableObject
 		}
 	}
 
+	/// <summary>復号に失敗したエントリに表示するプレースホルダ文字列。</summary>
+	private const string DecryptionFailedPlaceholder = "*** 復号できませんでした ***";
+
 	private void LoadEntries()
 	{
 		Entries.Clear();
 		foreach (var entry in _repository.GetAll())
 		{
-			var password = _cryptoService.Decrypt(entry.EncryptedPassword, _sessionKey!);
+			string password;
+			try
+			{
+				password = _cryptoService.Decrypt(entry.EncryptedPassword, _sessionKey!);
+			}
+			catch (Exception ex) when (ex is CryptographicException or FormatException)
+			{
+				// DB破損、または別のマスターパスワード(=別の鍵)で暗号化されたデータが
+				// 混入していると復号に失敗する。1件の破損が原因でロック解除自体が
+				// クラッシュしてはならないため、その1件だけプレースホルダ表示にして
+				// 他の正常なエントリの表示は続ける(StickyNotesの1件スキップと同様の方針)。
+				password = DecryptionFailedPlaceholder;
+			}
+
 			Entries.Add(new PasswordEntryItem(entry.Id, entry.Site, entry.Username, password));
 		}
 	}
@@ -285,6 +363,8 @@ public class MainViewModel : ObservableObject
 		SelectedEntry.Site = InputSite;
 		SelectedEntry.Username = InputUsername;
 		SelectedEntry.Password = InputPassword;
+
+		ClearInputs();
 	}
 
 	private void Delete()
@@ -307,7 +387,13 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		_clipboardService.SetText(entry.Password);
+		var password = entry.Password;
+		_clipboardService.SetText(password);
+
+		// コピーした平文パスワードがクリップボードに残り続けないよう、一定時間後に
+		// 自動クリアする。ただしその間に別の内容がコピーされていたら上書きしない
+		// (ClearIfUnchangedがコピー時の内容と一致する場合のみクリアする)。
+		_clipboardClearScheduler.Schedule(ClipboardAutoClearDelay, () => _clipboardService.ClearIfUnchanged(password));
 	}
 
 	private void ClearInputs()
