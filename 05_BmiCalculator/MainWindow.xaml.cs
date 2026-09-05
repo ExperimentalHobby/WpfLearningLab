@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,12 +13,14 @@ public partial class MainWindow : Window
 	private readonly BmiEngine _engine = new();
 
 	/// <summary>
-	/// 身長入力欄(cm)にバインドする文字列。
+	/// 身長入力欄(cm)にバインドする文字列。<see cref="NumericRangeValidationRule"/>の検証を
+	/// 通過した値のみがここに反映される(検証に失敗している間は直前の妥当な値のまま)。
 	/// </summary>
 	public string HeightInput { get; set; } = string.Empty;
 
 	/// <summary>
-	/// 体重入力欄(kg)にバインドする文字列。
+	/// 体重入力欄(kg)にバインドする文字列。<see cref="NumericRangeValidationRule"/>の検証を
+	/// 通過した値のみがここに反映される(検証に失敗している間は直前の妥当な値のまま)。
 	/// </summary>
 	public string WeightInput { get; set; } = string.Empty;
 
@@ -36,8 +39,12 @@ public partial class MainWindow : Window
 	/// </summary>
 	private void CalculateButton_Click(object sender, RoutedEventArgs e)
 	{
-		if (!decimal.TryParse(HeightTextBox.Text, out var height) ||
-			!decimal.TryParse(WeightTextBox.Text, out var weight))
+		// HeightTextBox.Text/WeightTextBox.Textを直接参照すると、検証を経由しない
+		// 別の入力経路ができてしまうため、検証済みのHeightInput/WeightInputを使う。
+		// NumericRangeValidationRuleと同じカルチャ・NumberStylesで解釈することで、
+		// 検証時とここでの数値解釈が食い違わないようにする。
+		if (!decimal.TryParse(HeightInput, NumberStyles.Float, CultureInfo.CurrentCulture, out var height) ||
+			!decimal.TryParse(WeightInput, NumberStyles.Float, CultureInfo.CurrentCulture, out var weight))
 		{
 			return;
 		}
