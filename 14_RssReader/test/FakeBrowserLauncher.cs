@@ -9,8 +9,12 @@ public class FakeBrowserLauncher : IBrowserLauncher
 {
 	public string? LastOpenedUrl { get; private set; }
 
-	public void Open(string url)
+	/// <summary>Openの戻り値。安全でないURLの拒否をシミュレートするテストで false に設定する。</summary>
+	public bool ReturnValue { get; set; } = true;
+
+	public bool Open(string url)
 	{
 		LastOpenedUrl = url;
+		return ReturnValue;
 	}
 }

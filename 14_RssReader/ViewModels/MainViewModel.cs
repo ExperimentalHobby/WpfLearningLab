@@ -91,9 +91,14 @@ public class MainViewModel : ObservableObject
 
 	private void OpenLink(string? url)
 	{
-		if (!string.IsNullOrWhiteSpace(url))
+		if (string.IsNullOrWhiteSpace(url))
 		{
-			_browserLauncher.Open(url);
+			return;
+		}
+
+		if (!_browserLauncher.Open(url))
+		{
+			ErrorMessage = "安全でないリンクのため開けませんでした。";
 		}
 	}
 
