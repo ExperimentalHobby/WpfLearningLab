@@ -128,8 +128,13 @@ public class MainViewModel : ObservableObject
 			WeatherDescription = WeatherCodeMapper.ToDescription(weather.WeatherCode);
 			WeatherIcon = WeatherCodeMapper.ToIcon(weather.WeatherCode);
 		}
-		catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
+		catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException
+			or KeyNotFoundException or InvalidOperationException)
 		{
+			// KeyNotFoundException/InvalidOperationExceptionは、API仕様変更や異常レスポンスで
+			// JsonElement.GetProperty/GetDouble等が失敗した場合に送出される。
+			// SearchCommand(AsyncRelayCommand)のExecuteはasync void実装でcatchを持たないため、
+			// ここで捕捉し損ねると未処理例外でアプリ全体がクラッシュしてしまう。
 			ErrorMessage = "天気情報の取得に失敗しました。通信環境を確認してください。";
 		}
 		finally
