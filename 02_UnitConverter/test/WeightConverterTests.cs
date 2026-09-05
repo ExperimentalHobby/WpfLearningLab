@@ -67,4 +67,16 @@ public class WeightConverterTests
 
 		Assert.Equal(new[] { "kg", "g", "lb" }, converter.Units);
 	}
+
+	/// <summary>
+	/// パス条件: 未対応の単位を指定すると ArgumentException が送出されること
+	/// (他のコンバータと例外の型を統一する)。
+	/// </summary>
+	[Fact]
+	public void Convert_UnknownUnit_ThrowsArgumentException()
+	{
+		var converter = new WeightConverter();
+
+		Assert.Throws<ArgumentException>(() => converter.Convert(1m, "ton", "kg"));
+	}
 }

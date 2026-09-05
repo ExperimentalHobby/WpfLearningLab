@@ -67,14 +67,18 @@ public partial class MainWindow : Window
 		}
 
 		_isUpdatingUnits = true;
-
-		var units = _engine.GetUnits(category);
-		FromUnitComboBox.ItemsSource = units;
-		ToUnitComboBox.ItemsSource = units;
-		FromUnitComboBox.SelectedIndex = 0;
-		ToUnitComboBox.SelectedIndex = units.Count > 1 ? 1 : 0;
-
-		_isUpdatingUnits = false;
+		try
+		{
+			var units = _engine.GetUnits(category);
+			FromUnitComboBox.ItemsSource = units;
+			ToUnitComboBox.ItemsSource = units;
+			FromUnitComboBox.SelectedIndex = 0;
+			ToUnitComboBox.SelectedIndex = units.Count > 1 ? 1 : 0;
+		}
+		finally
+		{
+			_isUpdatingUnits = false;
+		}
 	}
 
 	/// <summary>
@@ -96,7 +100,16 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		var result = _engine.Convert(category, value, fromUnit, toUnit);
-		OutputTextBox.Text = Math.Round(result, 6, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture);
+		try
+		{
+			var result = _engine.Convert(category, value, fromUnit, toUnit);
+			OutputTextBox.Text = Math.Round(result, 6, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture);
+		}
+		catch (OverflowException)
+		{
+			// decimal の表現範囲を超える極端な入力値(例: m→cm で極大値)は
+			// 変換不能として扱い、数値以外の入力と同様に出力欄を空にする。
+			OutputTextBox.Text = string.Empty;
+		}
 	}
 }
