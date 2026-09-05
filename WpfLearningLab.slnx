@@ -194,4 +194,8 @@
     <Project Path="48_ReactiveSearch/ReactiveSearch.csproj" />
     <Project Path="48_ReactiveSearch/test/ReactiveSearch.Tests.csproj" />
   </Folder>
+  <Folder Name="/49_BehaviorGallery/">
+    <Project Path="49_BehaviorGallery/BehaviorGallery.csproj" />
+    <Project Path="49_BehaviorGallery/test/BehaviorGallery.Tests.csproj" />
+  </Folder>
 </Solution>
