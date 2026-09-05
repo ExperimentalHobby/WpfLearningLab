@@ -32,6 +32,15 @@ public class AsyncRelayCommand : ICommand
 	/// <inheritdoc/>
 	public async void Execute(object? parameter)
 	{
+		// DispatcherTimer.Tickから直接Execute(null)を呼ぶような使い方では、呼び出し元は
+		// CanExecuteを確認しない。Executeがそれを確認せずに実行してしまうと、
+		// 「実行中はCanExecuteがfalseになる」という自身の契約を守れず多重実行してしまうため、
+		// ここでも確認する。
+		if (!CanExecute(parameter))
+		{
+			return;
+		}
+
 		_isExecuting = true;
 		RaiseCanExecuteChanged();
 		try

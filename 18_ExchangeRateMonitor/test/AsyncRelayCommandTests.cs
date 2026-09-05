@@ -53,4 +53,29 @@ public class AsyncRelayCommandTests
 
 		Assert.False(result);
 	}
+
+	/// <summary>
+	/// パス条件: 実行中に(CanExecuteを確認せず)再度Executeを呼んでも、多重実行されないこと
+	/// (DispatcherTimer.Tickから直接Execute(null)を呼ぶような使い方でも、
+	/// 前回の実行が完了していなければ多重実行してはならないため)
+	/// </summary>
+	[Fact]
+	public async Task Execute_実行中に再度Executeを呼んでも多重実行されない()
+	{
+		var executionCount = 0;
+		var tcs = new TaskCompletionSource();
+		var command = new AsyncRelayCommand(async () =>
+		{
+			executionCount++;
+			await tcs.Task;
+		});
+
+		command.Execute(null);
+		command.Execute(null);
+
+		tcs.SetResult();
+		await Task.Delay(10);
+
+		Assert.Equal(1, executionCount);
+	}
 }

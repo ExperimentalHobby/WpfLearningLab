@@ -133,7 +133,8 @@ public class MainViewModel : ObservableObject
 					pair.UpdateRate(rate);
 					return;
 				}
-				catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException)
+				catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException
+					or InvalidOperationException or FormatException)
 				{
 					if (attempt >= MaxAttempts)
 					{

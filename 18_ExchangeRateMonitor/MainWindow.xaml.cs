@@ -26,5 +26,6 @@ public partial class MainWindow : Window
 
 		_timer.Tick += (_, _) => _viewModel.RefreshAllCommand.Execute(null);
 		_timer.Start();
+		Closed += (_, _) => _timer.Stop();
 	}
 }

@@ -19,6 +19,12 @@ public class FakeExchangeRateApiClient : IExchangeRateApiClient
 	/// <summary>次回の呼び出しで通信エラーをスローするよう予約する。</summary>
 	public void EnqueueFailure() => _responses.Enqueue(() => throw new HttpRequestException("取得に失敗しました。"));
 
+	/// <summary>
+	/// 次回の呼び出しでFormatExceptionをスローするよう予約する
+	/// (異常なAPIレスポンスでレート値が数値として不正な場合を模擬する)。
+	/// </summary>
+	public void EnqueueFormatFailure() => _responses.Enqueue(() => throw new FormatException("レート値の形式が不正です。"));
+
 	/// <inheritdoc/>
 	public Task<decimal> GetRateAsync(string baseCurrency, string quoteCurrency)
 	{

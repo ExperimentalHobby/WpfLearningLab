@@ -163,6 +163,31 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: 異常なAPIレスポンス(レート値が数値として不正、FormatException)でも
+	/// 例外を投げずリトライされ、最終的にエラーメッセージが設定されること
+	/// (RefreshAllCommandはAsyncRelayCommand経由のasync voidのため、
+	/// catch対象外の例外は未処理例外でアプリ全体をクラッシュさせる)
+	/// </summary>
+	[Fact]
+	public async Task RefreshAllCommand_FormatException発生時もクラッシュせずエラーになる()
+	{
+		var apiClient = new FakeExchangeRateApiClient();
+		apiClient.EnqueueFormatFailure();
+		apiClient.EnqueueFormatFailure();
+		apiClient.EnqueueFormatFailure();
+		var viewModel = CreateViewModel(apiClient);
+		viewModel.InputBaseCurrency = "USD";
+		viewModel.InputQuoteCurrency = "JPY";
+		viewModel.AddPairCommand.Execute(null);
+
+		var exception = await Record.ExceptionAsync(() => RunRefreshAllAsync(viewModel));
+
+		Assert.Null(exception);
+		Assert.Equal(3, apiClient.CallCount);
+		Assert.NotEqual(string.Empty, viewModel.WatchedPairs[0].ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: リトライ後に成功すればエラーメッセージが設定されないこと
 	/// </summary>
 	[Fact]
