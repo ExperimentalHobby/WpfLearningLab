@@ -87,6 +87,40 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: API仕様変更等でレスポンスに期待するプロパティが無くKeyNotFoundExceptionが
+	/// 発生しても、例外を投げずErrorMessageが設定されること
+	/// (AsyncRelayCommand.Executeはasync void実装でcatchを持たないため、ここで捕捉し
+	/// 損ねると未処理例外でアプリ全体がクラッシュする)。
+	/// </summary>
+	[Fact]
+	public async Task SearchCommand_KeyNotFoundException発生時ErrorMessageが設定される()
+	{
+		var apiClient = new FakeWeatherApiClient { ExceptionToThrow = new KeyNotFoundException("name") };
+		var viewModel = new MainViewModel(apiClient) { SearchText = "東京" };
+
+		viewModel.SearchCommand.Execute(null);
+		await Task.Delay(50);
+
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+	}
+
+	/// <summary>
+	/// パス条件: レスポンスの型が期待と異なりInvalidOperationExceptionが発生しても、
+	/// 例外を投げずErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public async Task SearchCommand_InvalidOperationException発生時ErrorMessageが設定される()
+	{
+		var apiClient = new FakeWeatherApiClient { ExceptionToThrow = new InvalidOperationException("型が異なる") };
+		var viewModel = new MainViewModel(apiClient) { SearchText = "東京" };
+
+		viewModel.SearchCommand.Execute(null);
+		await Task.Delay(50);
+
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: 再検索時に前回のErrorMessageがクリアされること
 	/// </summary>
 	[Fact]
