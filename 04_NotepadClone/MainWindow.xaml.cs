@@ -59,7 +59,21 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		var content = File.ReadAllText(dialog.FileName);
+		string content;
+		try
+		{
+			content = File.ReadAllText(dialog.FileName);
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			MessageBox.Show(
+				$"ファイルを開けませんでした。\n{ex.Message}",
+				"メモ帳クローン",
+				MessageBoxButton.OK,
+				MessageBoxImage.Error);
+			return;
+		}
+
 		_engine.Load(dialog.FileName, content);
 		SetEditorTextWithoutMarkingDirty(content);
 		UpdateTitle();
@@ -145,7 +159,11 @@ public partial class MainWindow : Window
 			return PerformSaveAs();
 		}
 
-		File.WriteAllText(_engine.FilePath, EditorTextBox.Text);
+		if (!TryWriteFile(_engine.FilePath, EditorTextBox.Text))
+		{
+			return false;
+		}
+
 		_engine.MarkSaved(_engine.FilePath);
 		UpdateTitle();
 		return true;
@@ -168,10 +186,39 @@ public partial class MainWindow : Window
 			return false;
 		}
 
-		File.WriteAllText(dialog.FileName, EditorTextBox.Text);
+		if (!TryWriteFile(dialog.FileName, EditorTextBox.Text))
+		{
+			return false;
+		}
+
 		_engine.MarkSaved(dialog.FileName);
 		UpdateTitle();
 		return true;
+	}
+
+	/// <summary>
+	/// 指定したパスにテキストを書き込む。権限なし・ロック・ディスク満杯等のI/Oエラーは
+	/// 例外を投げずにエラーダイアログを表示し、false を返す。
+	/// </summary>
+	/// <param name="filePath">書き込み先のファイルパス。</param>
+	/// <param name="content">書き込む内容。</param>
+	/// <returns>書き込みに成功した場合は true。</returns>
+	private static bool TryWriteFile(string filePath, string content)
+	{
+		try
+		{
+			File.WriteAllText(filePath, content);
+			return true;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			MessageBox.Show(
+				$"ファイルを保存できませんでした。\n{ex.Message}",
+				"メモ帳クローン",
+				MessageBoxButton.OK,
+				MessageBoxImage.Error);
+			return false;
+		}
 	}
 
 	/// <summary>
@@ -180,8 +227,14 @@ public partial class MainWindow : Window
 	private void SetEditorTextWithoutMarkingDirty(string text)
 	{
 		_suppressTextChanged = true;
-		EditorTextBox.Text = text;
-		_suppressTextChanged = false;
+		try
+		{
+			EditorTextBox.Text = text;
+		}
+		finally
+		{
+			_suppressTextChanged = false;
+		}
 	}
 
 	/// <summary>
