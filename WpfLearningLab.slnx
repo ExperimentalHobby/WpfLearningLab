@@ -178,4 +178,8 @@
     <Project Path="44_FileTreeExplorer/FileTreeExplorer.csproj" />
     <Project Path="44_FileTreeExplorer/test/FileTreeExplorer.Tests.csproj" />
   </Folder>
+  <Folder Name="/45_DataWorkbench/">
+    <Project Path="45_DataWorkbench/DataWorkbench.csproj" />
+    <Project Path="45_DataWorkbench/test/DataWorkbench.Tests.csproj" />
+  </Folder>
 </Solution>
