@@ -64,7 +64,7 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編12個の計54個�
 - [ ] [51_MemoryLeakLab](51_MemoryLeakLab/README.md) - メモリリーク検証ラボ
 - [ ] [52_ScreenCaptureTool](52_ScreenCaptureTool/README.md) - スクリーンキャプチャツール
 - [ ] [53_BreakoutGame](53_BreakoutGame/README.md) - ブロック崩しゲーム
-- [ ] [54_ClaudeChatClient](54_ClaudeChatClient/README.md) - Claude APIチャットクライアント
+- [x] [54_ClaudeChatClient](54_ClaudeChatClient/README.md) - Claude APIチャットクライアント
 
 ## フォルダ構成
 各フォルダに独立した .csproj を配置し、ソリューションファイル `WpfLearningLab.slnx`(.NET 10 / Visual Studio 2026 のXML形式ソリューション)で全体を管理しています。

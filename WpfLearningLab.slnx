@@ -202,4 +202,8 @@
     <Project Path="50_SingleInstanceLauncher/SingleInstanceLauncher.csproj" />
     <Project Path="50_SingleInstanceLauncher/test/SingleInstanceLauncher.Tests.csproj" />
   </Folder>
+  <Folder Name="/54_ClaudeChatClient/">
+    <Project Path="54_ClaudeChatClient/ClaudeChatClient.csproj" />
+    <Project Path="54_ClaudeChatClient/test/ClaudeChatClient.Tests.csproj" />
+  </Folder>
 </Solution>
