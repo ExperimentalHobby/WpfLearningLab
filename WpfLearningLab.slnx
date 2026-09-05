@@ -202,6 +202,9 @@
     <Project Path="50_SingleInstanceLauncher/SingleInstanceLauncher.csproj" />
     <Project Path="50_SingleInstanceLauncher/test/SingleInstanceLauncher.Tests.csproj" />
   </Folder>
+  <Folder Name="/53_BreakoutGame/">
+    <Project Path="53_BreakoutGame/BreakoutGame.csproj" />
+    <Project Path="53_BreakoutGame/test/BreakoutGame.Tests.csproj" />
   <Folder Name="/52_ScreenCaptureTool/">
     <Project Path="52_ScreenCaptureTool/ScreenCaptureTool.csproj" />
     <Project Path="52_ScreenCaptureTool/test/ScreenCaptureTool.Tests.csproj" />
