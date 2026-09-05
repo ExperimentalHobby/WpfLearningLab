@@ -21,5 +21,7 @@ public partial class MainWindow : Window
 		// ペンの初期状態(色・太さ)をInkCanvasへ反映する。
 		controller.SetPenColor(viewModel.PenColor);
 		controller.SetPenWidth(viewModel.PenWidth);
+
+		Closed += (_, _) => controller.Dispose();
 	}
 }

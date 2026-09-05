@@ -41,6 +41,9 @@ public class FakeInkCanvasController : IInkCanvasController
 	public bool? LastEraserMode { get; private set; }
 	public string? LastSavedPath { get; private set; }
 
+	/// <summary>設定すると<see cref="SaveAsPng"/>呼び出し時にこの例外をスローする(テスト用)。</summary>
+	public Exception? SaveExceptionToThrow { get; set; }
+
 	public void Undo() => UndoCallCount++;
 
 	public void Redo() => RedoCallCount++;
@@ -53,5 +56,13 @@ public class FakeInkCanvasController : IInkCanvasController
 
 	public void SetEraserMode(bool isEraser) => LastEraserMode = isEraser;
 
-	public void SaveAsPng(string filePath) => LastSavedPath = filePath;
+	public void SaveAsPng(string filePath)
+	{
+		if (SaveExceptionToThrow is not null)
+		{
+			throw SaveExceptionToThrow;
+		}
+
+		LastSavedPath = filePath;
+	}
 }

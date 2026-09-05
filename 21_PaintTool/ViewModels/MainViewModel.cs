@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows.Media;
 using PaintTool.Services;
 
@@ -14,6 +15,7 @@ public class MainViewModel : ObservableObject
 	private Color _penColor = Colors.Black;
 	private double _penWidth = 3.0;
 	private bool _isEraserMode;
+	private string _errorMessage = string.Empty;
 
 	/// <summary>
 	/// ViewModelを初期化する。
@@ -77,6 +79,13 @@ public class MainViewModel : ObservableObject
 		}
 	}
 
+	/// <summary>直近の操作で発生したエラーメッセージ。エラーがなければ空文字列。</summary>
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		private set => SetProperty(ref _errorMessage, value);
+	}
+
 	/// <summary>直前の操作を取り消すコマンド。</summary>
 	public RelayCommand UndoCommand { get; }
 
@@ -100,7 +109,15 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		_controller.SaveAsPng(path);
+		try
+		{
+			_controller.SaveAsPng(path);
+			ErrorMessage = string.Empty;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+		{
+			ErrorMessage = $"画像の保存に失敗しました: {ex.Message}";
+		}
 	}
 
 	private void SelectColor(string? colorName)
@@ -110,6 +127,13 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		PenColor = (Color)ColorConverter.ConvertFromString(colorName);
+		try
+		{
+			PenColor = (Color)ColorConverter.ConvertFromString(colorName);
+		}
+		catch (FormatException)
+		{
+			ErrorMessage = $"'{colorName}' は色として解釈できませんでした。";
+		}
 	}
 }

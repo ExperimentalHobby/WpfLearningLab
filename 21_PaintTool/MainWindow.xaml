@@ -4,10 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PaintTool"
+        xmlns:converters="clr-namespace:PaintTool.Converters"
         mc:Ignorable="d"
         Title="お絵かきツール" Height="640" Width="900">
+    <Window.Resources>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -51,7 +56,12 @@
                     AutomationProperties.AutomationId="SaveButton"/>
         </StackPanel>
 
-        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1">
+        <TextBlock Grid.Row="1" Margin="0,0,0,8" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
+        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1">
             <InkCanvas x:Name="DrawingCanvas" Background="White"
                        AutomationProperties.AutomationId="DrawingCanvas"/>
         </Border>

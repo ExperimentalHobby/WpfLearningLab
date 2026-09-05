@@ -16,7 +16,7 @@ internal sealed record StrokeChangeAction(StrokeCollection Added, StrokeCollecti
 /// <summary>
 /// 実際の<see cref="InkCanvas"/>をラップし、Undo/Redo・ペン設定・PNG保存を行う<see cref="IInkCanvasController"/>実装。
 /// </summary>
-public class InkCanvasController : IInkCanvasController
+public class InkCanvasController : IInkCanvasController, IDisposable
 {
 	private readonly InkCanvas _inkCanvas;
 	private readonly UndoRedoStack<StrokeChangeAction> _history = new();
@@ -106,8 +106,16 @@ public class InkCanvasController : IInkCanvasController
 	/// <inheritdoc/>
 	public void SaveAsPng(string filePath)
 	{
-		var width = Math.Max(1, (int)_inkCanvas.ActualWidth);
-		var height = Math.Max(1, (int)_inkCanvas.ActualHeight);
+		if (_inkCanvas.ActualWidth <= 0 || _inkCanvas.ActualHeight <= 0)
+		{
+			// ウィンドウが最小化中などでActualWidth/Heightが0になっていると、意図せず1px四方の
+			// 画像がサイレントに保存されてしまう。呼び出し元(ViewModel)で分かりやすいエラーに
+			// できるよう、ここで明示的に例外を送出する。
+			throw new InvalidOperationException("キャンバスのサイズが0です。ウィンドウが最小化されている場合は元に戻してから保存してください。");
+		}
+
+		var width = (int)_inkCanvas.ActualWidth;
+		var height = (int)_inkCanvas.ActualHeight;
 		var renderTarget = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
 		renderTarget.Render(_inkCanvas);
 
@@ -115,6 +123,15 @@ public class InkCanvasController : IInkCanvasController
 		encoder.Frames.Add(BitmapFrame.Create(renderTarget));
 		using var stream = File.Create(filePath);
 		encoder.Save(stream);
+	}
+
+	/// <summary>
+	/// <see cref="InkCanvas.Strokes"/>の<see cref="StrokeCollection.StrokesChanged"/>購読を解除する。
+	/// </summary>
+	public void Dispose()
+	{
+		_inkCanvas.Strokes.StrokesChanged -= OnStrokesChanged;
+		GC.SuppressFinalize(this);
 	}
 
 	private void ApplyWithoutHistory(Action action)
