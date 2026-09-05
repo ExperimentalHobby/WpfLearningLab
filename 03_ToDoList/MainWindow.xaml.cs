@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,12 +12,17 @@ public partial class MainWindow : Window
 {
 	private readonly ToDoListEngine _engine = new();
 
+	// TaskListBox.ItemsSource に一度だけ設定し、以後は中身の入れ替えだけで表示を更新する
+	// (ItemsSource = null → 再代入するとフォーカスやスクロール位置がリセットされるため)。
+	private readonly ObservableCollection<ToDoTask> _taskItems = [];
+
 	/// <summary>
 	/// ウィンドウを初期化する。
 	/// </summary>
 	public MainWindow()
 	{
 		InitializeComponent();
+		TaskListBox.ItemsSource = _taskItems;
 		RefreshTaskList();
 	}
 
@@ -86,11 +92,16 @@ public partial class MainWindow : Window
 	private void RefreshTaskList()
 	{
 		var selectedId = (TaskListBox.SelectedItem as ToDoTask)?.Id;
-		TaskListBox.ItemsSource = null;
-		TaskListBox.ItemsSource = _engine.Tasks;
+
+		_taskItems.Clear();
+		foreach (var task in _engine.Tasks)
+		{
+			_taskItems.Add(task);
+		}
+
 		if (selectedId is int id)
 		{
-			TaskListBox.SelectedItem = _engine.Tasks.FirstOrDefault(t => t.Id == id);
+			TaskListBox.SelectedItem = _taskItems.FirstOrDefault(t => t.Id == id);
 		}
 	}
 }
