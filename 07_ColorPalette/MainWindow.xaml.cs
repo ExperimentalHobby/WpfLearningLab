@@ -57,10 +57,16 @@ public partial class MainWindow : Window
 		ErrorTextBlock.Visibility = Visibility.Collapsed;
 
 		_isUpdatingFromCode = true;
-		RedSlider.Value = r;
-		GreenSlider.Value = g;
-		BlueSlider.Value = b;
-		_isUpdatingFromCode = false;
+		try
+		{
+			RedSlider.Value = r;
+			GreenSlider.Value = g;
+			BlueSlider.Value = b;
+		}
+		finally
+		{
+			_isUpdatingFromCode = false;
+		}
 
 		UpdatePreviewAndLabels(r, g, b);
 	}
@@ -70,17 +76,31 @@ public partial class MainWindow : Window
 	/// </summary>
 	private void UpdatePreviewAndHexFromSliders()
 	{
-		var r = (byte)RedSlider.Value;
-		var g = (byte)GreenSlider.Value;
-		var b = (byte)BlueSlider.Value;
+		var r = ToByte(RedSlider.Value);
+		var g = ToByte(GreenSlider.Value);
+		var b = ToByte(BlueSlider.Value);
 
 		UpdatePreviewAndLabels(r, g, b);
 
 		_isUpdatingFromCode = true;
-		HexTextBox.Text = _engine.ToHex(r, g, b);
-		ErrorTextBlock.Visibility = Visibility.Collapsed;
-		_isUpdatingFromCode = false;
+		try
+		{
+			HexTextBox.Text = _engine.ToHex(r, g, b);
+			ErrorTextBlock.Visibility = Visibility.Collapsed;
+		}
+		finally
+		{
+			_isUpdatingFromCode = false;
+		}
 	}
+
+	/// <summary>
+	/// Sliderの値(double)をbyteに変換する。(byte)への直キャストはuncheckedのため
+	/// 範囲外の値が意図しないbyte値に化けてしまうので、0〜255にクランプしてから
+	/// 四捨五入して変換する。
+	/// </summary>
+	private static byte ToByte(double sliderValue) =>
+		(byte)Math.Round(Math.Clamp(sliderValue, 0, 255), MidpointRounding.AwayFromZero);
 
 	/// <summary>
 	/// プレビュー矩形の色と各Slider横の数値ラベルを更新する。

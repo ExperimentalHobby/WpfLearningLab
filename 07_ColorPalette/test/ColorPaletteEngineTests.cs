@@ -160,4 +160,18 @@ public class ColorPaletteEngineTests
 		Assert.Equal(52, g);
 		Assert.Equal(86, b);
 	}
+
+	/// <summary>
+	/// パス条件: nullをTryParseHexしても例外を投げずfalseが返ること
+	/// (BCLのTryParse系メソッドの慣例に合わせ、nullは例外ではなく失敗として扱う)。
+	/// </summary>
+	[Fact]
+	public void TryParseHex_Null_ReturnsFalseWithoutThrowing()
+	{
+		var engine = new ColorPaletteEngine();
+
+		var result = engine.TryParseHex(null!, out _, out _, out _);
+
+		Assert.False(result);
+	}
 }
