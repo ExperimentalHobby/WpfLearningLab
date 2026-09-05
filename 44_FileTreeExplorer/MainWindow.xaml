@@ -1,0 +1,45 @@
+<Window x:Class="FileTreeExplorer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:FileTreeExplorer.Models"
+        Title="フォルダツリー閲覧" Height="480" Width="760">
+    <Window.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type models:FolderNode}" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Name}" />
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="選択中: " VerticalAlignment="Center" />
+            <TextBlock x:Name="SelectedPathTextBlock" AutomationProperties.AutomationId="SelectedPathTextBlock" VerticalAlignment="Center" />
+            <Button x:Name="RefreshButton" AutomationProperties.AutomationId="RefreshButton" Content="更新(F5)" Margin="16,0,0,0" Click="RefreshButton_Click" />
+        </StackPanel>
+
+        <TreeView Grid.Row="1" Grid.Column="0" x:Name="FolderTreeView" AutomationProperties.AutomationId="FolderTreeView"
+                  Margin="0,0,8,0"
+                  TreeViewItem.Expanded="FolderTreeView_Expanded"
+                  SelectedItemChanged="FolderTreeView_SelectedItemChanged" />
+
+        <ListView Grid.Row="1" Grid.Column="1" x:Name="FilesListView" AutomationProperties.AutomationId="FilesListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="名前" Width="260" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="サイズ(バイト)" Width="120" DisplayMemberBinding="{Binding SizeBytes}" />
+                    <GridViewColumn Header="更新日時" Width="160" DisplayMemberBinding="{Binding LastWriteTime}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="StatusTextBlock" AutomationProperties.AutomationId="StatusTextBlock" Foreground="Red" Margin="0,8,0,0" />
+    </Grid>
+</Window>

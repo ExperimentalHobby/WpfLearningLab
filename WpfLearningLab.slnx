@@ -170,6 +170,14 @@
     <Project Path="42_AccessibleNoteApp/AccessibleNoteApp.csproj" />
     <Project Path="42_AccessibleNoteApp/test/AccessibleNoteApp.Tests.csproj" />
   </Folder>
+  <Folder Name="/43_SetupWizard/">
+    <Project Path="43_SetupWizard/SetupWizard.csproj" />
+    <Project Path="43_SetupWizard/test/SetupWizard.Tests.csproj" />
+  </Folder>
+  <Folder Name="/44_FileTreeExplorer/">
+    <Project Path="44_FileTreeExplorer/FileTreeExplorer.csproj" />
+    <Project Path="44_FileTreeExplorer/test/FileTreeExplorer.Tests.csproj" />
+  </Folder>
   <Folder Name="/45_DataWorkbench/">
     <Project Path="45_DataWorkbench/DataWorkbench.csproj" />
     <Project Path="45_DataWorkbench/test/DataWorkbench.Tests.csproj" />
