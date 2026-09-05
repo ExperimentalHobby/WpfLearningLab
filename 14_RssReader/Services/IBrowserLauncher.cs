@@ -9,5 +9,7 @@ public interface IBrowserLauncher
 	/// <summary>
 	/// 指定したURLを既定のブラウザで開く。
 	/// </summary>
-	void Open(string url);
+	/// <param name="url">開くURL。</param>
+	/// <returns>開けた場合は true、安全でない/不正なURLとして拒否した場合は false。</returns>
+	bool Open(string url);
 }

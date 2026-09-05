@@ -120,6 +120,21 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: BrowserLauncherが安全でないURLとして拒否(falseを返す)した場合、
+	/// ErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public void OpenLinkCommand_BrowserLauncherが拒否した場合ErrorMessageが設定される()
+	{
+		var browserLauncher = new FakeBrowserLauncher { ReturnValue = false };
+		var viewModel = CreateViewModel(browserLauncher: browserLauncher);
+
+		viewModel.OpenLinkCommand.Execute("file:///C:/Windows/System32/calc.exe");
+
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: リンクがnullまたは空の場合、OpenLinkCommandが実行不可になること
 	/// </summary>
 	[Theory]

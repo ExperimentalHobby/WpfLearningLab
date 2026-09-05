@@ -26,14 +26,26 @@ public class RssFeedClient : IRssFeedClient
 		using var stream = await _httpClient.GetStreamAsync(feedUrl);
 		var document = await Task.Run(() => XDocument.Load(stream));
 
-		var items = document.Descendants("item");
+		// RSS 2.0の<item>とAtomの<entry>の両方に対応する。要素名の一致は名前空間を
+		// 無視したLocalNameで行う。RSS 2.0では名前空間の宣言は本来不要だが、実際には
+		// <rss>/<channel>に既定の名前空間を宣言しているフィードも存在し、その場合は
+		// XName完全一致(名前空間なし)の検索では配下の要素が一致しなくなるため。
+		var entries = document.Descendants().Where(e => e.Name.LocalName is "item" or "entry");
+
 		var articles = new List<RssArticle>();
-		foreach (var item in items)
+		foreach (var entry in entries)
 		{
-			var title = item.Element("title")?.Value ?? string.Empty;
-			var summary = item.Element("description")?.Value ?? string.Empty;
-			var link = item.Element("link")?.Value ?? string.Empty;
-			var pubDateText = item.Element("pubDate")?.Value;
+			var title = GetChildValue(entry, "title") ?? string.Empty;
+			// summary/contentはAtomでの別名。
+			var summary = GetChildValue(entry, "description")
+				?? GetChildValue(entry, "summary")
+				?? GetChildValue(entry, "content")
+				?? string.Empty;
+			var link = GetLink(entry);
+			// published/updatedはAtomでの別名。
+			var pubDateText = GetChildValue(entry, "pubDate")
+				?? GetChildValue(entry, "published")
+				?? GetChildValue(entry, "updated");
 			DateTimeOffset? publishedDate = DateTimeOffset.TryParse(pubDateText, out var parsed) ? parsed : null;
 
 			articles.Add(new RssArticle
@@ -46,5 +58,28 @@ public class RssFeedClient : IRssFeedClient
 		}
 
 		return articles;
+	}
+
+	/// <summary>
+	/// 名前空間を無視して、指定したローカル名の直下の子要素の値を取得する。
+	/// </summary>
+	private static string? GetChildValue(XElement parent, string localName) =>
+		parent.Elements().FirstOrDefault(e => e.Name.LocalName == localName)?.Value;
+
+	/// <summary>
+	/// link要素からリンクURLを取得する。RSSはテキストの値としてURLを持つが、
+	/// Atomは<c>&lt;link href="..."/&gt;</c>のように href 属性にURLを持つため、両方に対応する。
+	/// </summary>
+	private static string GetLink(XElement entry)
+	{
+		var linkElement = entry.Elements().FirstOrDefault(e => e.Name.LocalName == "link");
+		if (linkElement is null)
+		{
+			return string.Empty;
+		}
+
+		return !string.IsNullOrEmpty(linkElement.Value)
+			? linkElement.Value
+			: linkElement.Attribute("href")?.Value ?? string.Empty;
 	}
 }
