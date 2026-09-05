@@ -202,6 +202,9 @@
     <Project Path="50_SingleInstanceLauncher/SingleInstanceLauncher.csproj" />
     <Project Path="50_SingleInstanceLauncher/test/SingleInstanceLauncher.Tests.csproj" />
   </Folder>
+  <Folder Name="/54_ClaudeChatClient/">
+    <Project Path="54_ClaudeChatClient/ClaudeChatClient.csproj" />
+    <Project Path="54_ClaudeChatClient/test/ClaudeChatClient.Tests.csproj" />
   <Folder Name="/53_BreakoutGame/">
     <Project Path="53_BreakoutGame/BreakoutGame.csproj" />
     <Project Path="53_BreakoutGame/test/BreakoutGame.Tests.csproj" />
