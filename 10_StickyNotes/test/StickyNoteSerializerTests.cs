@@ -141,4 +141,25 @@ public class StickyNoteSerializerTests
 		Assert.Equal("#FFF9C4", note.ColorHex);
 		Assert.Equal(string.Empty, note.Text);
 	}
+
+	/// <summary>
+	/// パス条件: 複数件のうち1件だけ必須のIdを欠く壊れた要素があっても、その要素だけが
+	/// スキップされ、他の正常な要素は復元できること(1件の破損で全付箋が消失しないこと)。
+	/// </summary>
+	[Fact]
+	public void Deserialize_OneEntryMissingRequiredId_SkipsOnlyThatEntry()
+	{
+		var serializer = new StickyNoteSerializer();
+		const string json = """
+			[
+				{"Id":"note-1","Text":"1件目"},
+				{"Text":"Idを欠く壊れた要素"},
+				{"Id":"note-3","Text":"3件目"}
+			]
+			""";
+
+		var result = serializer.Deserialize(json);
+
+		Assert.Equal(["note-1", "note-3"], result.Select(n => n.Id));
+	}
 }

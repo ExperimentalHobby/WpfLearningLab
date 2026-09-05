@@ -54,7 +54,21 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		var json = File.ReadAllText(SaveFilePath);
+		string json;
+		try
+		{
+			json = File.ReadAllText(SaveFilePath);
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			MessageBox.Show(
+				$"保存済みの付箋を読み込めませんでした。\n{ex.Message}",
+				"付箋",
+				MessageBoxButton.OK,
+				MessageBoxImage.Warning);
+			return;
+		}
+
 		foreach (var note in _serializer.Deserialize(json))
 		{
 			OpenNoteWindow(note);
@@ -66,26 +80,51 @@ public partial class MainWindow : Window
 	/// </summary>
 	private void MainWindow_Closing(object? sender, CancelEventArgs e)
 	{
-		var notes = _noteWindows.Select(w => w.GetCurrentData()).ToList();
-		var json = _serializer.Serialize(notes);
-
-		var directory = Path.GetDirectoryName(SaveFilePath);
-		if (directory is not null)
-		{
-			Directory.CreateDirectory(directory);
-		}
-
-		File.WriteAllText(SaveFilePath, json);
+		SaveNotes();
 	}
 
 	/// <summary>
 	/// 付箋データから <see cref="StickyNoteWindow"/> を生成し、表示・追跡する。
+	/// 個別の付箋が閉じられた時点でも、アプリ終了を待たずに保存する。
 	/// </summary>
 	private void OpenNoteWindow(StickyNoteData data)
 	{
 		var window = new StickyNoteWindow(data);
-		window.Closed += (_, _) => _noteWindows.Remove(window);
+		window.Closed += (_, _) =>
+		{
+			_noteWindows.Remove(window);
+			SaveNotes();
+		};
 		_noteWindows.Add(window);
 		window.Show();
+	}
+
+	/// <summary>
+	/// 現在開いている付箋の状態をまとめてファイルに保存する。
+	/// 書き込みに失敗しても例外を投げず、エラーダイアログを表示するにとどめる。
+	/// </summary>
+	private void SaveNotes()
+	{
+		var notes = _noteWindows.Select(w => w.GetCurrentData()).ToList();
+		var json = _serializer.Serialize(notes);
+
+		try
+		{
+			var directory = Path.GetDirectoryName(SaveFilePath);
+			if (directory is not null)
+			{
+				Directory.CreateDirectory(directory);
+			}
+
+			File.WriteAllText(SaveFilePath, json);
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			MessageBox.Show(
+				$"付箋を保存できませんでした。\n{ex.Message}",
+				"付箋",
+				MessageBoxButton.OK,
+				MessageBoxImage.Warning);
+		}
 	}
 }
