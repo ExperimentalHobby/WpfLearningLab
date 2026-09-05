@@ -190,4 +190,8 @@
     <Project Path="47_InvoicePrinter/InvoicePrinter.csproj" />
     <Project Path="47_InvoicePrinter/test/InvoicePrinter.Tests.csproj" />
   </Folder>
+  <Folder Name="/48_ReactiveSearch/">
+    <Project Path="48_ReactiveSearch/ReactiveSearch.csproj" />
+    <Project Path="48_ReactiveSearch/test/ReactiveSearch.Tests.csproj" />
+  </Folder>
 </Solution>
