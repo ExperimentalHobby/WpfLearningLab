@@ -182,4 +182,8 @@
     <Project Path="45_DataWorkbench/DataWorkbench.csproj" />
     <Project Path="45_DataWorkbench/test/DataWorkbench.Tests.csproj" />
   </Folder>
+  <Folder Name="/46_ThemeAndLocaleApp/">
+    <Project Path="46_ThemeAndLocaleApp/ThemeAndLocaleApp.csproj" />
+    <Project Path="46_ThemeAndLocaleApp/test/ThemeAndLocaleApp.Tests.csproj" />
+  </Folder>
 </Solution>
