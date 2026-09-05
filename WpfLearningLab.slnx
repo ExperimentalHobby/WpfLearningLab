@@ -186,4 +186,8 @@
     <Project Path="46_ThemeAndLocaleApp/ThemeAndLocaleApp.csproj" />
     <Project Path="46_ThemeAndLocaleApp/test/ThemeAndLocaleApp.Tests.csproj" />
   </Folder>
+  <Folder Name="/47_InvoicePrinter/">
+    <Project Path="47_InvoicePrinter/InvoicePrinter.csproj" />
+    <Project Path="47_InvoicePrinter/test/InvoicePrinter.Tests.csproj" />
+  </Folder>
 </Solution>
