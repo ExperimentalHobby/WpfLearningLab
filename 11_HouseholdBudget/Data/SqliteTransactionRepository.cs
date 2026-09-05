@@ -1,3 +1,4 @@
+using System.Globalization;
 using HouseholdBudget.Models;
 using Microsoft.Data.Sqlite;
 
@@ -46,10 +47,10 @@ public class SqliteTransactionRepository : ITransactionRepository
 			result.Add(new Transaction
 			{
 				Id = reader.GetInt32(0),
-				Date = DateTime.Parse(reader.GetString(1)),
+				Date = DateTime.Parse(reader.GetString(1), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
 				Type = (TransactionType)reader.GetInt32(2),
 				Category = reader.GetString(3),
-				Amount = decimal.Parse(reader.GetString(4)),
+				Amount = decimal.Parse(reader.GetString(4), CultureInfo.InvariantCulture),
 				Memo = reader.GetString(5),
 			});
 		}
@@ -67,10 +68,10 @@ public class SqliteTransactionRepository : ITransactionRepository
 			VALUES ($date, $type, $category, $amount, $memo);
 			SELECT last_insert_rowid();
 			""";
-		command.Parameters.AddWithValue("$date", transaction.Date.ToString("O"));
+		command.Parameters.AddWithValue("$date", transaction.Date.ToString("O", CultureInfo.InvariantCulture));
 		command.Parameters.AddWithValue("$type", (int)transaction.Type);
 		command.Parameters.AddWithValue("$category", transaction.Category);
-		command.Parameters.AddWithValue("$amount", transaction.Amount.ToString());
+		command.Parameters.AddWithValue("$amount", transaction.Amount.ToString(CultureInfo.InvariantCulture));
 		command.Parameters.AddWithValue("$memo", transaction.Memo);
 
 		transaction.Id = Convert.ToInt32(command.ExecuteScalar());
