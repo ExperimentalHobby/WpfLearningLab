@@ -53,14 +53,14 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編12個の計54個�
 - [x] [40_SystemTrayUtility](40_SystemTrayUtility/README.md) - システムトレイ常駐ユーティリティ
 - [x] [41_GlobalHotkeyLauncher](41_GlobalHotkeyLauncher/README.md) - グローバルホットキーランチャー
 - [x] [42_AccessibleNoteApp](42_AccessibleNoteApp/README.md) - アクセシビリティ対応メモアプリ
-- [ ] [43_SetupWizard](43_SetupWizard/README.md) - 複数ステップ設定ウィザード
-- [ ] [44_FileTreeExplorer](44_FileTreeExplorer/README.md) - フォルダツリー閲覧アプリ
-- [ ] [45_DataWorkbench](45_DataWorkbench/README.md) - CSVデータブラウザ
-- [ ] [46_ThemeAndLocaleApp](46_ThemeAndLocaleApp/README.md) - テーマ・多言語切替アプリ
-- [ ] [47_InvoicePrinter](47_InvoicePrinter/README.md) - 請求書プレビュー・印刷アプリ
-- [ ] [48_ReactiveSearch](48_ReactiveSearch/README.md) - リアクティブ検索アプリ
-- [ ] [49_BehaviorGallery](49_BehaviorGallery/README.md) - 添付ビヘイビアギャラリー
-- [ ] [50_SingleInstanceLauncher](50_SingleInstanceLauncher/README.md) - 単一インスタンス起動+IPCランチャー
+- [x] [43_SetupWizard](43_SetupWizard/README.md) - 複数ステップ設定ウィザード
+- [x] [44_FileTreeExplorer](44_FileTreeExplorer/README.md) - フォルダツリー閲覧アプリ
+- [x] [45_DataWorkbench](45_DataWorkbench/README.md) - CSVデータブラウザ
+- [x] [46_ThemeAndLocaleApp](46_ThemeAndLocaleApp/README.md) - テーマ・多言語切替アプリ
+- [x] [47_InvoicePrinter](47_InvoicePrinter/README.md) - 請求書プレビュー・印刷アプリ
+- [x] [48_ReactiveSearch](48_ReactiveSearch/README.md) - リアクティブ検索アプリ
+- [x] [49_BehaviorGallery](49_BehaviorGallery/README.md) - 添付ビヘイビアギャラリー
+- [x] [50_SingleInstanceLauncher](50_SingleInstanceLauncher/README.md) - 単一インスタンス起動+IPCランチャー
 - [x] [51_MemoryLeakLab](51_MemoryLeakLab/README.md) - メモリリーク検証ラボ
 - [x] [52_ScreenCaptureTool](52_ScreenCaptureTool/README.md) - スクリーンキャプチャツール
 - [x] [53_BreakoutGame](53_BreakoutGame/README.md) - ブロック崩しゲーム
