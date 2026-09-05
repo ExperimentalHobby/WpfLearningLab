@@ -17,7 +17,23 @@ namespace KanbanTaskManager.Behaviors;
 /// </summary>
 public static class DragDropBehavior
 {
-	private static Point _dragStartPosition;
+	/// <summary>
+	/// ドラッグ開始位置を要素ごとに保持する非公開の添付プロパティ。
+	/// 以前は static フィールドで保持していたが、それでは複数のドラッグ元コントロール間で
+	/// 状態が共有され、あるコントロールでの操作が別のコントロールの判定に影響してしまう。
+	/// 添付プロパティはDependencyObjectインスタンスごとに独立して値を保持するため、
+	/// 複数のドラッグ元があっても状態が混線しない。
+	/// </summary>
+	private static readonly DependencyProperty DragStartPositionProperty =
+		DependencyProperty.RegisterAttached(
+			"DragStartPosition",
+			typeof(Point),
+			typeof(DragDropBehavior),
+			new PropertyMetadata(default(Point)));
+
+	private static Point GetDragStartPosition(DependencyObject obj) => (Point)obj.GetValue(DragStartPositionProperty);
+
+	private static void SetDragStartPosition(DependencyObject obj, Point value) => obj.SetValue(DragStartPositionProperty, value);
 
 	/// <summary>
 	/// このコントロールをドラッグ元として扱うかどうか。
@@ -84,7 +100,10 @@ public static class DragDropBehavior
 
 	private static void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 	{
-		_dragStartPosition = e.GetPosition(null);
+		if (sender is DependencyObject element)
+		{
+			SetDragStartPosition(element, e.GetPosition(null));
+		}
 	}
 
 	private static void OnPreviewMouseMove(object sender, MouseEventArgs e)
@@ -95,7 +114,7 @@ public static class DragDropBehavior
 		}
 
 		var currentPosition = e.GetPosition(null);
-		var diff = _dragStartPosition - currentPosition;
+		var diff = GetDragStartPosition(element) - currentPosition;
 		if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
 			Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance)
 		{
