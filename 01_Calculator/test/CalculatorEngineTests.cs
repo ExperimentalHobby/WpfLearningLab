@@ -377,4 +377,77 @@ public class CalculatorEngineTests
 
 		Assert.Equal("3", engine.Display);
 	}
+
+	/// <summary>
+	/// パス条件: ゼロ除算で Display が "Error" になった状態で演算子を押しても、
+	/// 例外が発生せず Display が "Error" のまま維持されること。
+	/// </summary>
+	[Fact]
+	public void InputOperator_WhenDisplayIsError_DoesNotThrowAndKeepsErrorDisplay()
+	{
+		var engine = new CalculatorEngine();
+		engine.InputDigit("1");
+		engine.InputOperator("÷");
+		engine.InputDigit("0");
+		engine.InputEquals();
+
+		engine.InputOperator("+");
+
+		Assert.Equal("Error", engine.Display);
+	}
+
+	/// <summary>
+	/// パス条件: Display が "Error" の状態で M+ を押しても、例外が発生せず
+	/// Display が "Error" のまま維持されること。
+	/// </summary>
+	[Fact]
+	public void MemoryAdd_WhenDisplayIsError_DoesNotThrowAndKeepsErrorDisplay()
+	{
+		var engine = new CalculatorEngine();
+		engine.InputDigit("1");
+		engine.InputOperator("÷");
+		engine.InputDigit("0");
+		engine.InputEquals();
+
+		engine.MemoryAdd();
+
+		Assert.Equal("Error", engine.Display);
+	}
+
+	/// <summary>
+	/// パス条件: Display が "Error" の状態で M- を押しても、例外が発生せず
+	/// Display が "Error" のまま維持されること。
+	/// </summary>
+	[Fact]
+	public void MemorySubtract_WhenDisplayIsError_DoesNotThrowAndKeepsErrorDisplay()
+	{
+		var engine = new CalculatorEngine();
+		engine.InputDigit("1");
+		engine.InputOperator("÷");
+		engine.InputDigit("0");
+		engine.InputEquals();
+
+		engine.MemorySubtract();
+
+		Assert.Equal("Error", engine.Display);
+	}
+
+	/// <summary>
+	/// パス条件: Display が "Error" の状態でも C を押せば通常通りクリアされ、
+	/// 以後は数字入力・演算が再開できること。
+	/// </summary>
+	[Fact]
+	public void Clear_WhenDisplayIsError_ResetsAndAllowsNewCalculation()
+	{
+		var engine = new CalculatorEngine();
+		engine.InputDigit("1");
+		engine.InputOperator("÷");
+		engine.InputDigit("0");
+		engine.InputEquals();
+
+		engine.Clear();
+		engine.InputDigit("5");
+
+		Assert.Equal("5", engine.Display);
+	}
 }

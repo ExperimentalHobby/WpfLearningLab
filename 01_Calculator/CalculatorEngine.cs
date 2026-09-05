@@ -65,6 +65,13 @@ public class CalculatorEngine
 	/// <param name="op">入力された演算子("+", "-", "×", "÷")。</param>
 	public void InputOperator(string op)
 	{
+		// Error表示中はCを押すまで操作を受け付けない(decimal.Parseに"Error"を渡すと
+		// FormatExceptionでクラッシュするため)。
+		if (Display == "Error")
+		{
+			return;
+		}
+
 		// 演算子を連続で押した(例: + の直後に -)場合は shouldResetDisplayOnNextDigit が
 		// 立ったままになっているため Compute() を呼ばず、pendingOperator の上書きだけ行う。
 		if (_pendingOperator != null && !_shouldResetDisplayOnNextDigit)
@@ -102,6 +109,13 @@ public class CalculatorEngine
 	/// </summary>
 	public void MemoryAdd()
 	{
+		// Error表示中はCを押すまで操作を受け付けない(decimal.Parseに"Error"を渡すと
+		// FormatExceptionでクラッシュするため)。
+		if (Display == "Error")
+		{
+			return;
+		}
+
 		_memory += decimal.Parse(Display, CultureInfo.InvariantCulture);
 		_shouldResetDisplayOnNextDigit = true;
 	}
@@ -111,6 +125,13 @@ public class CalculatorEngine
 	/// </summary>
 	public void MemorySubtract()
 	{
+		// Error表示中はCを押すまで操作を受け付けない(decimal.Parseに"Error"を渡すと
+		// FormatExceptionでクラッシュするため)。
+		if (Display == "Error")
+		{
+			return;
+		}
+
 		_memory -= decimal.Parse(Display, CultureInfo.InvariantCulture);
 		_shouldResetDisplayOnNextDigit = true;
 	}
