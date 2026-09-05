@@ -57,8 +57,13 @@ public class TcpChatConnection : IChatConnection
 		}
 
 		_disposed = true;
-		_reader.Dispose();
+		// _readerと_writerは同一のNetworkStreamをラップしている。_readerを先にDispose
+		// するとストリームが閉じられ、後から_writer.Dispose()がFlushしようとした際に
+		// 既に閉じたストリームへの書き込みになり得る(現状はAutoFlush=trueのため
+		// 書き込みバッファが常に空でたまたま顕在化していないが、潜在的に脆い)。
+		// Flushが必要な_writerを先に安全に処理し、その後で_readerを閉じる。
 		_writer.Dispose();
+		_reader.Dispose();
 		_client.Dispose();
 	}
 
@@ -82,6 +87,14 @@ public class TcpChatConnection : IChatConnection
 		}
 		catch (ObjectDisposedException)
 		{
+		}
+		catch (Exception)
+		{
+			// 想定外の例外(例: MessageReceivedの購読側が投げた例外)。
+			// このメソッドはコンストラクタから _ = ReceiveLoopAsync() として
+			// fire-and-forgetで呼ばれているため、ここで捕捉し損ねると
+			// 未観測のタスク例外になってしまう。finally節でDisconnectedを確実に
+			// 発火させるため、どのような例外であっても最終的にここで受け止める。
 		}
 		finally
 		{
