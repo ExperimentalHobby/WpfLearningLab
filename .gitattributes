@@ -1,2 +1,7 @@
 # デフォルト: テキストファイルは CRLF に統一
 * text=auto eol=crlf
+
+# WpfLearningLab.slnx はアプリ追加のたびに末尾へ Folder ブロックを追記する構造のため、
+# 複数の feature ブランチが同じ位置に追記するとマージコンフリクトが頻発する。
+# union マージドライバで「両方の追記を残す」形の自動マージを優先する。
+WpfLearningLab.slnx merge=union
