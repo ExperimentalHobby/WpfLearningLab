@@ -9,12 +9,18 @@ public class FakeChatConnection : IChatConnection
 {
 	public List<string> SentMessages { get; } = [];
 	public bool IsClosed { get; private set; }
+	public Exception? SendExceptionToThrow { get; set; }
 
 	public event Action<string>? MessageReceived;
 	public event Action? Disconnected;
 
 	public Task SendAsync(string message)
 	{
+		if (SendExceptionToThrow is not null)
+		{
+			throw SendExceptionToThrow;
+		}
+
 		SentMessages.Add(message);
 		return Task.CompletedTask;
 	}

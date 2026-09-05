@@ -68,4 +68,18 @@ public class TcpChatConnectionTests : IAsyncLifetime
 
 		Assert.True(tcs.Task.IsCompletedSuccessfully);
 	}
+
+	/// <summary>
+	/// パス条件: Disposeを呼んでも例外を投げないこと。
+	/// readerとwriterは同一のNetworkStreamをラップしているため、reader→writerの順に
+	/// Disposeすると、writerのDispose時のFlushが(readerのDisposeで)既に閉じられた
+	/// ストリームに対して行われ例外になり得る。
+	/// </summary>
+	[Fact]
+	public void Dispose_呼んでも例外を投げない()
+	{
+		var exception = Record.Exception(() => _clientSideConnection.Dispose());
+
+		Assert.Null(exception);
+	}
 }

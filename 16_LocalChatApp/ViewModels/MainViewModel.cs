@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Net.Sockets;
 using LocalChatApp.Models;
 using LocalChatApp.Services;
 
@@ -19,6 +21,7 @@ public class MainViewModel : ObservableObject
 	private string _hostAddress = string.Empty;
 	private string _messageInput = string.Empty;
 	private bool _isConnected;
+	private string _errorMessage = string.Empty;
 
 	/// <summary>
 	/// ViewModelを初期化する。
@@ -90,6 +93,13 @@ public class MainViewModel : ObservableObject
 	/// <summary>チャット欄に表示するメッセージ一覧。</summary>
 	public ObservableCollection<ChatMessage> Messages { get; } = [];
 
+	/// <summary>エラーメッセージ。エラーが無い場合は空文字。</summary>
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		private set => SetProperty(ref _errorMessage, value);
+	}
+
 	/// <summary>
 	/// サーバーとしてクライアントの接続を待ち受けるコマンド。
 	/// </summary>
@@ -118,16 +128,36 @@ public class MainViewModel : ObservableObject
 
 	private async Task StartServerAsync()
 	{
-		var port = int.Parse(Port);
-		var connection = await _server.WaitForConnectionAsync(port);
-		AttachConnection(connection);
+		ErrorMessage = string.Empty;
+		try
+		{
+			var port = int.Parse(Port);
+			var connection = await _server.WaitForConnectionAsync(port);
+			AttachConnection(connection);
+		}
+		catch (SocketException ex)
+		{
+			// ポート使用中等の接続エラーは、ネットワークアプリでは常態的に起こり得る。
+			// StartServerCommand(AsyncRelayCommand)のExecuteはasync void実装でcatchを
+			// 持たないため、ここで捕捉し損ねると未処理例外でアプリ全体がクラッシュする。
+			ErrorMessage = $"待受を開始できませんでした。\n{ex.Message}";
+		}
 	}
 
 	private async Task ConnectAsync()
 	{
-		var port = int.Parse(Port);
-		var connection = await _client.ConnectAsync(HostAddress, port);
-		AttachConnection(connection);
+		ErrorMessage = string.Empty;
+		try
+		{
+			var port = int.Parse(Port);
+			var connection = await _client.ConnectAsync(HostAddress, port);
+			AttachConnection(connection);
+		}
+		catch (SocketException ex)
+		{
+			// 接続拒否・名前解決失敗等の接続エラーへの対応。理由はStartServerAsyncと同様。
+			ErrorMessage = $"接続できませんでした。\n{ex.Message}";
+		}
 	}
 
 	private void AttachConnection(IChatConnection connection)
@@ -150,9 +180,25 @@ public class MainViewModel : ObservableObject
 	{
 		_dispatcher.Invoke(() =>
 		{
+			// 相手都合の切断でも、手動のDisconnect()と同様にイベント購読を解除し
+			// _connectionをnullにする。これを怠ると、再接続時に古い(切断済みの)
+			// 接続への購読が残り続けてしまう。
+			DetachConnection();
 			IsConnected = false;
 			Messages.Add(new ChatMessage { Sender = MessageSender.System, Text = "接続が切断されました。", Timestamp = DateTime.Now });
 		});
+	}
+
+	private void DetachConnection()
+	{
+		if (_connection is null)
+		{
+			return;
+		}
+
+		_connection.MessageReceived -= OnMessageReceived;
+		_connection.Disconnected -= OnDisconnected;
+		_connection = null;
 	}
 
 	private void Disconnect()
@@ -162,10 +208,8 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		_connection.MessageReceived -= OnMessageReceived;
-		_connection.Disconnected -= OnDisconnected;
 		_connection.Close();
-		_connection = null;
+		DetachConnection();
 		IsConnected = false;
 		Messages.Add(new ChatMessage { Sender = MessageSender.System, Text = "接続を切断しました。", Timestamp = DateTime.Now });
 	}
@@ -180,7 +224,19 @@ public class MainViewModel : ObservableObject
 		}
 
 		var text = MessageInput;
-		await _connection.SendAsync(text);
+		try
+		{
+			await _connection.SendAsync(text);
+		}
+		catch (Exception ex) when (ex is IOException or ObjectDisposedException)
+		{
+			// 切断後の送信等で発生し得る。SendCommand(AsyncRelayCommand)のExecuteは
+			// async void実装でcatchを持たないため、ここで捕捉し損ねると未処理例外で
+			// アプリ全体がクラッシュする。
+			ErrorMessage = "送信に失敗しました。接続が切断されている可能性があります。";
+			return;
+		}
+
 		Messages.Add(new ChatMessage { Sender = MessageSender.Local, Text = text, Timestamp = DateTime.Now });
 		MessageInput = string.Empty;
 	}

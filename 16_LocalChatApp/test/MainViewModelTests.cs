@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using LocalChatApp.ViewModels;
 
 namespace LocalChatApp.Tests;
@@ -30,6 +31,26 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: StartServerCommand実行時にポート使用中(SocketException)が発生しても、
+	/// 例外を投げずErrorMessageが設定されること
+	/// (StartServerCommandはAsyncRelayCommand経由のasync voidのため、ここで捕捉し損ねると
+	/// 未処理例外でアプリ全体がクラッシュする)。
+	/// </summary>
+	[Fact]
+	public async Task StartServerCommand_ポート使用中の場合ErrorMessageが設定される()
+	{
+		var server = new FakeChatServer { ExceptionToThrow = new SocketException((int)SocketError.AddressAlreadyInUse) };
+		var viewModel = CreateViewModel(server);
+		viewModel.Port = "5000";
+
+		viewModel.StartServerCommand.Execute(null);
+		await Task.Delay(50);
+
+		Assert.False(viewModel.IsConnected);
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: ConnectCommand実行でサーバーに接続し、IsConnectedがtrueになること
 	/// </summary>
 	[Fact]
@@ -45,6 +66,25 @@ public class MainViewModelTests
 
 		Assert.True(viewModel.IsConnected);
 		Assert.Equal(("127.0.0.1", 5000), client.RequestedTarget);
+	}
+
+	/// <summary>
+	/// パス条件: ConnectCommand実行時に接続失敗(SocketException)が発生しても、
+	/// 例外を投げずErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public async Task ConnectCommand_接続失敗の場合ErrorMessageが設定される()
+	{
+		var client = new FakeChatClient { ExceptionToThrow = new SocketException((int)SocketError.ConnectionRefused) };
+		var viewModel = CreateViewModel(client: client);
+		viewModel.HostAddress = "127.0.0.1";
+		viewModel.Port = "5000";
+
+		viewModel.ConnectCommand.Execute(null);
+		await Task.Delay(50);
+
+		Assert.False(viewModel.IsConnected);
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
 	}
 
 	/// <summary>
@@ -67,6 +107,29 @@ public class MainViewModelTests
 
 		Assert.Contains("こんにちは", connection.SentMessages);
 		Assert.Contains(viewModel.Messages, m => m.Text == "こんにちは");
+	}
+
+	/// <summary>
+	/// パス条件: 切断後にSendCommandを実行し送信例外(IOException)が発生しても、
+	/// 例外を投げずErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public async Task SendCommand_送信例外発生時ErrorMessageが設定される()
+	{
+		var connection = new FakeChatConnection { SendExceptionToThrow = new IOException("切断済み") };
+		var client = new FakeChatClient { ConnectionToReturn = connection };
+		var viewModel = CreateViewModel(client: client);
+		viewModel.HostAddress = "127.0.0.1";
+		viewModel.Port = "5000";
+		viewModel.ConnectCommand.Execute(null);
+		await Task.Delay(50);
+		viewModel.MessageInput = "こんにちは";
+
+		viewModel.SendCommand.Execute(null);
+		await Task.Delay(50);
+
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+		Assert.DoesNotContain(viewModel.Messages, m => m.Text == "こんにちは");
 	}
 
 	/// <summary>
@@ -106,6 +169,29 @@ public class MainViewModelTests
 
 		Assert.False(viewModel.IsConnected);
 		Assert.Contains(viewModel.Messages, m => m.Sender == Models.MessageSender.System);
+	}
+
+	/// <summary>
+	/// パス条件: Disconnectedイベント発火(相手都合の切断)後は、古い接続のMessageReceivedを
+	/// 購読解除していること(再接続時に古い接続からの通知が混入しないようにするため)
+	/// </summary>
+	[Fact]
+	public async Task Disconnected_発火後は古い接続のMessageReceived購読が解除される()
+	{
+		var connection = new FakeChatConnection();
+		var client = new FakeChatClient { ConnectionToReturn = connection };
+		var viewModel = CreateViewModel(client: client);
+		viewModel.HostAddress = "127.0.0.1";
+		viewModel.Port = "5000";
+		viewModel.ConnectCommand.Execute(null);
+		await Task.Delay(50);
+		connection.RaiseDisconnected();
+
+		// 切断済みのはずの古い接続から(本来あり得ないが)メッセージが飛んできても、
+		// 購読が解除されていればMessagesに追加されないはず。
+		connection.RaiseMessageReceived("古い接続からのメッセージ");
+
+		Assert.DoesNotContain(viewModel.Messages, m => m.Text == "古い接続からのメッセージ");
 	}
 
 	/// <summary>

@@ -11,9 +11,11 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -58,8 +60,14 @@
                 Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}"
                 AutomationProperties.AutomationId="DisconnectButton"/>
 
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="1" Margin="0,4,0,0" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
         <!-- メッセージ一覧 -->
-        <ListBox Grid.Row="1" Margin="0,8,0,8"
+        <ListBox Grid.Row="2" Margin="0,8,0,8"
                   ItemsSource="{Binding Messages}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   AutomationProperties.AutomationId="MessagesListBox">
@@ -87,7 +95,7 @@
         </ListBox>
 
         <!-- 送信欄 -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
