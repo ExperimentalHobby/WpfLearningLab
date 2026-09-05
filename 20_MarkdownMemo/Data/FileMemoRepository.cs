@@ -46,5 +46,28 @@ public class FileMemoRepository : IMemoRepository
 		}
 	}
 
-	private string GetPath(string title) => Path.Combine(_folderPath, $"{title}{Extension}");
+	/// <summary>
+	/// タイトルからファイルパスを組み立てる。タイトルはファイル名として使われるため、
+	/// パス区切り文字(<c>/</c> <c>\</c>)や<c>:</c>等のファイル名として不正な文字を検証する。
+	/// これによりタイトルは単一のパスセグメントに限定され、<c>../</c>による保存先フォルダ外への
+	/// 書き込み(パストラバーサル)自体が成立しなくなる。
+	/// </summary>
+	private string GetPath(string title)
+	{
+		if (!IsValidTitle(title))
+		{
+			throw new ArgumentException($"タイトルに使用できない文字が含まれています: {title}", nameof(title));
+		}
+
+		return Path.Combine(_folderPath, $"{title}{Extension}");
+	}
+
+	/// <summary>
+	/// タイトルがファイル名として安全に使えるかどうかを判定する。
+	/// </summary>
+	internal static bool IsValidTitle(string title) =>
+		!string.IsNullOrWhiteSpace(title) &&
+		title != "." &&
+		title != ".." &&
+		title.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
 }

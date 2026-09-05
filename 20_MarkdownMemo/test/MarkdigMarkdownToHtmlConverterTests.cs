@@ -63,4 +63,19 @@ public class MarkdigMarkdownToHtmlConverterTests
 		Assert.Contains("<code>", html);
 		Assert.Contains("var x = 1;", html);
 	}
+
+	/// <summary>
+	/// パス条件: メモ本文に生の&lt;script&gt;タグを書いても、そのままHTMLとして出力されず
+	/// エスケープされること(プレビューはNavigateToStringで表示されるため、生HTML透過は
+	/// メモを開くだけでスクリプトが実行されるXSSにつながる)
+	/// </summary>
+	[Fact]
+	public void Convert_scriptタグはエスケープされ生HTMLとして出力されない()
+	{
+		var converter = new MarkdigMarkdownToHtmlConverter();
+
+		var html = converter.Convert("<script>alert(1)</script>");
+
+		Assert.DoesNotContain("<script>", html);
+	}
 }

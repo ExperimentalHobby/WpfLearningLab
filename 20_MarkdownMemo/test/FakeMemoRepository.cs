@@ -13,13 +13,24 @@ public class FakeMemoRepository : IMemoRepository
 	private readonly Dictionary<string, DateTime> _lastModified = [];
 	private int _sequence;
 
+	/// <summary>次回のLoad呼び出しでスローする例外(外部からファイルが削除された状況等を模擬する)。</summary>
+	public Exception? LoadExceptionToThrow { get; set; }
+
 	public IReadOnlyList<MemoSummary> GetAll() =>
 		_memos.Keys
 			.Select(title => new MemoSummary(title, _lastModified[title]))
 			.OrderByDescending(memo => memo.LastModified)
 			.ToList();
 
-	public string Load(string title) => _memos[title];
+	public string Load(string title)
+	{
+		if (LoadExceptionToThrow is not null)
+		{
+			throw LoadExceptionToThrow;
+		}
+
+		return _memos[title];
+	}
 
 	public void Save(string title, string content)
 	{

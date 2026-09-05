@@ -9,6 +9,10 @@ public class MarkdigMarkdownToHtmlConverter : IMarkdownToHtmlConverter
 {
 	private static readonly MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
 		.UseAdvancedExtensions()
+		// プレビューはNavigateToStringでHTMLとしてそのまま描画されるため、メモ本文に
+		// <script>タグ等の生HTMLを書けてしまうとメモを開くだけでスクリプトが実行される
+		// XSSにつながる。DisableHtml()で生HTMLをエスケープしプレーンテキスト扱いにする。
+		.DisableHtml()
 		.Build();
 
 	/// <inheritdoc/>
