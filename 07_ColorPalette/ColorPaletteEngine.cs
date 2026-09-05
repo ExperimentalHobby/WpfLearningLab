@@ -30,6 +30,11 @@ public class ColorPaletteEngine
 	{
 		r = g = b = 0;
 
+		if (hex is null)
+		{
+			return false;
+		}
+
 		var text = hex.StartsWith('#') ? hex[1..] : hex;
 
 		if (text.Length != 6)
