@@ -128,4 +128,16 @@ public class DictionaryEngineTests
 
 		Assert.NotEmpty(result);
 	}
+
+	/// <summary>
+	/// パス条件: nullクエリでSearchするとArgumentNullExceptionが送出されること
+	/// (NullReferenceExceptionではなく、引数の問題であることが分かる例外にする)。
+	/// </summary>
+	[Fact]
+	public void Search_NullQuery_ThrowsArgumentNullException()
+	{
+		var engine = CreateEngine();
+
+		Assert.Throws<ArgumentNullException>(() => engine.Search(null!));
+	}
 }

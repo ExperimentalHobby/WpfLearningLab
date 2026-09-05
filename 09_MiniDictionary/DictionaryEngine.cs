@@ -44,6 +44,8 @@ public class DictionaryEngine
 	/// <param name="query">検索文字列。</param>
 	public IReadOnlyList<string> Search(string query)
 	{
+		ArgumentNullException.ThrowIfNull(query);
+
 		return _entries.Keys
 			.Where(word => query.Length == 0 || word.Contains(query, StringComparison.OrdinalIgnoreCase))
 			.OrderBy(word => word, StringComparer.Ordinal)
