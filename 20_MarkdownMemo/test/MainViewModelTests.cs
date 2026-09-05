@@ -41,6 +41,41 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: タイトルにファイル名として不正な文字(パス区切り文字等)が含まれる場合、
+	/// SaveCommandのCanExecuteがfalseになること(パストラバーサル対策のUI側の防御)
+	/// </summary>
+	[Theory]
+	[InlineData("../evil")]
+	[InlineData("a/b")]
+	[InlineData("a\\b")]
+	[InlineData("a:b")]
+	public void SaveCommand_不正な文字を含むタイトルはCanExecuteがfalseになる(string title)
+	{
+		var viewModel = CreateViewModel();
+		viewModel.InputTitle = title;
+
+		Assert.False(viewModel.SaveCommand.CanExecute(null));
+	}
+
+	/// <summary>
+	/// パス条件: 一覧からメモを選択した際にLoadが例外(外部からファイルが削除された等)を
+	/// 送出しても、クラッシュせずErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public void SelectedMemo_Load失敗時にクラッシュせずErrorMessageが設定される()
+	{
+		var repository = new FakeMemoRepository();
+		repository.Save("買い物メモ", "- 牛乳");
+		var viewModel = CreateViewModel(repository);
+		repository.LoadExceptionToThrow = new IOException("ファイルが見つかりません。");
+
+		var exception = Record.Exception(() => viewModel.SelectedMemo = viewModel.Memos[0]);
+
+		Assert.Null(exception);
+		Assert.NotEqual(string.Empty, viewModel.ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: コンストラクタ実行時にリポジトリの一覧が読み込まれること
 	/// </summary>
 	[Fact]

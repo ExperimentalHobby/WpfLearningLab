@@ -83,4 +83,44 @@ public class FileMemoRepositoryTests : IDisposable
 		Assert.Single(all);
 		Assert.Equal("- 卵", content);
 	}
+
+	/// <summary>
+	/// パス条件: "../"を含むタイトルでSaveすると、保存先フォルダの外に書き込まれず
+	/// ArgumentExceptionが送出されること(パストラバーサル対策)
+	/// </summary>
+	[Fact]
+	public void Save_パストラバーサルを試みるタイトルはArgumentExceptionを送出する()
+	{
+		var repository = new FileMemoRepository(_folderPath);
+		var outsideDir = Path.Combine(Path.GetTempPath(), $"MarkdownMemoOutside_{Guid.NewGuid():N}");
+		Directory.CreateDirectory(outsideDir);
+		try
+		{
+			var maliciousTitle = $"../{Path.GetFileName(outsideDir)}/evil";
+
+			Assert.Throws<ArgumentException>(() => repository.Save(maliciousTitle, "悪意のある内容"));
+
+			Assert.Empty(Directory.GetFiles(outsideDir));
+		}
+		finally
+		{
+			Directory.Delete(outsideDir, recursive: true);
+		}
+	}
+
+	/// <summary>
+	/// パス条件: ファイル名として不正な文字(: など)を含むタイトルでSaveすると、
+	/// 未処理のIOException/ArgumentExceptionではなく、明示的なArgumentExceptionが送出されること
+	/// </summary>
+	[Theory]
+	[InlineData("a:b")]
+	[InlineData("a/b")]
+	[InlineData("a\\b")]
+	[InlineData("..")]
+	public void Save_不正な文字を含むタイトルはArgumentExceptionを送出する(string invalidTitle)
+	{
+		var repository = new FileMemoRepository(_folderPath);
+
+		Assert.Throws<ArgumentException>(() => repository.Save(invalidTitle, "内容"));
+	}
 }

@@ -34,8 +34,23 @@ public partial class MainWindow : Window
 
 	private async void OnLoaded(object sender, RoutedEventArgs e)
 	{
-		await PreviewWebView.EnsureCoreWebView2Async();
-		UpdatePreview();
+		try
+		{
+			await PreviewWebView.EnsureCoreWebView2Async();
+			UpdatePreview();
+		}
+		catch (Exception ex)
+		{
+			// WebView2ランタイム未導入の環境ではEnsureCoreWebView2Asyncが例外を送出する。
+			// OnLoadedはasync voidでcatchを持たないため、ここで捕捉し損ねるとプレビュー
+			// 機能どころかアプリ全体がクラッシュしてしまう。プレビューは諦めても
+			// 編集・保存自体はできるよう、エラーを表示するだけに留める。
+			MessageBox.Show(
+				$"プレビュー機能を初期化できませんでした。\nMicrosoft Edge WebView2 Runtimeが必要です。\n{ex.Message}",
+				"Markdownメモ",
+				MessageBoxButton.OK,
+				MessageBoxImage.Warning);
+		}
 	}
 
 	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

@@ -5,10 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MarkdownMemo"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:converters="clr-namespace:MarkdownMemo.Converters"
         mc:Ignorable="d"
         Title="Markdownメモ" Height="640" Width="1000">
+    <Window.Resources>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -35,8 +40,14 @@
                     AutomationProperties.AutomationId="DeleteButton"/>
         </Grid>
 
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="1" Margin="0,0,0,8" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
         <!-- 一覧 / 編集 / プレビュー -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="180"/>
                 <ColumnDefinition Width="8"/>
