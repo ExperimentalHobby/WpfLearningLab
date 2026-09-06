@@ -15,13 +15,27 @@ public class DfsMazeSolver : IMazeSolver
 	{
 		var visitedOrder = new List<(int X, int Y)>();
 		var cameFrom = new Dictionary<(int X, int Y), (int X, int Y)>();
-		var visited = new HashSet<(int X, int Y)> { start };
-		var stack = new Stack<(int X, int Y)>();
-		stack.Push(start);
+		var visited = new HashSet<(int X, int Y)>();
+		// (訪問候補セル, そのセルを見つけた親セル)のペアを積む。訪問済みかどうかは
+		// popして実際に処理する時点で判定する(DFSの一般的な実装作法。pushした時点で
+		// visited登録すると、本来スタックが持つべき「深さ優先の巻き戻り」が発生する前に
+		// 兄弟ノードを訪問済み扱いにしてしまい、探索順序の意図が曖昧になる)。
+		var stack = new Stack<((int X, int Y) Cell, (int X, int Y) Parent)>();
+		stack.Push((start, start));
 
 		while (stack.Count > 0)
 		{
-			var current = stack.Pop();
+			var (current, parent) = stack.Pop();
+			if (!visited.Add(current))
+			{
+				continue;
+			}
+
+			if (current != start)
+			{
+				cameFrom[current] = parent;
+			}
+
 			visitedOrder.Add(current);
 
 			if (current == goal)
@@ -31,10 +45,9 @@ public class DfsMazeSolver : IMazeSolver
 
 			foreach (var neighbor in maze.GetConnectedNeighbors(current))
 			{
-				if (visited.Add(neighbor))
+				if (!visited.Contains(neighbor))
 				{
-					cameFrom[neighbor] = current;
-					stack.Push(neighbor);
+					stack.Push((neighbor, current));
 				}
 			}
 		}

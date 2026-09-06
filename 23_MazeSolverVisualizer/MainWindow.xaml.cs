@@ -36,7 +36,7 @@ public partial class MainWindow : Window
 		_timer.Tick += (_, _) =>
 		{
 			_viewModel.AdvanceAnimationStep();
-			UpdateCellColors();
+			PaintNextAnimationStep();
 			if (_viewModel.IsAnimationComplete)
 			{
 				_timer.Stop();
@@ -135,6 +135,38 @@ public partial class MainWindow : Window
 				{
 					_cellRects[x, y].Fill = Brushes.Orange;
 				}
+			}
+		}
+
+		_cellRects[MainViewModel.Start.X, MainViewModel.Start.Y].Fill = Brushes.LimeGreen;
+		_cellRects[MainViewModel.Goal.X, MainViewModel.Goal.Y].Fill = Brushes.Red;
+	}
+
+	/// <summary>
+	/// アニメーションTick用の軽量な再描画。1tickにつき訪問セルが1つ増えるだけなので、
+	/// <see cref="UpdateCellColors"/>のように毎回全225セルを塗り直さず、新たに訪問した
+	/// セルだけを塗る(完了時のみ経路の色塗りも行う)。
+	/// </summary>
+	private void PaintNextAnimationStep()
+	{
+		var result = _viewModel.LastResult;
+		if (result is null)
+		{
+			return;
+		}
+
+		var index = _viewModel.AnimationStepIndex;
+		if (index > 0 && index <= result.VisitedOrder.Count)
+		{
+			var (x, y) = result.VisitedOrder[index - 1];
+			_cellRects[x, y].Fill = Brushes.LightBlue;
+		}
+
+		if (_viewModel.IsAnimationComplete && result.Path is not null)
+		{
+			foreach (var (x, y) in result.Path)
+			{
+				_cellRects[x, y].Fill = Brushes.Orange;
 			}
 		}
 
