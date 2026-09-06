@@ -66,7 +66,18 @@ public partial class MainWindow : Window
         // 1つのFlowDocumentは同時に複数のビューア/ページネータへバインドできないため。
         var document = BuildDocument();
         var paginatorSource = (IDocumentPaginatorSource)document;
-        printDialog.PrintDocument(paginatorSource.DocumentPaginator, "請求書");
+
+        try
+        {
+            printDialog.PrintDocument(paginatorSource.DocumentPaginator, "請求書");
+        }
+        catch (Exception ex)
+        {
+            // プリンタドライバ由来の失敗モードは多様(Win32Exception・COMException等)で
+            // ドライバ依存のため網羅的に列挙できない。このアプリの他のtry/catchとは意図的に異なり、
+            // ここは印刷操作の最終防御境界として広く捕捉する。
+            MessageBox.Show($"印刷に失敗しました: {ex.Message}", "請求書プレビュー・印刷", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void ExportXpsButton_Click(object sender, RoutedEventArgs e)
@@ -80,14 +91,21 @@ public partial class MainWindow : Window
         var document = BuildDocument();
         var paginatorSource = (IDocumentPaginatorSource)document;
 
-        if (File.Exists(dialog.FileName))
+        try
         {
-            File.Delete(dialog.FileName);
-        }
+            if (File.Exists(dialog.FileName))
+            {
+                File.Delete(dialog.FileName);
+            }
 
-        using var xpsDocument = new XpsDocument(dialog.FileName, FileAccess.ReadWrite);
-        var writer = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-        writer.Write(paginatorSource.DocumentPaginator);
-        xpsDocument.Close();
+            using var xpsDocument = new XpsDocument(dialog.FileName, FileAccess.ReadWrite);
+            var writer = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+            writer.Write(paginatorSource.DocumentPaginator);
+            xpsDocument.Close();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            MessageBox.Show($"XPS出力に失敗しました: {ex.Message}", "請求書プレビュー・印刷", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }
