@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Input;
 using VirtualizedLogViewer.Models;
 using VirtualizedLogViewer.Services;
@@ -32,8 +33,18 @@ public class MainViewModel : ObservableObject
 		JumpToLineCommand = new RelayCommand(JumpToLine, () => DisplayedLines.Count > 0);
 	}
 
-	/// <summary>フィルタ適用後に表示中のログ行(この一覧をUI仮想化で表示する)。</summary>
-	public ObservableCollection<LogLine> DisplayedLines { get; } = [];
+	private ObservableCollection<LogLine> _displayedLines = [];
+
+	/// <summary>
+	/// フィルタ適用後に表示中のログ行(この一覧をUI仮想化で表示する)。
+	/// 大量件数を1件ずつAddすると<see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/>が
+	/// 同数発火しUIが固まるため、更新時はコレクションごと新しいインスタンスに差し替える。
+	/// </summary>
+	public ObservableCollection<LogLine> DisplayedLines
+	{
+		get => _displayedLines;
+		private set => SetProperty(ref _displayedLines, value);
+	}
 
 	/// <summary>選択可能なログレベル(先頭は絞り込み無し)。</summary>
 	public IReadOnlyList<string> LevelOptions { get; } = [LogLineFilter.AllLevels, .. Levels];
@@ -96,15 +107,22 @@ public class MainViewModel : ObservableObject
 		try
 		{
 			var stopwatch = Stopwatch.StartNew();
+			// ダミーログを一時ファイルへ書き出してから、LogFileLoaderでストリーミング読み込みする。
+			// (このアプリの「大量ログの仮想化表示」という学習目的上、ファイル全体を一度に
+			// メモリへ読み込まずに済む設計を実際に使う意味があるため、インメモリ生成ではなく
+			// あえてファイル経由にしている)
 			var lines = await Task.Run(() =>
 			{
-				var random = new Random();
-				var generated = new List<LogLine>(count);
-				for (var i = 1; i <= count; i++)
+				var tempFilePath = Path.GetTempFileName();
+				try
 				{
-					generated.Add(new LogLine(i, Levels[random.Next(Levels.Length)], $"Sample log message number {i}"));
+					new DummyLogFileGenerator(new Random()).GenerateToFile(tempFilePath, count);
+					return LogFileLoader.Load(tempFilePath);
 				}
-				return generated;
+				finally
+				{
+					File.Delete(tempFilePath);
+				}
 			});
 			stopwatch.Stop();
 
@@ -142,11 +160,9 @@ public class MainViewModel : ObservableObject
 		var allLines = _allLines;
 		var filtered = await Task.Run(() => LogLineFilter.Filter(allLines, keyword, level));
 
-		DisplayedLines.Clear();
-		foreach (var line in filtered)
-		{
-			DisplayedLines.Add(line);
-		}
+		// 1件ずつAddすると大量件数(例: 10万件)でCollectionChangedが同数発火しUIが固まるため、
+		// コレクションごと差し替える。ItemsSourceバインディングは新しい参照へ自動的に切り替わる。
+		DisplayedLines = new ObservableCollection<LogLine>(filtered);
 		((RelayCommand)JumpToLineCommand).RaiseCanExecuteChanged();
 	}
 
