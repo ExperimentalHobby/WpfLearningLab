@@ -19,7 +19,8 @@ public class EfContactRepository : IContactRepository
 	}
 
 	/// <inheritdoc/>
-	public IReadOnlyList<Contact> GetAll() => _context.Contacts.OrderBy(contact => contact.Name).ToList();
+	public IReadOnlyList<Contact> GetAll() =>
+		_context.Contacts.AsNoTracking().OrderBy(contact => contact.Name).ToList();
 
 	/// <inheritdoc/>
 	public void Add(Contact contact)

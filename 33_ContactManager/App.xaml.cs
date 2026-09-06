@@ -23,7 +23,13 @@ public partial class App : Application
 	{
 		base.OnStartup(e);
 
-		var dbPath = Path.Combine(AppContext.BaseDirectory, "contacts.db");
+		// AppContext.BaseDirectoryは配置先(Program Files配下等)によっては書き込み権限が
+		// ないため、他アプリと同様にApplicationData配下に統一する。
+		var dataDirectory = Path.Combine(
+			Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+			"WpfLearningLab.ContactManager");
+		Directory.CreateDirectory(dataDirectory);
+		var dbPath = Path.Combine(dataDirectory, "contacts.db");
 
 		_host = Host.CreateDefaultBuilder()
 			.ConfigureServices(services =>
@@ -40,7 +46,26 @@ public partial class App : Application
 		// アプリのライフタイム全体を1つのDIスコープとして扱う(スコープはOnExitまで保持し破棄する)。
 		_scope = _host.Services.CreateScope();
 		var context = _scope.ServiceProvider.GetRequiredService<ContactManagerDbContext>();
-		context.Database.Migrate();
+
+		try
+		{
+			context.Database.Migrate();
+		}
+		catch (Exception ex)
+		{
+			// DBファイルの破損・権限不足等でマイグレーションに失敗すると、そのまま起動しても
+			// 何もできないため、エラーを表示してから終了する。
+			MessageBox.Show(
+				$"データベースの初期化に失敗しました。\n{ex.Message}",
+				"連絡先管理",
+				MessageBoxButton.OK,
+				MessageBoxImage.Error);
+			_scope.Dispose();
+			_host.StopAsync().GetAwaiter().GetResult();
+			_host.Dispose();
+			Shutdown();
+			return;
+		}
 
 		var mainWindow = _scope.ServiceProvider.GetRequiredService<MainWindow>();
 		mainWindow.Show();

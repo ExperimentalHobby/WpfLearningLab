@@ -84,4 +84,60 @@ public class MainViewModelTests
 		Assert.Empty(viewModel.Contacts);
 		Assert.Null(viewModel.SelectedContact);
 	}
+
+	/// <summary>
+	/// パス条件: SelectedContactを変更すると、その内容がEditName等の編集用プロパティにコピーされること。
+	/// </summary>
+	[Fact]
+	public void SelectedContact_変更するとEditフィールドに値がコピーされる()
+	{
+		var repository = new FakeContactRepository();
+		repository.Add(new Contact { Name = "山田太郎", PhoneNumber = "090-1111-2222", Email = "yamada@example.com" });
+		var viewModel = new MainViewModel(repository);
+
+		viewModel.SelectedContact = viewModel.Contacts[0];
+
+		Assert.Equal("山田太郎", viewModel.EditName);
+		Assert.Equal("090-1111-2222", viewModel.EditPhoneNumber);
+		Assert.Equal("yamada@example.com", viewModel.EditEmail);
+	}
+
+	/// <summary>
+	/// パス条件: 編集フォーム(EditName等)を変更しただけでは、UpdateCommandを実行するまで
+	/// SelectedContact自体(実体であるエンティティ)は変化しないこと。
+	/// (Update()を押さずとも別のSaveChanges()で意図せず保存されてしまう不具合の回帰テスト)
+	/// </summary>
+	[Fact]
+	public void EditName変更だけではUpdateCommand実行前はSelectedContactが変化しない()
+	{
+		var repository = new FakeContactRepository();
+		repository.Add(new Contact { Name = "山田太郎" });
+		var viewModel = new MainViewModel(repository);
+		viewModel.SelectedContact = viewModel.Contacts[0];
+
+		viewModel.EditName = "編集中の未確定な名前";
+
+		Assert.Equal("山田太郎", viewModel.SelectedContact!.Name);
+	}
+
+	/// <summary>
+	/// パス条件: UpdateCommandを実行すると、EditName等の内容がSelectedContactへ反映され
+	/// リポジトリのUpdateが呼ばれること。
+	/// </summary>
+	[Fact]
+	public void UpdateCommand_実行するとEditフィールドの内容がSelectedContactとリポジトリへ反映される()
+	{
+		var repository = new FakeContactRepository();
+		repository.Add(new Contact { Name = "山田太郎", PhoneNumber = "090-1111-2222" });
+		var viewModel = new MainViewModel(repository);
+		viewModel.SelectedContact = viewModel.Contacts[0];
+		viewModel.EditName = "山田次郎";
+		viewModel.EditPhoneNumber = "090-9999-8888";
+
+		viewModel.UpdateCommand.Execute(null);
+
+		Assert.Equal("山田次郎", viewModel.SelectedContact!.Name);
+		Assert.Equal("090-9999-8888", viewModel.SelectedContact.PhoneNumber);
+		Assert.Equal(1, repository.UpdateCallCount);
+	}
 }
