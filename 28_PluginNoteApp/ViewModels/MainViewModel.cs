@@ -73,5 +73,18 @@ public class MainViewModel : ObservableObject
 
 	private bool CanRunPlugin() => SelectedPlugin is not null;
 
-	private void RunPlugin() => PluginOutput = SelectedPlugin!.Process(MemoText);
+	private void RunPlugin()
+	{
+		try
+		{
+			PluginOutput = SelectedPlugin!.Process(MemoText);
+		}
+		catch (Exception ex)
+		{
+			// プラグインは任意の外部コードであり、どんな例外を投げるか予測できない。
+			// ここで捕捉し損ねるとプラグイン1つの不具合でホストアプリ全体がクラッシュしてしまう
+			// (プラグイン機構として致命的なため、意図的に広く捕捉する)。
+			PluginOutput = $"プラグインの実行中にエラーが発生しました: {ex.Message}";
+		}
+	}
 }

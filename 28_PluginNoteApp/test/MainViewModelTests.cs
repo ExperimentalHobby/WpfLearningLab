@@ -75,4 +75,25 @@ public class MainViewModelTests
 
 		Assert.Equal("HELLO", viewModel.PluginOutput);
 	}
+
+	/// <summary>
+	/// パス条件: 選択中プラグインのProcessが例外を投げても、ホストアプリはクラッシュせず
+	/// PluginOutputにエラーメッセージが表示されること(プラグイン機構として致命的な欠陥の修正確認)
+	/// </summary>
+	[Fact]
+	public void RunPluginCommand_プラグインが例外を投げてもクラッシュせずエラーが表示される()
+	{
+		var plugin = FakeMemoPlugin.CreateThrowing("壊れたプラグイン", new InvalidOperationException("プラグイン内部エラー"));
+		var loader = new FakePluginLoader
+		{
+			ResultsToReturn = [new PluginLoadResult("壊れたプラグイン", plugin, null)],
+		};
+		var viewModel = new MainViewModel(loader, "dummy");
+		viewModel.MemoText = "hello";
+		viewModel.SelectedPlugin = viewModel.Plugins[0];
+
+		viewModel.RunPluginCommand.Execute(null);
+
+		Assert.Contains("プラグイン内部エラー", viewModel.PluginOutput);
+	}
 }

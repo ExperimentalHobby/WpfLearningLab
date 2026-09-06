@@ -16,6 +16,9 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 		var pluginDirectory = Path.Combine(AppContext.BaseDirectory, "Plugins");
-		DataContext = new MainViewModel(new MefPluginLoader(), pluginDirectory);
+		var pluginLoader = new MefPluginLoader();
+		DataContext = new MainViewModel(pluginLoader, pluginDirectory);
+
+		Closed += (_, _) => pluginLoader.Dispose();
 	}
 }
