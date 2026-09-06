@@ -101,4 +101,35 @@ public class EfContactRepositoryTests : IDisposable
 		Assert.Equal("Abe", all[0].Name);
 		Assert.Equal("Suzuki", all[1].Name);
 	}
+
+	/// <summary>
+	/// パス条件: GetAllが返すエンティティは変更追跡されない(AsNoTracking)ため、
+	/// Updateを呼ばずにプロパティを変更して別のSaveChangesを実行しても永続化されないこと。
+	/// </summary>
+	[Fact]
+	public void GetAll_返すエンティティは変更追跡されずUpdateを呼ばない変更は保存されない()
+	{
+		var optionsBuilder = new DbContextOptionsBuilder<ContactManagerDbContext>();
+		optionsBuilder.UseSqlite($"Data Source={_dbPath}");
+		using var setupContext = new ContactManagerDbContext(optionsBuilder.Options);
+		setupContext.Database.Migrate();
+		setupContext.Contacts.Add(new Contact { Name = "山田太郎", PhoneNumber = "090-1111-2222" });
+		setupContext.Contacts.Add(new Contact { Name = "鈴木花子", PhoneNumber = "090-3333-4444" });
+		setupContext.SaveChanges();
+
+		using var context = new ContactManagerDbContext(optionsBuilder.Options);
+		var repository = new EfContactRepository(context);
+		var loaded = repository.GetAll();
+		// GetAllで取得したエンティティのプロパティを直接変更する(Update()を経由しない、
+		// 編集フォームでの「入力中」を模した操作)。
+		loaded[0].PhoneNumber = "未確定な変更";
+
+		// 別の操作(例: 他の連絡先の追加)によるSaveChangesを模擬する。
+		context.Contacts.Add(new Contact { Name = "佐藤次郎" });
+		context.SaveChanges();
+
+		using var verifyContext = new ContactManagerDbContext(optionsBuilder.Options);
+		var reloaded = verifyContext.Contacts.Single(c => c.Name == "山田太郎");
+		Assert.Equal("090-1111-2222", reloaded.PhoneNumber);
+	}
 }

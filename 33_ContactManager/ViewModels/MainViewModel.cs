@@ -16,6 +16,9 @@ public class MainViewModel : ObservableObject
 	private string _newName = string.Empty;
 	private string _newPhoneNumber = string.Empty;
 	private string _newEmail = string.Empty;
+	private string _editName = string.Empty;
+	private string _editPhoneNumber = string.Empty;
+	private string _editEmail = string.Empty;
 
 	/// <summary>
 	/// <see cref="MainViewModel"/>を初期化し、リポジトリから連絡先一覧を読み込む。
@@ -37,7 +40,7 @@ public class MainViewModel : ObservableObject
 	/// <summary>登録済みの連絡先一覧。</summary>
 	public ObservableCollection<Contact> Contacts { get; } = [];
 
-	/// <summary>一覧で選択中の連絡先。編集フォームはこのインスタンスに直接双方向バインドする。</summary>
+	/// <summary>一覧で選択中の連絡先。</summary>
 	public Contact? SelectedContact
 	{
 		get => _selectedContact;
@@ -45,11 +48,27 @@ public class MainViewModel : ObservableObject
 		{
 			if (SetProperty(ref _selectedContact, value))
 			{
+				// 編集フォームはSelectedContactへ直接バインドせず、EditName等のコピーへ
+				// バインドする。UpdateCommandを実行するまでは入力中の内容がエンティティに
+				// 反映されないようにするため(EF Coreの変更追跡と相まって、Updateを押さずとも
+				// 別のSaveChanges()で意図せず保存されてしまうのを防ぐ)。
+				EditName = value?.Name ?? string.Empty;
+				EditPhoneNumber = value?.PhoneNumber ?? string.Empty;
+				EditEmail = value?.Email ?? string.Empty;
 				((RelayCommand)UpdateCommand).RaiseCanExecuteChanged();
 				((RelayCommand)DeleteCommand).RaiseCanExecuteChanged();
 			}
 		}
 	}
+
+	/// <summary>編集フォームの氏名。<see cref="UpdateCommand"/>実行時に<see cref="SelectedContact"/>へ反映される。</summary>
+	public string EditName { get => _editName; set => SetProperty(ref _editName, value); }
+
+	/// <summary>編集フォームの電話番号。<see cref="UpdateCommand"/>実行時に<see cref="SelectedContact"/>へ反映される。</summary>
+	public string EditPhoneNumber { get => _editPhoneNumber; set => SetProperty(ref _editPhoneNumber, value); }
+
+	/// <summary>編集フォームのメールアドレス。<see cref="UpdateCommand"/>実行時に<see cref="SelectedContact"/>へ反映される。</summary>
+	public string EditEmail { get => _editEmail; set => SetProperty(ref _editEmail, value); }
 
 	/// <summary>新規追加フォームの氏名。</summary>
 	public string NewName
@@ -100,6 +119,10 @@ public class MainViewModel : ObservableObject
 		{
 			return;
 		}
+
+		SelectedContact.Name = EditName;
+		SelectedContact.PhoneNumber = EditPhoneNumber;
+		SelectedContact.Email = EditEmail;
 		_repository.Update(SelectedContact);
 	}
 

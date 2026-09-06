@@ -51,13 +51,13 @@
             <GroupBox Header="選択中の連絡先を編集" IsEnabled="{Binding SelectedContact, Converter={x:Static conv:NullToBooleanConverter.Instance}}">
                 <StackPanel Margin="8">
                     <TextBlock Text="氏名"/>
-                    <TextBox Text="{Binding SelectedContact.Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                    <TextBox Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
                               AutomationProperties.AutomationId="EditNameTextBox"/>
                     <TextBlock Text="電話番号"/>
-                    <TextBox Text="{Binding SelectedContact.PhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                    <TextBox Text="{Binding EditPhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
                               AutomationProperties.AutomationId="EditPhoneNumberTextBox"/>
                     <TextBlock Text="メールアドレス"/>
-                    <TextBox Text="{Binding SelectedContact.Email, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
+                    <TextBox Text="{Binding EditEmail, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"
                               AutomationProperties.AutomationId="EditEmailTextBox"/>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="更新" Padding="10,4" Margin="0,0,8,0" Command="{Binding UpdateCommand}"
