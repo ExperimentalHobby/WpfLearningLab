@@ -9,9 +9,11 @@
         Title="ミュージックプレイヤー" Height="600" Width="640">
     <Window.Resources>
         <conv:TimeSpanToSecondsConverter x:Key="TimeSpanToSecondsConverter"/>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -22,8 +24,14 @@
                 Command="{Binding LoadFolderCommand}"
                 AutomationProperties.AutomationId="LoadFolderButton"/>
 
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="1" Margin="0,0,0,8" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
         <!-- プレイリスト -->
-        <ListBox Grid.Row="1" ItemsSource="{Binding Playlist}"
+        <ListBox Grid.Row="2" ItemsSource="{Binding Playlist}"
                   SelectedItem="{Binding SelectedTrack, Mode=TwoWay}"
                   AutomationProperties.AutomationId="PlaylistListBox">
             <ListBox.ItemTemplate>
@@ -60,7 +68,7 @@
         </ListBox>
 
         <!-- 再生コントロール -->
-        <StackPanel Grid.Row="2" Margin="0,8,0,0">
+        <StackPanel Grid.Row="3" Margin="0,8,0,0">
             <TextBlock Text="{Binding CurrentTrack.Title, TargetNullValue=(未再生)}" FontWeight="Bold" Margin="0,0,0,4"
                        AutomationProperties.AutomationId="CurrentTrackText"/>
 

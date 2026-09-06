@@ -23,6 +23,11 @@ public interface IMediaPlayerController
 	event EventHandler? MediaOpened;
 
 	/// <summary>
+	/// メディアの読み込み・再生に失敗したときに発火する(存在しないファイル・破損ファイルなど)。
+	/// </summary>
+	event EventHandler<Exception?>? MediaFailed;
+
+	/// <summary>
 	/// 指定した音声ファイルを読み込み、再生を開始する。
 	/// </summary>
 	void Load(string filePath);

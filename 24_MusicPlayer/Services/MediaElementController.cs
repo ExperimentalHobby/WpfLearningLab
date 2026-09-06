@@ -18,6 +18,7 @@ public class MediaElementController : IMediaPlayerController
 		_mediaElement = mediaElement;
 		_mediaElement.MediaEnded += (_, _) => MediaEnded?.Invoke(this, EventArgs.Empty);
 		_mediaElement.MediaOpened += (_, _) => MediaOpened?.Invoke(this, EventArgs.Empty);
+		_mediaElement.MediaFailed += (_, e) => MediaFailed?.Invoke(this, e.ErrorException);
 	}
 
 	/// <inheritdoc/>
@@ -35,6 +36,9 @@ public class MediaElementController : IMediaPlayerController
 
 	/// <inheritdoc/>
 	public event EventHandler? MediaOpened;
+
+	/// <inheritdoc/>
+	public event EventHandler<Exception?>? MediaFailed;
 
 	/// <inheritdoc/>
 	public void Load(string filePath)

@@ -20,9 +20,17 @@ public class AudioFileScanner : IAudioFileScanner
 			return [];
 		}
 
-		return Directory.EnumerateFiles(folderPath)
-			.Where(path => AudioExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
-			.OrderBy(path => Path.GetFileName(path), StringComparer.OrdinalIgnoreCase)
-			.ToList();
+		try
+		{
+			return Directory.EnumerateFiles(folderPath)
+				.Where(path => AudioExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
+				.OrderBy(path => Path.GetFileName(path), StringComparer.OrdinalIgnoreCase)
+				.ToList();
+		}
+		catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+		{
+			// アクセス権限がないフォルダ等では、存在しないフォルダと同様に空の一覧を返す。
+			return [];
+		}
 	}
 }

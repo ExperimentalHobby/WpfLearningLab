@@ -299,6 +299,68 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: LoadFolderCommandを2回実行すると、プレイリストは前回の内容ではなく
+	/// 新しいフォルダの内容に置き換わること(重複しないこと)
+	/// </summary>
+	[Fact]
+	public void LoadFolderCommand_2回実行するとプレイリストが重複せず置き換わる()
+	{
+		var scanner = new FakeAudioFileScanner { PathsToReturn = [@"C:\Music\曲A.mp3"] };
+		var folderPicker = new FakeFolderPicker { PathToReturn = @"C:\Music" };
+		var viewModel = CreateViewModel(scanner: scanner, folderPicker: folderPicker);
+		viewModel.LoadFolderCommand.Execute(null);
+
+		scanner.PathsToReturn = [@"D:\Music2\曲X.mp3", @"D:\Music2\曲Y.mp3"];
+		viewModel.LoadFolderCommand.Execute(null);
+
+		Assert.Equal(2, viewModel.Playlist.Count);
+		Assert.Equal("曲X", viewModel.Playlist[0].Title);
+		Assert.Equal("曲Y", viewModel.Playlist[1].Title);
+	}
+
+	/// <summary>
+	/// パス条件: 再生中に別フォルダを読み込むと、再生が停止しCurrentTrackがリセットされること
+	/// </summary>
+	[Fact]
+	public void LoadFolderCommand_再生中に別フォルダを読み込むと再生が停止しCurrentTrackがリセットされる()
+	{
+		var player = new FakeMediaPlayerController();
+		var scanner = new FakeAudioFileScanner { PathsToReturn = [@"C:\Music\曲A.mp3"] };
+		var folderPicker = new FakeFolderPicker { PathToReturn = @"C:\Music" };
+		var viewModel = CreateViewModel(player, scanner, folderPicker);
+		viewModel.LoadFolderCommand.Execute(null);
+		viewModel.SelectTrackCommand.Execute(viewModel.Playlist[0]);
+		Assert.NotNull(viewModel.CurrentTrack);
+
+		scanner.PathsToReturn = [@"D:\Music2\曲X.mp3"];
+		viewModel.LoadFolderCommand.Execute(null);
+
+		Assert.Null(viewModel.CurrentTrack);
+		Assert.False(viewModel.IsPlaying);
+		Assert.Equal(1, player.StopCallCount);
+	}
+
+	/// <summary>
+	/// パス条件: MediaFailedが発火すると、IsPlayingがfalseに戻りErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public void MediaFailed_発火するとIsPlayingがfalseになりErrorMessageが設定される()
+	{
+		var player = new FakeMediaPlayerController();
+		var scanner = new FakeAudioFileScanner { PathsToReturn = [@"C:\Music\曲A.mp3"] };
+		var folderPicker = new FakeFolderPicker { PathToReturn = @"C:\Music" };
+		var viewModel = CreateViewModel(player, scanner, folderPicker);
+		viewModel.LoadFolderCommand.Execute(null);
+		viewModel.SelectTrackCommand.Execute(viewModel.Playlist[0]);
+		Assert.True(viewModel.IsPlaying);
+
+		player.RaiseMediaFailed(new InvalidOperationException("破損したファイルです"));
+
+		Assert.False(viewModel.IsPlaying);
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
+	}
+
+	/// <summary>
 	/// パス条件: ToggleShuffleCommandでIsShuffleが反転すること
 	/// </summary>
 	[Fact]

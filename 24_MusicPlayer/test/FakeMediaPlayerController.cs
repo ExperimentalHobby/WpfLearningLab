@@ -15,6 +15,8 @@ public class FakeMediaPlayerController : IMediaPlayerController
 
 	public event EventHandler? MediaOpened;
 
+	public event EventHandler<Exception?>? MediaFailed;
+
 	public string? LastLoadedPath { get; private set; }
 	public int PlayCallCount { get; private set; }
 	public int PauseCallCount { get; private set; }
@@ -31,4 +33,6 @@ public class FakeMediaPlayerController : IMediaPlayerController
 	public void RaiseMediaEnded() => MediaEnded?.Invoke(this, EventArgs.Empty);
 
 	public void RaiseMediaOpened() => MediaOpened?.Invoke(this, EventArgs.Empty);
+
+	public void RaiseMediaFailed(Exception? exception) => MediaFailed?.Invoke(this, exception);
 }
