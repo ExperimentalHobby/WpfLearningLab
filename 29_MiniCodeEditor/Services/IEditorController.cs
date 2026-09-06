@@ -8,6 +8,9 @@ public interface IEditorController
 	/// <summary>エディタの表示内容。</summary>
 	string Text { get; set; }
 
+	/// <summary>エディタの表示内容が変化したときに発火する(未保存の変更検知に使う)。</summary>
+	event EventHandler? TextChanged;
+
 	/// <summary>
 	/// ファイルパスの拡張子に応じたシンタックスハイライトを設定する。
 	/// 対応する定義が無い場合はハイライト無し(プレーンテキスト)にする。
