@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Text.Json;
 using SingleInstanceLauncher.Models;
 
 namespace SingleInstanceLauncher.Services;
@@ -40,6 +42,14 @@ public class PipeMessenger
             catch (OperationCanceledException)
             {
                 // キャンセル時はループを抜ける。
+                break;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException)
+            {
+                // このループはfire-and-forgetで呼び出されるため、ここで捕捉しないと
+                // 1回の接続失敗・不正な受信データが未処理のタスク例外としてアプリ全体を
+                // クラッシュさせうる。1回分の失敗として扱い、待受自体は継続する。
+                Debug.WriteLine($"起動待受サーバーでエラーが発生しました: {ex.Message}");
             }
         }
     }
