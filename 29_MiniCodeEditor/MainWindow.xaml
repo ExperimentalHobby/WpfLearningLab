@@ -5,10 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MiniCodeEditor"
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:conv="clr-namespace:MiniCodeEditor.Converters"
         mc:Ignorable="d"
         Title="簡易コードエディタ" Height="560" Width="800">
+    <Window.Resources>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -41,15 +46,21 @@
                       AutomationProperties.AutomationId="WordWrapCheckBox"/>
         </StackPanel>
 
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="2" Margin="0,0,0,8" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
         <!-- コードエディタ本体(AvalonEdit) -->
-        <avalonedit:TextEditor x:Name="Editor" Grid.Row="2"
+        <avalonedit:TextEditor x:Name="Editor" Grid.Row="3"
                                 FontFamily="Consolas" FontSize="14"
                                 ShowLineNumbers="{Binding ShowLineNumbers}"
                                 WordWrap="{Binding IsWordWrapEnabled}"
                                 AutomationProperties.AutomationId="CodeEditor"/>
 
         <!-- ステータスバー -->
-        <TextBlock Grid.Row="3" Margin="0,8,0,0" Foreground="Gray"
+        <TextBlock Grid.Row="4" Margin="0,8,0,0" Foreground="Gray"
                    Text="{Binding CurrentFilePath, TargetNullValue=(無題)}"
                    AutomationProperties.AutomationId="CurrentFilePathTextBlock"/>
     </Grid>

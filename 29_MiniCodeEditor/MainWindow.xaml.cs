@@ -14,6 +14,10 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 		var editorController = new AvalonEditController(Editor);
-		DataContext = new MainViewModel(editorController, new Win32FileDialogService(), new FileService());
+		DataContext = new MainViewModel(
+			editorController,
+			new Win32FileDialogService(),
+			new FileService(),
+			new Win32UnsavedChangesPrompt());
 	}
 }

@@ -16,6 +16,9 @@ public class FakeFileService : IFileService
 	/// <summary>最後に<see cref="WriteAllText"/>に渡された内容。</summary>
 	public string? LastWrittenContent { get; private set; }
 
+	/// <summary>設定すると<see cref="WriteAllText"/>呼び出し時にこの例外をスローする(テスト用)。</summary>
+	public Exception? WriteExceptionToThrow { get; set; }
+
 	/// <summary>
 	/// テストの前提として、指定パスに読み込み可能なファイルを用意する。
 	/// </summary>
@@ -29,6 +32,11 @@ public class FakeFileService : IFileService
 	/// <inheritdoc/>
 	public void WriteAllText(string filePath, string content)
 	{
+		if (WriteExceptionToThrow is not null)
+		{
+			throw WriteExceptionToThrow;
+		}
+
 		_files[filePath] = content;
 		LastWrittenPath = filePath;
 		LastWrittenContent = content;

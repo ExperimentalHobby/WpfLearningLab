@@ -1,3 +1,4 @@
+using System.IO;
 using MiniCodeEditor.Services;
 
 namespace MiniCodeEditor.ViewModels;
@@ -11,24 +12,33 @@ public class MainViewModel : ObservableObject
 	private readonly IEditorController _editor;
 	private readonly IFileDialogService _dialogService;
 	private readonly IFileService _fileService;
+	private readonly IUnsavedChangesPrompt _unsavedChangesPrompt;
 
 	private string? _currentFilePath;
 	private bool _isWordWrapEnabled;
 	private bool _showLineNumbers = true;
+	private bool _isDirty;
+	private string _errorMessage = string.Empty;
 
 	/// <summary>
 	/// ViewModelを初期化する。
 	/// </summary>
-	public MainViewModel(IEditorController editor, IFileDialogService dialogService, IFileService fileService)
+	public MainViewModel(
+		IEditorController editor,
+		IFileDialogService dialogService,
+		IFileService fileService,
+		IUnsavedChangesPrompt unsavedChangesPrompt)
 	{
 		_editor = editor;
 		_dialogService = dialogService;
 		_fileService = fileService;
+		_unsavedChangesPrompt = unsavedChangesPrompt;
+		_editor.TextChanged += (_, _) => IsDirty = true;
 
 		NewCommand = new RelayCommand(New);
 		OpenCommand = new RelayCommand(Open);
-		SaveCommand = new RelayCommand(Save);
-		SaveAsCommand = new RelayCommand(SaveAs);
+		SaveCommand = new RelayCommand(() => Save());
+		SaveAsCommand = new RelayCommand(() => SaveAs());
 	}
 
 	/// <summary>現在開いているファイルのパス。未保存の場合は<see langword="null"/>。</summary>
@@ -52,6 +62,20 @@ public class MainViewModel : ObservableObject
 		set => SetProperty(ref _showLineNumbers, value);
 	}
 
+	/// <summary>直近の読込・保存以降に未保存の変更があるかどうか。</summary>
+	public bool IsDirty
+	{
+		get => _isDirty;
+		private set => SetProperty(ref _isDirty, value);
+	}
+
+	/// <summary>直近の操作で発生したエラーメッセージ。エラーがなければ空文字列。</summary>
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		private set => SetProperty(ref _errorMessage, value);
+	}
+
 	/// <summary>新規作成コマンド。</summary>
 	public RelayCommand NewCommand { get; }
 
@@ -66,45 +90,107 @@ public class MainViewModel : ObservableObject
 
 	private void New()
 	{
+		if (!ConfirmDiscardIfDirty())
+		{
+			return;
+		}
+
 		_editor.Text = string.Empty;
 		CurrentFilePath = null;
 		_editor.SetSyntaxHighlighting(null);
+		IsDirty = false;
+		ErrorMessage = string.Empty;
 	}
 
 	private void Open()
 	{
+		if (!ConfirmDiscardIfDirty())
+		{
+			return;
+		}
+
 		var filePath = _dialogService.ShowOpenDialog();
 		if (filePath is null)
 		{
 			return;
 		}
 
-		_editor.Text = _fileService.ReadAllText(filePath);
-		CurrentFilePath = filePath;
-		_editor.SetSyntaxHighlighting(filePath);
-	}
-
-	private void Save()
-	{
-		if (CurrentFilePath is null)
+		try
 		{
-			SaveAs();
+			_editor.Text = _fileService.ReadAllText(filePath);
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			ErrorMessage = $"ファイルを開けませんでした: {ex.Message}";
 			return;
 		}
 
-		_fileService.WriteAllText(CurrentFilePath, _editor.Text);
+		CurrentFilePath = filePath;
+		_editor.SetSyntaxHighlighting(filePath);
+		IsDirty = false;
+		ErrorMessage = string.Empty;
 	}
 
-	private void SaveAs()
+	private bool Save()
+	{
+		if (CurrentFilePath is null)
+		{
+			return SaveAs();
+		}
+
+		try
+		{
+			_fileService.WriteAllText(CurrentFilePath, _editor.Text);
+			IsDirty = false;
+			ErrorMessage = string.Empty;
+			return true;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			ErrorMessage = $"保存できませんでした: {ex.Message}";
+			return false;
+		}
+	}
+
+	private bool SaveAs()
 	{
 		var filePath = _dialogService.ShowSaveDialog(CurrentFilePath);
 		if (filePath is null)
 		{
-			return;
+			return false;
 		}
 
-		_fileService.WriteAllText(filePath, _editor.Text);
-		CurrentFilePath = filePath;
-		_editor.SetSyntaxHighlighting(filePath);
+		try
+		{
+			_fileService.WriteAllText(filePath, _editor.Text);
+			CurrentFilePath = filePath;
+			_editor.SetSyntaxHighlighting(filePath);
+			IsDirty = false;
+			ErrorMessage = string.Empty;
+			return true;
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			ErrorMessage = $"保存できませんでした: {ex.Message}";
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// 未保存の変更があれば確認する。続行してよい場合は<see langword="true"/>を返す。
+	/// </summary>
+	private bool ConfirmDiscardIfDirty()
+	{
+		if (!IsDirty)
+		{
+			return true;
+		}
+
+		return _unsavedChangesPrompt.Confirm() switch
+		{
+			true => Save(),
+			false => true,
+			null => false,
+		};
 	}
 }

@@ -11,6 +11,9 @@ public class FakeEditorController : IEditorController
 	/// <inheritdoc/>
 	public string Text { get; set; } = string.Empty;
 
+	/// <inheritdoc/>
+	public event EventHandler? TextChanged;
+
 	/// <summary>最後に<see cref="SetSyntaxHighlighting"/>に渡されたファイルパス。</summary>
 	public string? LastSyntaxHighlightingFilePath { get; private set; }
 
@@ -23,4 +26,9 @@ public class FakeEditorController : IEditorController
 		LastSyntaxHighlightingFilePath = filePath;
 		SetSyntaxHighlightingCallCount++;
 	}
+
+	/// <summary>
+	/// テストからユーザーの編集操作を疑似的に発火させる(<see cref="TextChanged"/>の発火のみ、<see cref="Text"/>は変更しない)。
+	/// </summary>
+	public void RaiseTextChanged() => TextChanged?.Invoke(this, EventArgs.Empty);
 }

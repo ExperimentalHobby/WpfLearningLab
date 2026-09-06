@@ -1,3 +1,4 @@
+using System.IO;
 using MiniCodeEditor.ViewModels;
 
 namespace MiniCodeEditor.Tests;
@@ -10,11 +11,13 @@ public class MainViewModelTests
 	private static MainViewModel CreateViewModel(
 		FakeEditorController? editor = null,
 		FakeFileDialogService? dialog = null,
-		FakeFileService? fileService = null) =>
+		FakeFileService? fileService = null,
+		FakeUnsavedChangesPrompt? unsavedChangesPrompt = null) =>
 		new(
 			editor ?? new FakeEditorController(),
 			dialog ?? new FakeFileDialogService(),
-			fileService ?? new FakeFileService());
+			fileService ?? new FakeFileService(),
+			unsavedChangesPrompt ?? new FakeUnsavedChangesPrompt());
 
 	/// <summary>
 	/// パス条件: OpenCommand実行で、ダイアログが返したパスの内容がエディタに反映されCurrentFilePathが設定されること
@@ -159,5 +162,112 @@ public class MainViewModelTests
 
 		Assert.Equal(string.Empty, editor.Text);
 		Assert.Null(viewModel.CurrentFilePath);
+	}
+
+	/// <summary>
+	/// パス条件: エディタのTextChangedが発火するとIsDirtyがtrueになること
+	/// </summary>
+	[Fact]
+	public void TextChanged_発火するとIsDirtyがtrueになる()
+	{
+		var editor = new FakeEditorController();
+		var viewModel = CreateViewModel(editor);
+
+		editor.RaiseTextChanged();
+
+		Assert.True(viewModel.IsDirty);
+	}
+
+	/// <summary>
+	/// パス条件: 未保存の変更がある状態でNewCommandを実行し、確認ダイアログで「破棄」を選ぶと
+	/// そのまま新規作成されること
+	/// </summary>
+	[Fact]
+	public void NewCommand_未保存の変更があり破棄を選ぶと新規作成される()
+	{
+		var editor = new FakeEditorController { Text = "編集中の内容" };
+		var prompt = new FakeUnsavedChangesPrompt { ResultToReturn = false };
+		var viewModel = CreateViewModel(editor, unsavedChangesPrompt: prompt);
+		editor.RaiseTextChanged();
+
+		viewModel.NewCommand.Execute(null);
+
+		Assert.Equal(1, prompt.CallCount);
+		Assert.Equal(string.Empty, editor.Text);
+		Assert.False(viewModel.IsDirty);
+	}
+
+	/// <summary>
+	/// パス条件: 未保存の変更がある状態でNewCommandを実行し、確認ダイアログで「キャンセル」を選ぶと
+	/// 何も変更されないこと
+	/// </summary>
+	[Fact]
+	public void NewCommand_未保存の変更がありキャンセルを選ぶと何も変更されない()
+	{
+		var editor = new FakeEditorController { Text = "編集中の内容" };
+		var prompt = new FakeUnsavedChangesPrompt { ResultToReturn = null };
+		var viewModel = CreateViewModel(editor, unsavedChangesPrompt: prompt);
+		editor.RaiseTextChanged();
+
+		viewModel.NewCommand.Execute(null);
+
+		Assert.Equal("編集中の内容", editor.Text);
+		Assert.True(viewModel.IsDirty);
+	}
+
+	/// <summary>
+	/// パス条件: 未保存の変更がある状態でOpenCommandを実行し、確認ダイアログで「保存」を選ぶと
+	/// 保存してから開かれること
+	/// </summary>
+	[Fact]
+	public void OpenCommand_未保存の変更があり保存を選ぶと保存してから開かれる()
+	{
+		var editor = new FakeEditorController { Text = "編集中の内容" };
+		var dialog = new FakeFileDialogService
+		{
+			SaveDialogResult = @"C:\src\old.cs",
+			OpenDialogResult = @"C:\src\new.cs",
+		};
+		var fileService = new FakeFileService();
+		fileService.SeedFile(@"C:\src\new.cs", "新しい内容");
+		var prompt = new FakeUnsavedChangesPrompt { ResultToReturn = true };
+		var viewModel = CreateViewModel(editor, dialog, fileService, prompt);
+		editor.RaiseTextChanged();
+
+		viewModel.OpenCommand.Execute(null);
+
+		Assert.Equal(@"C:\src\old.cs", fileService.LastWrittenPath);
+		Assert.Equal("編集中の内容", fileService.LastWrittenContent);
+		Assert.Equal("新しい内容", editor.Text);
+		Assert.Equal(@"C:\src\new.cs", viewModel.CurrentFilePath);
+	}
+
+	/// <summary>
+	/// パス条件: OpenCommand実行時にファイルの読込に失敗しても、クラッシュせずErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public void OpenCommand_読込に失敗してもクラッシュせずErrorMessageが設定される()
+	{
+		var dialog = new FakeFileDialogService { OpenDialogResult = @"C:\src\not-exist.cs" };
+		var viewModel = CreateViewModel(dialog: dialog);
+
+		viewModel.OpenCommand.Execute(null);
+
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
+	}
+
+	/// <summary>
+	/// パス条件: SaveCommand実行時に保存に失敗しても、クラッシュせずErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public void SaveCommand_保存に失敗してもクラッシュせずErrorMessageが設定される()
+	{
+		var dialog = new FakeFileDialogService { SaveDialogResult = @"C:\src\new.cs" };
+		var fileService = new FakeFileService { WriteExceptionToThrow = new IOException("ディスク容量不足です") };
+		var viewModel = CreateViewModel(dialog: dialog, fileService: fileService);
+
+		viewModel.SaveCommand.Execute(null);
+
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
 	}
 }
