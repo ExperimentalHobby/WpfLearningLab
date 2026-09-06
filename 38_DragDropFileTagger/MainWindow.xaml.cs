@@ -20,7 +20,13 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 
-		var savePath = Path.Combine(AppContext.BaseDirectory, "tagged-files.json");
+		// AppContext.BaseDirectoryは配置先(Program Files配下等)によっては書き込み権限が
+		// ないため、他アプリと同様にApplicationData配下に統一する(33番と同種の対応)。
+		var dataDirectory = Path.Combine(
+			Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+			"WpfLearningLab.DragDropFileTagger");
+		Directory.CreateDirectory(dataDirectory);
+		var savePath = Path.Combine(dataDirectory, "tagged-files.json");
 		_viewModel = new MainViewModel(new JsonTaggedFileRepository(savePath));
 		DataContext = _viewModel;
 	}
