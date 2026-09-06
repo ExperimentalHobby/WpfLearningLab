@@ -20,10 +20,26 @@ public static class ChartModelBuilder
 	public static PlotModel Build(IReadOnlyList<DataPoint> dataPoints, ChartType chartType)
 	{
 		var model = new PlotModel { Title = "データ可視化" };
+		Rebuild(model, dataPoints, chartType);
+		return model;
+	}
+
+	/// <summary>
+	/// 既存の<see cref="PlotModel"/>インスタンスの<c>Series</c>/<c>Axes</c>を、指定したデータ点・
+	/// グラフ種類の内容に置き換える。新しい<see cref="PlotModel"/>を作らないため、呼び出し元は
+	/// 更新後に<see cref="PlotModel.InvalidatePlot(bool)"/>を呼んで再描画をトリガーする必要がある。
+	/// </summary>
+	/// <param name="model">更新対象の<see cref="PlotModel"/>。</param>
+	/// <param name="dataPoints">グラフに表示するデータ点一覧。</param>
+	/// <param name="chartType">グラフの種類。</param>
+	public static void Rebuild(PlotModel model, IReadOnlyList<DataPoint> dataPoints, ChartType chartType)
+	{
+		model.Series.Clear();
+		model.Axes.Clear();
 
 		if (dataPoints.Count == 0)
 		{
-			return model;
+			return;
 		}
 
 		switch (chartType)
@@ -38,8 +54,6 @@ public static class ChartModelBuilder
 				BuildPie(model, dataPoints);
 				break;
 		}
-
-		return model;
 	}
 
 	private static void BuildBar(PlotModel model, IReadOnlyList<DataPoint> dataPoints)

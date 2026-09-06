@@ -23,9 +23,9 @@ public class EnumToBooleanConverter : IValueConverter
 	/// <inheritdoc/>
 	public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
 	{
-		if (value is true && parameter is not null)
+		if (value is true && parameter is not null && Enum.TryParse(targetType, parameter.ToString(), out var result))
 		{
-			return Enum.Parse(targetType, parameter.ToString()!);
+			return result;
 		}
 
 		return Binding.DoNothing;

@@ -94,4 +94,22 @@ public class ChartModelBuilderTests
 		var categoryAxis = Assert.Single(model.Axes.OfType<CategoryAxis>());
 		Assert.Equal(AxisPosition.Left, categoryAxis.Position);
 	}
+
+	/// <summary>
+	/// パス条件: Rebuildは新しいPlotModelを作らず、渡された既存インスタンスのSeries/Axesを
+	/// 置き換えること(OxyPlotのInvalidatePlot()運用のため、Modelの参照自体は変えない)
+	/// </summary>
+	[Fact]
+	public void Rebuild_既存のPlotModelインスタンスを再利用してSeriesを置き換える()
+	{
+		var model = new OxyPlot.PlotModel();
+		ChartModelBuilder.Rebuild(model, SampleData, ChartType.Bar);
+		Assert.Single(model.Series.OfType<BarSeries>());
+
+		ChartModelBuilder.Rebuild(model, SampleData, ChartType.Pie);
+
+		Assert.Empty(model.Series.OfType<BarSeries>());
+		Assert.Empty(model.Axes);
+		Assert.Single(model.Series.OfType<PieSeries>());
+	}
 }

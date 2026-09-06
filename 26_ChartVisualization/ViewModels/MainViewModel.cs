@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using ChartVisualization.Models;
 using ChartVisualization.Services;
@@ -15,7 +16,11 @@ public class MainViewModel : ObservableObject
 	private string _newLabel = string.Empty;
 	private string _newValueInput = string.Empty;
 	private ChartType _selectedChartType = ChartType.Bar;
-	private PlotModel _plotModel;
+
+	// OxyPlotの推奨運用に従い、PlotModelインスタンス自体は差し替えずに保持し、内容が変わったら
+	// Rebuild + InvalidatePlot(true)で再描画をトリガーする(毎回new PlotModel()すると
+	// PlotViewとのバインディング更新のたびに再生成コストがかかる)。
+	private readonly PlotModel _plotModel = new() { Title = "データ可視化" };
 
 	/// <summary>
 	/// ViewModelを初期化する。
@@ -24,7 +29,6 @@ public class MainViewModel : ObservableObject
 	{
 		AddDataPointCommand = new RelayCommand(AddDataPoint, CanAddDataPoint);
 		RemoveDataPointCommand = new RelayCommand<DataPoint>(RemoveDataPoint);
-		_plotModel = ChartModelBuilder.Build(DataPoints, SelectedChartType);
 	}
 
 	/// <summary>データ点入力フォームのラベル入力欄。</summary>
@@ -69,12 +73,8 @@ public class MainViewModel : ObservableObject
 	/// <summary>登録済みのデータ点一覧。</summary>
 	public ObservableCollection<DataPoint> DataPoints { get; } = [];
 
-	/// <summary>現在のデータ点・グラフ種類から組み立てられた<see cref="PlotModel"/>。</summary>
-	public PlotModel PlotModel
-	{
-		get => _plotModel;
-		private set => SetProperty(ref _plotModel, value);
-	}
+	/// <summary>現在のデータ点・グラフ種類から組み立てられた<see cref="PlotModel"/>。インスタンスは固定で、内容のみ更新される。</summary>
+	public PlotModel PlotModel => _plotModel;
 
 	/// <summary>入力欄の内容からデータ点を追加するコマンド。</summary>
 	public RelayCommand AddDataPointCommand { get; }
@@ -82,11 +82,13 @@ public class MainViewModel : ObservableObject
 	/// <summary>指定したデータ点を削除するコマンド。</summary>
 	public RelayCommand<DataPoint> RemoveDataPointCommand { get; }
 
-	private bool CanAddDataPoint() => !string.IsNullOrWhiteSpace(NewLabel) && double.TryParse(NewValueInput, out _);
+	private bool CanAddDataPoint() =>
+		!string.IsNullOrWhiteSpace(NewLabel) &&
+		double.TryParse(NewValueInput, NumberStyles.Float, CultureInfo.InvariantCulture, out _);
 
 	private void AddDataPoint()
 	{
-		DataPoints.Add(new DataPoint(NewLabel, double.Parse(NewValueInput)));
+		DataPoints.Add(new DataPoint(NewLabel, double.Parse(NewValueInput, CultureInfo.InvariantCulture)));
 		NewLabel = string.Empty;
 		NewValueInput = string.Empty;
 		RebuildPlotModel();
@@ -100,5 +102,9 @@ public class MainViewModel : ObservableObject
 		}
 	}
 
-	private void RebuildPlotModel() => PlotModel = ChartModelBuilder.Build(DataPoints.ToList(), SelectedChartType);
+	private void RebuildPlotModel()
+	{
+		ChartModelBuilder.Rebuild(_plotModel, DataPoints.ToList(), SelectedChartType);
+		_plotModel.InvalidatePlot(true);
+	}
 }
