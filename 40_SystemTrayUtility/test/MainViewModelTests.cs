@@ -1,4 +1,5 @@
 using SystemTrayUtility.Services;
+using SystemTrayUtility.Tests.Fakes;
 using SystemTrayUtility.ViewModels;
 
 namespace SystemTrayUtility.Tests;
@@ -62,5 +63,33 @@ public class MainViewModelTests
 		viewModel.TestNotifyCommand.Execute(null);
 
 		Assert.True(raised);
+	}
+
+	/// <summary>
+	/// パス条件: IsStartupEnabledをtrueに設定した際にレジストラのRegisterが例外をスローすると、
+	/// クラッシュせずIsStartupEnabledは変更前(false)のままで、StatusTextにエラーメッセージが設定されること。
+	/// </summary>
+	[Fact]
+	public void IsStartupEnabled_Registerが例外をスローすると状態は変わらずStatusTextにエラーが設定される()
+	{
+		var viewModel = new MainViewModel(new ThrowingStartupRegistrar());
+
+		viewModel.IsStartupEnabled = true;
+
+		Assert.False(viewModel.IsStartupEnabled);
+		Assert.Contains("失敗しました", viewModel.StatusText);
+	}
+
+	/// <summary>
+	/// パス条件: コンストラクタでレジストラのIsRegisteredが例外をスローすると、
+	/// クラッシュせずIsStartupEnabledはfalseで初期化され、StatusTextにエラーメッセージが設定されること。
+	/// </summary>
+	[Fact]
+	public void Constructor_IsRegisteredが例外をスローするとIsStartupEnabledはfalseで初期化されStatusTextにエラーが設定される()
+	{
+		var viewModel = new MainViewModel(new ThrowingStartupRegistrar());
+
+		Assert.False(viewModel.IsStartupEnabled);
+		Assert.Contains("失敗しました", viewModel.StatusText);
 	}
 }

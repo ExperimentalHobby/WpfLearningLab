@@ -1,3 +1,5 @@
+using System.IO;
+using System.Security;
 using System.Windows.Input;
 using SystemTrayUtility.Services;
 
@@ -23,7 +25,15 @@ public class MainViewModel : ObservableObject
 	public MainViewModel(IStartupRegistrar startupRegistrar)
 	{
 		_startupRegistrar = startupRegistrar;
-		_isStartupEnabled = _startupRegistrar.IsRegistered();
+		try
+		{
+			_isStartupEnabled = _startupRegistrar.IsRegistered();
+		}
+		catch (Exception ex) when (ex is UnauthorizedAccessException or SecurityException or IOException)
+		{
+			_isStartupEnabled = false;
+			_statusText = $"スタートアップ登録状態の確認に失敗しました: {ex.Message}";
+		}
 
 		TestNotifyCommand = new RelayCommand(() => TestNotifyRequested?.Invoke());
 	}
@@ -43,19 +53,34 @@ public class MainViewModel : ObservableObject
 		get => _isStartupEnabled;
 		set
 		{
-			if (SetProperty(ref _isStartupEnabled, value))
+			if (_isStartupEnabled == value)
+			{
+				return;
+			}
+
+			try
 			{
 				if (value)
 				{
 					_startupRegistrar.Register();
-					StatusText = "スタートアップに登録しました。";
 				}
 				else
 				{
 					_startupRegistrar.Unregister();
-					StatusText = "スタートアップ登録を解除しました。";
 				}
 			}
+			catch (Exception ex) when (ex is UnauthorizedAccessException or SecurityException or IOException or InvalidOperationException)
+			{
+				// 登録/解除に失敗した場合、内部状態は変更前のまま維持する。
+				// フィールドは変えていないが、双方向バインディングされたチェックボックスの表示を
+				// 実際の値へ戻すため、通知だけを発火する。
+				StatusText = $"スタートアップ設定の変更に失敗しました: {ex.Message}";
+				RaisePropertyChanged();
+				return;
+			}
+
+			SetProperty(ref _isStartupEnabled, value);
+			StatusText = value ? "スタートアップに登録しました。" : "スタートアップ登録を解除しました。";
 		}
 	}
 
