@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows.Media;
 using PaintTool.ViewModels;
 
@@ -175,5 +176,59 @@ public class MainViewModelTests
 
 		Assert.Equal(Colors.Red, viewModel.PenColor);
 		Assert.Equal(Colors.Red, controller.LastPenColor);
+	}
+
+	/// <summary>
+	/// パス条件: SelectColorCommandに不正な色名を渡してもクラッシュせずPenColorが変化しないこと
+	/// </summary>
+	[Fact]
+	public void SelectColorCommand_不正な色名を渡してもクラッシュせずPenColorが変化しない()
+	{
+		var controller = new FakeInkCanvasController();
+		var viewModel = CreateViewModel(controller);
+		var originalColor = viewModel.PenColor;
+
+		viewModel.SelectColorCommand.Execute("そんな色はない");
+
+		Assert.Equal(originalColor, viewModel.PenColor);
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
+	}
+
+	/// <summary>
+	/// パス条件: SaveCommand実行時にIOException/UnauthorizedAccessException/InvalidOperationExceptionが
+	/// 発生してもクラッシュせずErrorMessageが設定されること
+	/// </summary>
+	[Theory]
+	[InlineData(typeof(IOException))]
+	[InlineData(typeof(UnauthorizedAccessException))]
+	[InlineData(typeof(InvalidOperationException))]
+	public void SaveCommand_保存時に例外が発生してもクラッシュせずErrorMessageが設定される(Type exceptionType)
+	{
+		var exception = (Exception)Activator.CreateInstance(exceptionType)!;
+		var controller = new FakeInkCanvasController { SaveExceptionToThrow = exception };
+		var saveDialog = new FakeSaveFileDialogService { PathToReturn = @"C:\temp\drawing.png" };
+		var viewModel = CreateViewModel(controller, saveDialog);
+
+		viewModel.SaveCommand.Execute(null);
+
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
+	}
+
+	/// <summary>
+	/// パス条件: SaveCommandが成功するとErrorMessageがクリアされること
+	/// </summary>
+	[Fact]
+	public void SaveCommand_成功時はErrorMessageがクリアされる()
+	{
+		var controller = new FakeInkCanvasController { SaveExceptionToThrow = new IOException() };
+		var saveDialog = new FakeSaveFileDialogService { PathToReturn = @"C:\temp\drawing.png" };
+		var viewModel = CreateViewModel(controller, saveDialog);
+		viewModel.SaveCommand.Execute(null);
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
+
+		controller.SaveExceptionToThrow = null;
+		viewModel.SaveCommand.Execute(null);
+
+		Assert.True(string.IsNullOrEmpty(viewModel.ErrorMessage));
 	}
 }
