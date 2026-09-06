@@ -17,16 +17,16 @@ public class EnumValuesExtension : MarkupExtension
 	/// <param name="enumType">値一覧を取得する対象の列挙型。</param>
 	public EnumValuesExtension(Type enumType)
 	{
+		// XAML解析時(ProvideValue呼び出し時)まで検証を遅らせると発見が遅れるため、
+		// コンストラクタの時点で検証する。
+		if (!enumType.IsEnum)
+		{
+			throw new ArgumentException($"{enumType}は列挙型ではありません。", nameof(enumType));
+		}
+
 		EnumType = enumType;
 	}
 
 	/// <inheritdoc/>
-	public override object ProvideValue(IServiceProvider serviceProvider)
-	{
-		if (!EnumType.IsEnum)
-		{
-			throw new ArgumentException($"{EnumType}は列挙型ではありません。", nameof(EnumType));
-		}
-		return Enum.GetValues(EnumType);
-	}
+	public override object ProvideValue(IServiceProvider serviceProvider) => Enum.GetValues(EnumType);
 }

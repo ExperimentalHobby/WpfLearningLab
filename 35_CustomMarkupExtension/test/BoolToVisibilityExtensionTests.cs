@@ -60,4 +60,19 @@ public class BoolToVisibilityExtensionTests
 
 		Assert.Equal("MyCheckBox", binding.ElementName);
 	}
+
+	/// <summary>
+	/// パス条件: BuildBindingを複数回呼んでも、Converterはステートレスなため
+	/// 同一インスタンスが使い回されること(呼ぶたびに新規生成しない)。
+	/// </summary>
+	[Fact]
+	public void BuildBinding_複数回呼んでもConverterは同一インスタンスが使い回される()
+	{
+		var extension = new BoolToVisibilityExtension { Path = "X" };
+
+		var first = extension.BuildBinding();
+		var second = extension.BuildBinding();
+
+		Assert.Same(first.Converter, second.Converter);
+	}
 }
