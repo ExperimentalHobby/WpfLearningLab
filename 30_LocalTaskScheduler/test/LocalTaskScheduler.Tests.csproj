@@ -6,8 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <!-- LocalTaskScheduler.csprojと同様、System.Drawing.Commonの明示的なバージョン上書きに対する
-         誤検知(NU1510)のみを抑制する -->
+    <!-- LocalTaskScheduler.csproj(CommunityToolkit.WinUI.Notifications経由)と同様、
+         System.Drawing.Commonの明示的なバージョン上書きに対する誤検知(NU1510)のみを抑制する -->
     <NoWarn>$(NoWarn);NU1510</NoWarn>
   </PropertyGroup>
 

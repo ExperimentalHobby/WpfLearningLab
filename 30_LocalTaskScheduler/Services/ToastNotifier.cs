@@ -1,9 +1,9 @@
-using Microsoft.Toolkit.Uwp.Notifications;
+using CommunityToolkit.WinUI.Notifications;
 
 namespace LocalTaskScheduler.Services;
 
 /// <summary>
-/// <see cref="ToastContentBuilder"/>(Microsoft.Toolkit.Uwp.Notifications)を使う<see cref="IToastNotifier"/>実装。
+/// <see cref="ToastContentBuilder"/>(CommunityToolkit.WinUI.Notifications)を使う<see cref="IToastNotifier"/>実装。
 /// </summary>
 public class ToastNotifier : IToastNotifier
 {

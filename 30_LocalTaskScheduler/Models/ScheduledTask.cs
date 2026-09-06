@@ -20,7 +20,21 @@ public class ScheduledTask : INotifyPropertyChanged
 	/// <param name="executeAt"><see cref="ScheduleType.Once"/>の場合の実行日時。</param>
 	/// <param name="interval"><see cref="ScheduleType.Interval"/>の場合の実行間隔。</param>
 	public ScheduledTask(string name, ScheduleType scheduleType, DateTime? executeAt, TimeSpan? interval)
+		: this(Guid.NewGuid(), name, scheduleType, executeAt, interval)
 	{
+	}
+
+	/// <summary>
+	/// タスクを初期化する(IDを明示指定する版)。永続化からの復元用。
+	/// </summary>
+	/// <param name="id">タスクを一意に識別するID。</param>
+	/// <param name="name">タスク名。</param>
+	/// <param name="scheduleType">スケジュール種別。</param>
+	/// <param name="executeAt"><see cref="ScheduleType.Once"/>の場合の実行日時。</param>
+	/// <param name="interval"><see cref="ScheduleType.Interval"/>の場合の実行間隔。</param>
+	public ScheduledTask(Guid id, string name, ScheduleType scheduleType, DateTime? executeAt, TimeSpan? interval)
+	{
+		Id = id;
 		Name = name;
 		ScheduleType = scheduleType;
 		ExecuteAt = executeAt;
@@ -31,7 +45,7 @@ public class ScheduledTask : INotifyPropertyChanged
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>タスクを一意に識別するID。</summary>
-	public Guid Id { get; } = Guid.NewGuid();
+	public Guid Id { get; }
 
 	/// <summary>タスク名。</summary>
 	public string Name { get; }

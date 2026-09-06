@@ -14,6 +14,7 @@ public class MainViewModel : ObservableObject
 	private const string DateTimeFormat = "yyyy-MM-dd HH:mm";
 
 	private readonly IToastNotifier _toastNotifier;
+	private readonly ITaskRepository _taskRepository;
 
 	private string _newTaskName = string.Empty;
 	private ScheduleType _newTaskScheduleType = ScheduleType.Once;
@@ -21,14 +22,21 @@ public class MainViewModel : ObservableObject
 	private string _newTaskIntervalMinutes = string.Empty;
 
 	/// <summary>
-	/// ViewModelを初期化する。
+	/// ViewModelを初期化する。保存済みのタスク一覧があれば読み込んで反映する。
 	/// </summary>
 	/// <param name="toastNotifier">トースト通知処理。</param>
-	public MainViewModel(IToastNotifier toastNotifier)
+	/// <param name="taskRepository">タスク一覧の永続化処理。</param>
+	public MainViewModel(IToastNotifier toastNotifier, ITaskRepository taskRepository)
 	{
 		_toastNotifier = toastNotifier;
+		_taskRepository = taskRepository;
 		AddTaskCommand = new RelayCommand(AddTask, CanAddTask);
 		RemoveTaskCommand = new RelayCommand<ScheduledTask>(RemoveTask);
+
+		foreach (var task in _taskRepository.Load())
+		{
+			Tasks.Add(task);
+		}
 	}
 
 	/// <summary>新規タスク入力フォームのタスク名。</summary>
@@ -145,6 +153,7 @@ public class MainViewModel : ObservableObject
 		NewTaskName = string.Empty;
 		NewTaskExecuteAt = string.Empty;
 		NewTaskIntervalMinutes = string.Empty;
+		SaveTasks();
 	}
 
 	private void RemoveTask(ScheduledTask? task)
@@ -152,6 +161,7 @@ public class MainViewModel : ObservableObject
 		if (task is not null)
 		{
 			Tasks.Remove(task);
+			SaveTasks();
 		}
 	}
 
@@ -164,7 +174,19 @@ public class MainViewModel : ObservableObject
 		}
 
 		var message = $"タスク「{task.Name}」を実行しました。";
-		_toastNotifier.Show("ローカルタスクスケジューラ", message);
+		try
+		{
+			_toastNotifier.Show("ローカルタスクスケジューラ", message);
+		}
+		catch (Exception)
+		{
+			// 通知APIが無効な環境(トースト通知が無効化されている等)でも、タスクの実行記録自体は
+			// 失われないようにする。通知に失敗したこと自体はログに残さず実行ログのみ記録する。
+		}
+
 		ExecutionLog.Insert(0, $"{now:HH:mm:ss} {message}");
+		SaveTasks();
 	}
+
+	private void SaveTasks() => _taskRepository.Save(Tasks.ToList());
 }

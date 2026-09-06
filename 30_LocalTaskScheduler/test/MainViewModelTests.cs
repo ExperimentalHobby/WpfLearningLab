@@ -10,8 +10,8 @@ public class MainViewModelTests
 {
 	private static readonly DateTime Now = new(2026, 8, 31, 12, 0, 0);
 
-	private static MainViewModel CreateViewModel(FakeToastNotifier? toastNotifier = null) =>
-		new(toastNotifier ?? new FakeToastNotifier());
+	private static MainViewModel CreateViewModel(FakeToastNotifier? toastNotifier = null, FakeTaskRepository? taskRepository = null) =>
+		new(toastNotifier ?? new FakeToastNotifier(), taskRepository ?? new FakeTaskRepository());
 
 	/// <summary>
 	/// パス条件: Once種別でAddTaskCommandを実行すると、Tasksに指定した実行日時のタスクが追加されること
@@ -206,5 +206,77 @@ public class MainViewModelTests
 
 		viewModel.CheckDueTasks(Now.AddMinutes(10));
 		Assert.Equal(2, viewModel.ExecutionLog.Count);
+	}
+
+	/// <summary>
+	/// パス条件: コンストラクタでリポジトリから読み込んだタスクがTasksに反映されること
+	/// </summary>
+	[Fact]
+	public void コンストラクタ_リポジトリから読み込んだタスクがTasksに反映される()
+	{
+		var task = new ScheduledTask("既存タスク", ScheduleType.Once, Now.AddHours(1), null);
+		var repository = new FakeTaskRepository { TasksToReturn = [task] };
+
+		var viewModel = CreateViewModel(taskRepository: repository);
+
+		var restored = Assert.Single(viewModel.Tasks);
+		Assert.Equal("既存タスク", restored.Name);
+	}
+
+	/// <summary>
+	/// パス条件: AddTaskCommand実行でリポジトリに保存されること
+	/// </summary>
+	[Fact]
+	public void AddTaskCommand_実行するとリポジトリに保存される()
+	{
+		var repository = new FakeTaskRepository();
+		var viewModel = CreateViewModel(taskRepository: repository);
+		viewModel.NewTaskName = "バックアップ";
+		viewModel.NewTaskScheduleType = ScheduleType.Once;
+		viewModel.NewTaskExecuteAt = "2026-08-31 15:00";
+
+		viewModel.AddTaskCommand.Execute(null);
+
+		Assert.Equal(1, repository.SaveCallCount);
+		Assert.Single(repository.LastSavedTasks!);
+	}
+
+	/// <summary>
+	/// パス条件: RemoveTaskCommand実行でリポジトリに保存されること
+	/// </summary>
+	[Fact]
+	public void RemoveTaskCommand_実行するとリポジトリに保存される()
+	{
+		var repository = new FakeTaskRepository();
+		var viewModel = CreateViewModel(taskRepository: repository);
+		viewModel.NewTaskName = "バックアップ";
+		viewModel.NewTaskScheduleType = ScheduleType.Once;
+		viewModel.NewTaskExecuteAt = "2026-08-31 15:00";
+		viewModel.AddTaskCommand.Execute(null);
+		var saveCallCountAfterAdd = repository.SaveCallCount;
+
+		viewModel.RemoveTaskCommand.Execute(viewModel.Tasks[0]);
+
+		Assert.True(repository.SaveCallCount > saveCallCountAfterAdd);
+		Assert.Empty(repository.LastSavedTasks!);
+	}
+
+	/// <summary>
+	/// パス条件: 通知(トースト)が失敗してもクラッシュせず、タスクの実行記録は残ること
+	/// </summary>
+	[Fact]
+	public void CheckDueTasks_通知が失敗してもクラッシュせず実行記録が残る()
+	{
+		var toastNotifier = new FakeToastNotifier { ExceptionToThrow = new InvalidOperationException("通知APIが無効です") };
+		var viewModel = CreateViewModel(toastNotifier);
+		viewModel.NewTaskName = "バックアップ";
+		viewModel.NewTaskScheduleType = ScheduleType.Once;
+		viewModel.NewTaskExecuteAt = "2026-08-31 11:00";
+		viewModel.AddTaskCommand.Execute(null);
+
+		viewModel.CheckDueTasks(Now);
+
+		Assert.Equal(Now, viewModel.Tasks[0].LastExecutedAt);
+		Assert.Single(viewModel.ExecutionLog);
 	}
 }
