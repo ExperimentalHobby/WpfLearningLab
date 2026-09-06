@@ -22,13 +22,12 @@ public class EnumValuesExtensionTests
 	}
 
 	/// <summary>
-	/// パス条件: 列挙型でない型を指定した場合、ArgumentExceptionをスローすること。
+	/// パス条件: 列挙型でない型を指定した場合、コンストラクタ呼び出し時点でArgumentExceptionを
+	/// スローすること(XAML解析時ではなく、より早いタイミングで検知できるようにする)。
 	/// </summary>
 	[Fact]
-	public void ProvideValue_列挙型でない場合ArgumentExceptionをスローする()
+	public void Constructor_列挙型でない場合ArgumentExceptionをスローする()
 	{
-		var extension = new EnumValuesExtension(typeof(string));
-
-		Assert.Throws<ArgumentException>(() => extension.ProvideValue(null!));
+		Assert.Throws<ArgumentException>(() => new EnumValuesExtension(typeof(string)));
 	}
 }

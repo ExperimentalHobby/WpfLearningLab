@@ -13,6 +13,9 @@ namespace CustomMarkupExtension.MarkupExtensions;
 /// </summary>
 public class BoolToVisibilityExtension : MarkupExtension
 {
+	// ステートレスなコンバーターのため、BuildBindingを呼ぶたびに新規生成せず共有する。
+	private static readonly InvertibleBoolToVisibilityConverter SharedConverter = new();
+
 	/// <summary>バインド元のパス。</summary>
 	public string Path { get; set; } = ".";
 
@@ -31,7 +34,7 @@ public class BoolToVisibilityExtension : MarkupExtension
 	{
 		var binding = new Binding(Path)
 		{
-			Converter = new InvertibleBoolToVisibilityConverter(),
+			Converter = SharedConverter,
 			ConverterParameter = Invert,
 		};
 		if (ElementName is not null)
