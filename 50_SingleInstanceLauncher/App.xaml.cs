@@ -1,5 +1,6 @@
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using SingleInstanceLauncher.Models;
@@ -53,9 +54,27 @@ public partial class App : Application
 
         _serverCts = new CancellationTokenSource();
         var server = new PipeMessenger(PipeName);
-        _ = server.StartServerAsync(
-            message => Dispatcher.Invoke(() => mainWindow.OnLaunchMessageReceived(message)),
-            _serverCts.Token);
+        _ = RunServerAsync(server, mainWindow, _serverCts.Token);
+    }
+
+    /// <summary>
+    /// <see cref="PipeMessenger.StartServerAsync"/>をfire-and-forgetで呼び出すためのラッパー。
+    /// <see cref="PipeMessenger.StartServerAsync"/>自体は既知の例外を内部で処理しているが、
+    /// fire-and-forget呼び出しである以上、万一の想定外の例外がアプリ全体をクラッシュさせない
+    /// よう最終防御境界として捕捉する。
+    /// </summary>
+    private static async Task RunServerAsync(PipeMessenger server, MainWindow mainWindow, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await server.StartServerAsync(
+                message => mainWindow.Dispatcher.Invoke(() => mainWindow.OnLaunchMessageReceived(message)),
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"起動待受サーバーで予期しないエラーが発生しました: {ex.Message}");
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)

@@ -12,17 +12,16 @@ public class SingleInstanceGuard : IDisposable
 
     public SingleInstanceGuard(string mutexName)
     {
-        _mutex = new Mutex(initiallyOwned: true, name: mutexName, out var createdNew);
+        // 「自分が最初のインスタンスか」の判定にはcreatedNewのみを使い、Mutexの所有(取得)は
+        // 行わない。所有した場合、Dispose元と異なるスレッドからReleaseMutexを呼ぶと
+        // ApplicationExceptionになりうるが、名前付きMutexはプロセス内で参照されている限り
+        // カーネルオブジェクトが存在し続けるため、所有しなくても多重起動検知は成立する。
+        _mutex = new Mutex(initiallyOwned: false, name: mutexName, out var createdNew);
         IsFirstInstance = createdNew;
     }
 
     public void Dispose()
     {
-        if (IsFirstInstance)
-        {
-            _mutex.ReleaseMutex();
-        }
-
         _mutex.Dispose();
     }
 }
