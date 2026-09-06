@@ -8,5 +8,5 @@ namespace LocalTaskScheduler.Services;
 public class WpfUiDispatcher : IUiDispatcher
 {
 	/// <inheritdoc/>
-	public void Invoke(Action action) => Application.Current.Dispatcher.Invoke(action);
+	public void Invoke(Action action) => Application.Current.Dispatcher.InvokeAsync(action);
 }

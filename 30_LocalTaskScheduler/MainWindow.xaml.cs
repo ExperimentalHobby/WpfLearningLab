@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using LocalTaskScheduler.Services;
 using LocalTaskScheduler.ViewModels;
@@ -17,7 +18,11 @@ public partial class MainWindow : Window
 	public MainWindow()
 	{
 		InitializeComponent();
-		_viewModel = new MainViewModel(new ToastNotifier());
+		var tasksFilePath = Path.Combine(
+			Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+			"WpfLearningLab.LocalTaskScheduler",
+			"tasks.json");
+		_viewModel = new MainViewModel(new ToastNotifier(), new JsonFileTaskRepository(tasksFilePath));
 		DataContext = _viewModel;
 
 		_ticker.Ticked += now => _dispatcher.Invoke(() => _viewModel.CheckDueTasks(now));
