@@ -99,15 +99,23 @@ public class MainViewModel : ObservableObject
 				continue;
 			}
 
-			var info = new FileInfo(path);
-			Files.Add(new TaggedFile
+			try
 			{
-				FilePath = path,
-				SizeBytes = info.Length,
-				LastModified = info.LastWriteTime,
-				SortOrder = Files.Count,
-			});
-			added = true;
+				var info = new FileInfo(path);
+				Files.Add(new TaggedFile
+				{
+					FilePath = path,
+					SizeBytes = info.Length,
+					LastModified = info.LastWriteTime,
+					SortOrder = Files.Count,
+				});
+				added = true;
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				// ドロップ直後にファイルが削除される・権限がない等でアクセスに失敗しても、
+				// そのファイルだけスキップして他のファイルの取り込みは継続する。
+			}
 		}
 
 		if (added)
@@ -158,7 +166,6 @@ public class MainViewModel : ObservableObject
 				SelectedFile.Tags.Add(tag);
 			}
 		}
-		SelectedFile.NotifyTagsChanged();
 
 		NewTagInput = string.Empty;
 		RefreshDisplayedFiles();

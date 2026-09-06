@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 
@@ -8,6 +10,16 @@ namespace DragDropFileTagger.Models;
 /// </summary>
 public class TaggedFile : INotifyPropertyChanged
 {
+	private ObservableCollection<string> _tags = [];
+
+	/// <summary>
+	/// <see cref="TaggedFile"/>を初期化する。
+	/// </summary>
+	public TaggedFile()
+	{
+		SubscribeTagsChanged();
+	}
+
 	/// <inheritdoc/>
 	public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -23,8 +35,23 @@ public class TaggedFile : INotifyPropertyChanged
 	/// <summary>最終更新日時。</summary>
 	public DateTime LastModified { get; set; }
 
-	/// <summary>付与されたタグの一覧。</summary>
-	public List<string> Tags { get; set; } = [];
+	/// <summary>
+	/// 付与されたタグの一覧。<see cref="ObservableCollection{T}"/>のため、呼び出し側は
+	/// <c>Tags.Add(...)</c>するだけで<see cref="TagsDisplay"/>の変更通知が自動的に発火する
+	/// (以前は呼び出し側が明示的な通知メソッドを呼ぶ必要があり、呼び忘れるとUIが更新されない
+	/// 問題があった)。
+	/// </summary>
+	public ObservableCollection<string> Tags
+	{
+		get => _tags;
+		set
+		{
+			_tags.CollectionChanged -= OnTagsCollectionChanged;
+			_tags = value;
+			SubscribeTagsChanged();
+			OnPropertyChanged(nameof(TagsDisplay));
+		}
+	}
 
 	/// <summary>表示順。小さい順に並べる。</summary>
 	public int SortOrder { get; set; }
@@ -32,8 +59,11 @@ public class TaggedFile : INotifyPropertyChanged
 	/// <summary>タグをカンマ区切りで結合した表示用文字列。</summary>
 	public string TagsDisplay => string.Join(", ", Tags);
 
-	/// <summary>
-	/// <see cref="Tags"/>を直接変更した後に呼び出し、<see cref="TagsDisplay"/>の変更をUIへ通知する。
-	/// </summary>
-	public void NotifyTagsChanged() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TagsDisplay)));
+	private void SubscribeTagsChanged() => _tags.CollectionChanged += OnTagsCollectionChanged;
+
+	private void OnTagsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+		OnPropertyChanged(nameof(TagsDisplay));
+
+	private void OnPropertyChanged(string propertyName) =>
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

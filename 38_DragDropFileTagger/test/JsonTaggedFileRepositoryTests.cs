@@ -54,4 +54,19 @@ public class JsonTaggedFileRepositoryTests : IDisposable
 
 		Assert.Empty(repository.Load());
 	}
+
+	/// <summary>
+	/// パス条件: 壊れたJSONファイルを読み込んでも例外を投げず、空のリストを返すこと
+	/// (コンストラクタでLoad()を呼ぶため、ここで例外を投げると起動時クラッシュになる)。
+	/// </summary>
+	[Fact]
+	public void Load_壊れたJSONファイルは例外を投げず空のリストを返す()
+	{
+		File.WriteAllText(_filePath, "{ this is not valid json");
+		var repository = new JsonTaggedFileRepository(_filePath);
+
+		var result = repository.Load();
+
+		Assert.Empty(result);
+	}
 }
