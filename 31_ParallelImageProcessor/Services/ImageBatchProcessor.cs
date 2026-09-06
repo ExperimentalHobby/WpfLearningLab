@@ -16,11 +16,16 @@ public class ImageBatchProcessor : IImageBatchProcessor
 	/// <inheritdoc/>
 	public ImageProcessResult ProcessImage(string sourcePath, string destPath, ImageProcessingOptions options)
 	{
+		Bitmap? grayscale = null;
 		try
 		{
 			using var original = new Bitmap(sourcePath);
 			using var resized = options.ResizeEnabled ? ResizeImage(original, options.TargetWidth, options.TargetHeight) : new Bitmap(original);
-			using var final = options.GrayscaleEnabled ? ToGrayscale(resized) : resized;
+			// グレースケール無効時はfinalがresizedと同一インスタンスになる。usingでどちらも
+			// 管理すると同一インスタンスを二重にDisposeしてしまうため、grayscaleは別変数で
+			// 保持しこのtry/finallyの外側で個別に破棄する。
+			grayscale = options.GrayscaleEnabled ? ToGrayscale(resized) : null;
+			var final = grayscale ?? resized;
 
 			var destDir = Path.GetDirectoryName(destPath);
 			if (!string.IsNullOrEmpty(destDir))
@@ -35,6 +40,10 @@ public class ImageBatchProcessor : IImageBatchProcessor
 		catch (Exception ex) when (ex is IOException or ArgumentException or OutOfMemoryException or UnauthorizedAccessException)
 		{
 			return new ImageProcessResult(sourcePath, Success: false, ErrorMessage: ex.Message);
+		}
+		finally
+		{
+			grayscale?.Dispose();
 		}
 	}
 
@@ -59,6 +68,10 @@ public class ImageBatchProcessor : IImageBatchProcessor
 			MaxDegreeOfParallelism = Environment.ProcessorCount,
 		};
 
+		// ここでの本体はCPUバウンドな同期処理で、I/O待ちで本来の意味の非同期にはならない。
+		// それでもParallel.ForEachAsyncを使うのは、キャンセルトークンとMaxDegreeOfParallelismを
+		// 一貫したAPIで扱えるためで、内部的にはMaxDegreeOfParallelism件までスレッドプールへ
+		// 正しく分散して実行される(Parallel.ForEachと同等の並列性は確保できている)。
 		await Parallel.ForEachAsync(sourceFiles, parallelOptions, (filePath, _) =>
 		{
 			var destPath = Path.Combine(destinationFolder, Path.GetFileName(filePath));

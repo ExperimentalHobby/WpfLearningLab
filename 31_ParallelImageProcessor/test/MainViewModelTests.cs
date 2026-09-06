@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
+using ParallelImageProcessor.Models;
 using ParallelImageProcessor.Services;
 using ParallelImageProcessor.Tests.Fakes;
 using ParallelImageProcessor.ViewModels;
@@ -114,5 +115,67 @@ public class MainViewModelTests : IDisposable
 
 		Assert.Contains("成功 3件", viewModel.ResultSummaryText);
 		Assert.Equal(3, Directory.GetFiles(destFolder).Length);
+	}
+
+	/// <summary>
+	/// パス条件: SourceFolderに存在しないフォルダを指定してStartCommandを実行しても、
+	/// クラッシュせずResultSummaryTextにエラーメッセージが表示されること。
+	/// </summary>
+	[Fact]
+	public async Task StartCommand_存在しないフォルダを指定してもクラッシュせずエラーが表示される()
+	{
+		var notExistFolder = Path.Combine(_tempDir, "not-exist-" + Guid.NewGuid());
+		var destFolder = Path.Combine(_tempDir, "dest");
+		var picker = new FakeFolderPicker { ResultPath = notExistFolder };
+		var viewModel = new MainViewModel(new ImageBatchProcessor(), picker);
+		viewModel.SelectSourceFolderCommand.Execute(null);
+		picker.ResultPath = destFolder;
+		viewModel.SelectDestinationFolderCommand.Execute(null);
+
+		viewModel.StartCommand.Execute(null);
+		var waited = 0;
+		while (viewModel.IsProcessing && waited < 5000)
+		{
+			await Task.Delay(50);
+			waited += 50;
+		}
+
+		Assert.False(string.IsNullOrEmpty(viewModel.ResultSummaryText));
+	}
+
+	/// <summary>
+	/// パス条件: 並列処理により完了件数が逆順で報告されても、ProgressPercentageが後退しないこと。
+	/// </summary>
+	[Fact]
+	public async Task StartCommand_進捗が逆順で報告されてもProgressPercentageが後退しない()
+	{
+		var sourceFolder = CreateSourceFolderWithImages(1);
+		var destFolder = Path.Combine(_tempDir, "dest");
+		var picker = new FakeFolderPicker();
+		var processor = new FakeImageBatchProcessor
+		{
+			ProcessBatchAsyncImpl = (files, dest, options, progress, ct) =>
+			{
+				// 並列実行で完了順が入れ替わった状況を模擬する(3件目→1件目の順で報告)
+				progress?.Report(new BatchProgress(3, 3));
+				progress?.Report(new BatchProgress(1, 3));
+				return Task.FromResult(new BatchProcessResult(3, 0, TimeSpan.Zero, []));
+			},
+		};
+		var viewModel = new MainViewModel(processor, picker);
+		picker.ResultPath = sourceFolder;
+		viewModel.SelectSourceFolderCommand.Execute(null);
+		picker.ResultPath = destFolder;
+		viewModel.SelectDestinationFolderCommand.Execute(null);
+
+		viewModel.StartCommand.Execute(null);
+		var waited = 0;
+		while (viewModel.IsProcessing && waited < 5000)
+		{
+			await Task.Delay(50);
+			waited += 50;
+		}
+
+		Assert.Equal(100.0, viewModel.ProgressPercentage);
 	}
 }
