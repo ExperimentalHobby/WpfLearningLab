@@ -47,4 +47,31 @@ public class MainViewModelTests
 
 		Assert.Equal("Crimson", viewModel.MaterialColorName);
 	}
+
+	/// <summary>
+	/// パス条件: Azimuthに360以上の値を設定すると、[0, 360)の範囲に正規化されること
+	/// (自動回転で際限なく加算し続けるとdoubleの精度が劣化するため)。
+	/// </summary>
+	[Fact]
+	public void Azimuth_360以上の値は正規化される()
+	{
+		var viewModel = new MainViewModel();
+
+		viewModel.Azimuth = 361;
+
+		Assert.Equal(1, viewModel.Azimuth, precision: 10);
+	}
+
+	/// <summary>
+	/// パス条件: Azimuthに負の値を設定すると、[0, 360)の範囲に正規化されること。
+	/// </summary>
+	[Fact]
+	public void Azimuth_負の値は正規化される()
+	{
+		var viewModel = new MainViewModel();
+
+		viewModel.Azimuth = -1;
+
+		Assert.Equal(359, viewModel.Azimuth, precision: 10);
+	}
 }

@@ -35,8 +35,17 @@ public class MainViewModel : ObservableObject
 	/// <summary>マテリアルの色を設定するコマンド(パラメータに色名の文字列を渡す)。</summary>
 	public ICommand SetColorCommand { get; }
 
-	/// <summary>カメラの方位角(度)。</summary>
-	public double Azimuth { get => _azimuth; set => SetProperty(ref _azimuth, value); }
+	/// <summary>
+	/// カメラの方位角(度)。<c>[0, 360)</c>の範囲に正規化される
+	/// (自動回転で際限なく加算し続けるとdoubleの精度が劣化するため)。
+	/// </summary>
+	public double Azimuth { get => _azimuth; set => SetProperty(ref _azimuth, NormalizeAzimuth(value)); }
+
+	private static double NormalizeAzimuth(double azimuth)
+	{
+		var normalized = azimuth % 360;
+		return normalized < 0 ? normalized + 360 : normalized;
+	}
 
 	/// <summary>カメラの仰角(度)。</summary>
 	public double Elevation { get => _elevation; set => SetProperty(ref _elevation, value); }
