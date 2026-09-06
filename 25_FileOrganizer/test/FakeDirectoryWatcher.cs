@@ -16,6 +16,12 @@ public class FakeDirectoryWatcher : IDirectoryWatcher
 	/// <summary>監視中かどうか。</summary>
 	public bool IsStarted { get; private set; }
 
+	/// <summary><see cref="Dispose"/>が呼ばれた回数。</summary>
+	public int DisposeCallCount { get; private set; }
+
+	/// <summary><see cref="FileCreated"/>に購読者が残っているかどうか。</summary>
+	public bool HasFileCreatedSubscribers => FileCreated is not null;
+
 	/// <inheritdoc/>
 	public void Start(string folderPath)
 	{
@@ -27,7 +33,11 @@ public class FakeDirectoryWatcher : IDirectoryWatcher
 	public void Stop() => IsStarted = false;
 
 	/// <inheritdoc/>
-	public void Dispose() => Stop();
+	public void Dispose()
+	{
+		DisposeCallCount++;
+		Stop();
+	}
 
 	/// <summary>
 	/// テストからファイル作成イベントを疑似的に発火させる。

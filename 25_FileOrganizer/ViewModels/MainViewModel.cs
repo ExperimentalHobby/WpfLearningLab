@@ -8,7 +8,7 @@ namespace FileOrganizer.ViewModels;
 /// <summary>
 /// フォルダ監視・振り分けルール管理・処理ログ表示を行うメイン画面のViewModel。
 /// </summary>
-public class MainViewModel : ObservableObject
+public class MainViewModel : ObservableObject, IDisposable
 {
 	private readonly IFileOrganizerService _organizerService;
 	private readonly IDirectoryWatcher _watcher;
@@ -175,10 +175,33 @@ public class MainViewModel : ObservableObject
 
 	private async void OnFileCreated(string filePath)
 	{
-		var result = await _organizerService.OrganizeFileAsync(filePath, WatchFolder, Rules.ToList());
-		if (ShouldLog(result))
+		// FileSystemWatcherのイベントはバックグラウンドスレッドから発火する。UIスレッド所有の
+		// ObservableCollectionである Rules を直接読むと、AddRule/RemoveRuleとの競合状態になりうるため
+		// _dispatcher.Invoke経由でスナップショットを取得する。また、このメソッドはバックグラウンド
+		// スレッドからのイベントハンドラであり呼び出し元が存在しない(async voidの例外は捕捉されず
+		// アプリ全体をクラッシュさせる)ため、ここが実質的な最終防衛ラインとして例外を広く捕捉する。
+		try
 		{
-			_dispatcher.Invoke(() => Logs.Add(result));
+			var rules = _dispatcher.Invoke(() => Rules.ToList());
+			var watchFolder = _dispatcher.Invoke(() => WatchFolder);
+			var result = await _organizerService.OrganizeFileAsync(filePath, watchFolder, rules);
+			if (ShouldLog(result))
+			{
+				_dispatcher.Invoke(() => Logs.Add(result));
+			}
 		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"ファイル振り分け中に予期しないエラーが発生しました: {ex}");
+		}
+	}
+
+	/// <summary>
+	/// フォルダ監視の購読解除と<see cref="IDirectoryWatcher"/>の破棄を行う。
+	/// </summary>
+	public void Dispose()
+	{
+		_watcher.FileCreated -= OnFileCreated;
+		_watcher.Dispose();
 	}
 }

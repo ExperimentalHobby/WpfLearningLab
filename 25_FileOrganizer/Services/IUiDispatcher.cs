@@ -12,4 +12,11 @@ public interface IUiDispatcher
 	/// </summary>
 	/// <param name="action">実行する処理。</param>
 	void Invoke(Action action);
+
+	/// <summary>
+	/// 指定した処理をUIスレッドで実行し、結果を返す。<see cref="System.Collections.ObjectModel.ObservableCollection{T}"/>等、
+	/// UIスレッド以外からの読み取りが安全でないコレクションのスナップショット取得に使う。
+	/// </summary>
+	/// <param name="func">実行する処理。</param>
+	T Invoke<T>(Func<T> func);
 }

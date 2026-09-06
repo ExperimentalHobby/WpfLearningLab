@@ -117,4 +117,28 @@ public class FileOrganizerServiceTests : IDisposable
 		Assert.False(result.Moved);
 		Assert.NotNull(result.ErrorMessage);
 	}
+
+	/// <summary>
+	/// パス条件: 移動対象ファイルが一時的に排他ロックされていても(コピー未完了を想定)、
+	/// リトライの末にロック解除後は移動が成功すること
+	/// </summary>
+	[Fact]
+	public async Task OrganizeFileAsync_ファイルが一時的にロックされていてもリトライして移動が成功する()
+	{
+		var filePath = Path.Combine(_watchFolder, "photo.jpg");
+		File.WriteAllText(filePath, "dummy");
+		var rules = new List<SortingRule> { new(".jpg", "Images") };
+		var service = new FileOrganizerService();
+
+		using (var lockStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+		{
+			var organizeTask = service.OrganizeFileAsync(filePath, _watchFolder, rules);
+			await Task.Delay(150);
+			lockStream.Dispose();
+
+			var result = await organizeTask;
+
+			Assert.True(result.Moved);
+		}
+	}
 }
