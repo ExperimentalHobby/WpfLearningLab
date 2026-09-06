@@ -65,4 +65,19 @@ public class BandwidthChartModelBuilderTests
 		Assert.Equal(2, lineSeriesList.Count);
 		Assert.All(lineSeriesList, series => Assert.Empty(series.Points));
 	}
+
+	/// <summary>
+	/// パス条件: Rebuildは新しいPlotModelを作らず、渡された既存インスタンスのSeriesを置き換えること
+	/// </summary>
+	[Fact]
+	public void Rebuild_既存のPlotModelインスタンスを再利用してSeriesを置き換える()
+	{
+		var model = new OxyPlot.PlotModel();
+		BandwidthChartModelBuilder.Rebuild(model, SampleHistory);
+		Assert.Equal(3, model.Series.OfType<LineSeries>().First().Points.Count);
+
+		BandwidthChartModelBuilder.Rebuild(model, [SampleHistory[0]]);
+
+		Assert.Single(model.Series.OfType<LineSeries>().First().Points);
+	}
 }

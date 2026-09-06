@@ -9,7 +9,7 @@ namespace NetworkMonitor.Services;
 public class BandwidthHistory
 {
 	private readonly int _maxSampleCount;
-	private readonly List<BandwidthSample> _samples = [];
+	private readonly Queue<BandwidthSample> _samples = new();
 
 	/// <summary>
 	/// 履歴を初期化する。
@@ -26,17 +26,19 @@ public class BandwidthHistory
 	}
 
 	/// <summary>保持しているサンプル一覧(古い順)。</summary>
-	public IReadOnlyList<BandwidthSample> Samples => _samples;
+	public IReadOnlyCollection<BandwidthSample> Samples => _samples;
 
 	/// <summary>
 	/// サンプルを追加する。上限を超える場合は最古のサンプルを破棄する。
 	/// </summary>
 	public void Add(BandwidthSample sample)
 	{
-		_samples.Add(sample);
+		// 保持件数は最大でも数十件程度だが、List.RemoveAt(0)はO(n)の要素シフトが発生するため、
+		// 先頭の削除・末尾への追加がO(1)のQueueを使う。
+		_samples.Enqueue(sample);
 		if (_samples.Count > _maxSampleCount)
 		{
-			_samples.RemoveAt(0);
+			_samples.Dequeue();
 		}
 	}
 
