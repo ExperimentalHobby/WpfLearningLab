@@ -124,4 +124,22 @@ public class MefPluginLoaderTests : IDisposable
 		Assert.Contains(results, r => r.Success);
 		Assert.Contains(results, r => !r.Success);
 	}
+
+	/// <summary>
+	/// パス条件: プラグイン読込後にDisposeしても例外を投げないこと
+	/// (AssemblyLoadContextによる分離・アンロード対応の確認)
+	/// </summary>
+	[Fact]
+	public void Dispose_プラグイン読込後に呼んでも例外を投げない()
+	{
+		var pluginDllPath = GetCharacterCountPluginDllPath();
+		File.Copy(pluginDllPath, Path.Combine(_tempDirectory, "CharacterCountPlugin.dll"));
+		var loader = new MefPluginLoader();
+		var results = loader.LoadPlugins(_tempDirectory);
+		Assert.Single(results);
+
+		var exception = Record.Exception(loader.Dispose);
+
+		Assert.Null(exception);
+	}
 }
