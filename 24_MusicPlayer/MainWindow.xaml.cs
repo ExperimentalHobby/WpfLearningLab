@@ -25,5 +25,7 @@ public partial class MainWindow : Window
 
 		_positionTimer.Tick += (_, _) => _viewModel.ReportPosition(controller.Position);
 		_positionTimer.Start();
+
+		Closed += (_, _) => _positionTimer.Stop();
 	}
 }

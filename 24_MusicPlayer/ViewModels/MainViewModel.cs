@@ -23,6 +23,7 @@ public class MainViewModel : ObservableObject
 	private Track? _selectedTrack;
 	private TimeSpan _position;
 	private TimeSpan _duration;
+	private string _errorMessage = string.Empty;
 
 	/// <summary>
 	/// ViewModelを初期化する。
@@ -40,6 +41,7 @@ public class MainViewModel : ObservableObject
 
 		_player.MediaEnded += (_, _) => Next();
 		_player.MediaOpened += (_, _) => Duration = _player.Duration ?? TimeSpan.Zero;
+		_player.MediaFailed += (_, ex) => OnMediaFailed(ex);
 
 		LoadFolderCommand = new AsyncRelayCommand(LoadFolderAsync);
 		PlayPauseCommand = new RelayCommand(PlayPause, () => CurrentTrack is not null);
@@ -115,6 +117,13 @@ public class MainViewModel : ObservableObject
 		private set => SetProperty(ref _duration, value);
 	}
 
+	/// <summary>直近の再生失敗などで発生したエラーメッセージ。エラーがなければ空文字列。</summary>
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		private set => SetProperty(ref _errorMessage, value);
+	}
+
 	/// <summary>フォルダを選択し、含まれる音声ファイルをプレイリストへ読み込むコマンド。</summary>
 	public AsyncRelayCommand LoadFolderCommand { get; }
 
@@ -164,10 +173,29 @@ public class MainViewModel : ObservableObject
 		}
 
 		var paths = await _scanner.GetAudioFilePathsAsync(folder);
+
+		// フォルダの読み込みは「置き換え」として扱う。クリアせずに追加すると、同じフォルダを
+		// 2回読み込んだ場合に曲が重複し、_currentIndexが指す位置と実際の曲がずれてしまう。
+		if (CurrentTrack is not null)
+		{
+			Stop();
+			CurrentTrack = null;
+			_currentIndex = -1;
+			RaisePlaybackCommandsCanExecuteChanged();
+		}
+
+		Playlist.Clear();
+
 		foreach (var path in paths)
 		{
 			Playlist.Add(new Track(path));
 		}
+	}
+
+	private void OnMediaFailed(Exception? exception)
+	{
+		IsPlaying = false;
+		ErrorMessage = $"再生に失敗しました: {exception?.Message ?? "不明なエラーです。"}";
 	}
 
 	private void PlayPause()
