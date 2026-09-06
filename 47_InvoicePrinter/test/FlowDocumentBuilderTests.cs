@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows.Documents;
 using InvoicePrinter.Models;
 
@@ -40,5 +41,32 @@ public class FlowDocumentBuilderTests
         var text = new TextRange(document.ContentStart, document.ContentEnd).Text;
         Assert.Contains("山田商事", text);
         Assert.Contains("4,235", text);
+    }
+
+    /// <summary>
+    /// パス条件: 実行環境のカルチャに関わらず、金額は日本円表記("¥")になること
+    /// (現在のカルチャに依存する"C0"書式のせいで、環境によっては"$"等になっていた不具合の回帰テスト)。
+    /// </summary>
+    [Fact]
+    public void Build_現在のカルチャに関わらず日本円表記になる()
+    {
+        var originalCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            var lines = new List<InvoiceLine> { new() { ItemName = "商品A", Quantity = 1, UnitPrice = 1000m } };
+
+            var document = FlowDocumentBuilder.Build("山田商事", lines, 1000m, 100m, 1100m);
+
+            var text = new TextRange(document.ContentStart, document.ContentEnd).Text;
+            // ja-JPカルチャの通貨記号は環境によって"¥"(U+00A5)/"￥"(全角、U+FFE5)のいずれかになりうるため、
+            // どちらであっても日本円表記になっていることを確認する。
+            Assert.True(text.Contains('¥') || text.Contains('￥'), $"日本円表記が含まれていません: {text}");
+            Assert.DoesNotContain("$", text);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Documents;
 using InvoicePrinter.Models;
@@ -9,6 +10,12 @@ namespace InvoicePrinter;
 /// </summary>
 public static class FlowDocumentBuilder
 {
+    /// <summary>
+    /// 金額の書式に使うカルチャ。実行環境の現在のカルチャに依存すると通貨記号が変わってしまうため、
+    /// 日本円前提のこのアプリでは常に明示的にja-JPを使う。
+    /// </summary>
+    private static readonly CultureInfo JapaneseCulture = CultureInfo.GetCultureInfo("ja-JP");
+
     /// <summary>
     /// 顧客名・明細一覧・小計・消費税・合計から請求書のFlowDocumentを生成する。
     /// </summary>
@@ -35,9 +42,9 @@ public static class FlowDocumentBuilder
 
         document.Blocks.Add(BuildTable(lines));
 
-        document.Blocks.Add(new Paragraph(new Run($"小計: {subtotal:C0}")) { Margin = new Thickness(0, 16, 0, 0) });
-        document.Blocks.Add(new Paragraph(new Run($"消費税: {tax:C0}")));
-        document.Blocks.Add(new Paragraph(new Run($"合計: {total:C0}")) { FontWeight = FontWeights.Bold });
+        document.Blocks.Add(new Paragraph(new Run($"小計: {subtotal.ToString("C0", JapaneseCulture)}")) { Margin = new Thickness(0, 16, 0, 0) });
+        document.Blocks.Add(new Paragraph(new Run($"消費税: {tax.ToString("C0", JapaneseCulture)}")));
+        document.Blocks.Add(new Paragraph(new Run($"合計: {total.ToString("C0", JapaneseCulture)}")) { FontWeight = FontWeights.Bold });
 
         return document;
     }
@@ -58,8 +65,8 @@ public static class FlowDocumentBuilder
             rowGroup.Rows.Add(BuildRow(
                 line.ItemName,
                 line.Quantity.ToString("0.##"),
-                line.UnitPrice.ToString("C0"),
-                line.Amount.ToString("C0"),
+                line.UnitPrice.ToString("C0", JapaneseCulture),
+                line.Amount.ToString("C0", JapaneseCulture),
                 isHeader: false));
         }
 

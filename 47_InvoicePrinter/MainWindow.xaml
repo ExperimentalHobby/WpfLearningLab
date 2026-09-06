@@ -26,6 +26,7 @@
                     <DataGridTextColumn Header="品目" Binding="{Binding ItemName}" Width="120" />
                     <DataGridTextColumn Header="数量" Binding="{Binding Quantity}" Width="60" />
                     <DataGridTextColumn Header="単価" Binding="{Binding UnitPrice}" Width="80" />
+                    <DataGridTextColumn Header="金額" Binding="{Binding Amount, StringFormat={}{0:C0}, ConverterCulture=ja-JP}" Width="90" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
 
