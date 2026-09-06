@@ -8,9 +8,12 @@ namespace ReactiveSearch;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private readonly SearchViewModel _viewModel = new();
+
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new SearchViewModel();
+        DataContext = _viewModel;
+        Closed += (_, _) => _viewModel.Dispose();
     }
 }

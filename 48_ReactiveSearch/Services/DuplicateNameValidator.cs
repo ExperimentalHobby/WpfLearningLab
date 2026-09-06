@@ -3,7 +3,7 @@ namespace ReactiveSearch.Services;
 /// <summary>
 /// 名前が予約済み(使用済み)かどうかをサーバー問い合わせ相当の非同期処理でチェックする。
 /// </summary>
-public class DuplicateNameValidator
+public class DuplicateNameValidator : IDuplicateNameValidator
 {
     private readonly HashSet<string> _reservedNames;
     private readonly TimeSpan _simulatedDelay;
