@@ -10,13 +10,18 @@ namespace FileOrganizer;
 /// </summary>
 public partial class MainWindow : Window
 {
+	private readonly MainViewModel _viewModel;
+
 	public MainWindow()
 	{
 		InitializeComponent();
-		DataContext = new MainViewModel(
+		_viewModel = new MainViewModel(
 			new FileOrganizerService(),
 			new FileSystemDirectoryWatcher(),
 			new Win32FolderPicker(),
 			new WpfUiDispatcher());
+		DataContext = _viewModel;
+
+		Closed += (_, _) => _viewModel.Dispose();
 	}
 }

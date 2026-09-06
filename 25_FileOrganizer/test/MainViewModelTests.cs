@@ -277,4 +277,19 @@ public class MainViewModelTests
 
 		Assert.Empty(viewModel.Logs);
 	}
+
+	/// <summary>
+	/// パス条件: Dispose呼び出しでwatcherがDisposeされ、FileCreatedの購読が解除されること
+	/// </summary>
+	[Fact]
+	public void Dispose_呼び出すとwatcherがDisposeされFileCreatedの購読が解除される()
+	{
+		var watcher = new FakeDirectoryWatcher();
+		var viewModel = CreateViewModel(watcher: watcher);
+
+		viewModel.Dispose();
+
+		Assert.Equal(1, watcher.DisposeCallCount);
+		Assert.False(watcher.HasFileCreatedSubscribers);
+	}
 }

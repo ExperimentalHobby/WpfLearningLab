@@ -9,4 +9,7 @@ public class FakeUiDispatcher : IUiDispatcher
 {
 	/// <inheritdoc/>
 	public void Invoke(Action action) => action();
+
+	/// <inheritdoc/>
+	public T Invoke<T>(Func<T> func) => func();
 }
