@@ -10,13 +10,13 @@ namespace AnimatedDashboard.ViewModels;
 /// </summary>
 public class MainViewModel : ObservableObject
 {
-	private readonly DummyMetricGenerator _generator;
+	private readonly IMetricGenerator _generator;
 	private EasingType _selectedEasing = EasingType.EaseOut;
 
 	/// <summary>
 	/// <see cref="MainViewModel"/>を初期化する。
 	/// </summary>
-	public MainViewModel(DummyMetricGenerator generator)
+	public MainViewModel(IMetricGenerator generator)
 	{
 		_generator = generator;
 		RefreshCommand = new RelayCommand(Refresh);
@@ -42,9 +42,24 @@ public class MainViewModel : ObservableObject
 	private void Refresh()
 	{
 		var newMetrics = _generator.Generate();
-		for (var i = 0; i < Metrics.Count && i < newMetrics.Count; i++)
+
+		// 共通するインデックス分はValueを更新するだけに留め、KpiCard側のカウントアップ
+		// アニメーションが引き続き効くようにする(カードを作り直すとアニメーションが途切れる)。
+		var commonCount = Math.Min(Metrics.Count, newMetrics.Count);
+		for (var i = 0; i < commonCount; i++)
 		{
 			Metrics[i].Value = newMetrics[i].Value;
+		}
+
+		// 件数が増えた場合は末尾に追加、減った場合は末尾を削除し、件数変化時に
+		// 一部の指標が表示されないまま取り残されることがないようにする。
+		for (var i = commonCount; i < newMetrics.Count; i++)
+		{
+			Metrics.Add(new KpiCardViewModel(newMetrics[i].Name, newMetrics[i].Unit, newMetrics[i].Value));
+		}
+		while (Metrics.Count > newMetrics.Count)
+		{
+			Metrics.RemoveAt(Metrics.Count - 1);
 		}
 	}
 }

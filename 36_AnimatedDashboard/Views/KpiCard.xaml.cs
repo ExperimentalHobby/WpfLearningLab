@@ -48,12 +48,12 @@ public partial class KpiCard : UserControl
 		set => SetValue(TargetValueProperty, value);
 	}
 
-	/// <summary>アニメーション中の表示値。</summary>
-	public double DisplayValue
-	{
-		get => (double)GetValue(DisplayValueProperty);
-		private set => SetValue(DisplayValueProperty, value);
-	}
+	/// <summary>
+	/// アニメーション中の表示値。値は<see cref="Storyboard"/>経由でのみ変更され、
+	/// このプロパティ自体に書き込みsetterを持たせるとStoryboard実行中は反映されず紛らわしいため、
+	/// 取得専用にしている(34_CustomGaugeControlの<c>GaugeControl.AnimatedAngle</c>と同様)。
+	/// </summary>
+	public double DisplayValue => (double)GetValue(DisplayValueProperty);
 
 	/// <summary>カウントアップアニメーションに使うイージング関数の種類。</summary>
 	public EasingType Easing

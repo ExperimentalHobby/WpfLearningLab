@@ -5,7 +5,7 @@ namespace AnimatedDashboard.Services;
 /// <summary>
 /// ダミーのKPI指標を生成する疑似データソース。
 /// </summary>
-public class DummyMetricGenerator
+public class DummyMetricGenerator : IMetricGenerator
 {
 	private readonly Random _random;
 
@@ -18,9 +18,7 @@ public class DummyMetricGenerator
 		_random = random;
 	}
 
-	/// <summary>
-	/// ランダムな値のKPI指標一覧を生成する。
-	/// </summary>
+	/// <inheritdoc/>
 	public IReadOnlyList<KpiMetric> Generate() =>
 	[
 		new("売上", "万円", Math.Round(_random.NextDouble() * 1000, 1)),
