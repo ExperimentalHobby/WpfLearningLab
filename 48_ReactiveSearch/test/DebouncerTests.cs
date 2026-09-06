@@ -41,4 +41,20 @@ public class DebouncerTests
         Assert.True(scheduler.Calls[1].Token.IsDisposed);
         Assert.False(scheduler.Calls[2].Token.IsDisposed);
     }
+
+    /// <summary>
+    /// パス条件: Disposeを呼ぶと、保留中のスケジュールがキャンセルされること
+    /// (DebouncerがIDisposableでなく、最後の保留分がリークしていた不具合の回帰テスト)。
+    /// </summary>
+    [Fact]
+    public void Dispose_保留中のスケジュールがキャンセルされる()
+    {
+        var scheduler = new FakeScheduler();
+        var debouncer = new Debouncer(scheduler, TimeSpan.FromMilliseconds(300));
+        debouncer.Trigger(() => { });
+
+        debouncer.Dispose();
+
+        Assert.True(scheduler.Calls[0].Token.IsDisposed);
+    }
 }

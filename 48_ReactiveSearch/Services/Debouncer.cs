@@ -4,7 +4,7 @@ namespace ReactiveSearch.Services;
 /// 短時間に連続して <see cref="Trigger"/> が呼ばれた場合、直前にスケジュールした分を
 /// キャンセルして新たにスケジュールし直すことで、最後の呼び出しだけを遅延実行する(debounce)。
 /// </summary>
-public class Debouncer
+public class Debouncer : IDisposable
 {
     private readonly IScheduler _scheduler;
     private readonly TimeSpan _delay;
@@ -23,5 +23,14 @@ public class Debouncer
     {
         _pending?.Dispose();
         _pending = _scheduler.Schedule(_delay, action);
+    }
+
+    /// <summary>
+    /// 保留中のスケジュール(最後にTriggerされた分)をキャンセルする。
+    /// </summary>
+    public void Dispose()
+    {
+        _pending?.Dispose();
+        _pending = null;
     }
 }
