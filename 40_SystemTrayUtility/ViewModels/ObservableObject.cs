@@ -25,4 +25,12 @@ public abstract class ObservableObject : INotifyPropertyChanged
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		return true;
 	}
+
+	/// <summary>
+	/// フィールドの値を変更せずに<see cref="PropertyChanged"/>のみを発火する。
+	/// レジストリ登録失敗時など、内部状態を変更前のまま維持しつつ
+	/// (双方向バインディングされたUIの表示を実際の値へ戻すために)通知だけを送りたい場合に使う。
+	/// </summary>
+	protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
+		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

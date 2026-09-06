@@ -44,6 +44,10 @@ public partial class MainWindow : Window
 
 		_reminderTimer.Tick += (_, _) => ShowBalloon("定期リマインダー", _viewModel.ReminderMessage);
 
+		// トレイメニューの「終了」以外にも、Windowsのシャットダウン・ログオフ等で
+		// Application.Exitが発火する経路があるため、NotifyIconの破棄はここに一元化する。
+		Application.Current.Exit += (_, _) => DisposeNotifyIcon();
+
 		Closing += MainWindow_Closing;
 	}
 
@@ -85,10 +89,14 @@ public partial class MainWindow : Window
 	private void ExitApplication()
 	{
 		_isExitRequested = true;
+		Application.Current.Shutdown();
+	}
+
+	private void DisposeNotifyIcon()
+	{
 		_reminderTimer.Stop();
 		_notifyIcon.Visible = false;
 		_notifyIcon.Dispose();
-		Application.Current.Shutdown();
 	}
 
 	private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

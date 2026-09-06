@@ -53,4 +53,15 @@ public class RegistryStartupRegistrarTests : IDisposable
 
 		Assert.False(_registrar.IsRegistered());
 	}
+
+	/// <summary>
+	/// パス条件: 実行ファイルパスが空文字の場合、Registerが例外をスローし、空文字のままレジストリに登録されないこと。
+	/// </summary>
+	[Fact]
+	public void Register_実行ファイルパスが空の場合は例外がスローされる()
+	{
+		var registrar = new RegistryStartupRegistrar($"SystemTrayUtilityTests_{Guid.NewGuid():N}", string.Empty);
+
+		Assert.Throws<InvalidOperationException>(() => registrar.Register());
+	}
 }

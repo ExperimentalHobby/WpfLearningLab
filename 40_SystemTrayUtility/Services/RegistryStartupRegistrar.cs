@@ -34,6 +34,11 @@ public class RegistryStartupRegistrar : IStartupRegistrar
 	/// <inheritdoc/>
 	public void Register()
 	{
+		if (string.IsNullOrEmpty(_executablePath))
+		{
+			throw new InvalidOperationException("実行ファイルのパスを取得できなかったため、スタートアップに登録できません。");
+		}
+
 		using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, writable: true)
 			?? Registry.CurrentUser.CreateSubKey(RunKeyPath);
 		key.SetValue(_valueName, _executablePath);
