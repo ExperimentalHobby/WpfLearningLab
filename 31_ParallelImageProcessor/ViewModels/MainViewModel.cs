@@ -26,6 +26,7 @@ public class MainViewModel : ObservableObject
 	private double _progressPercentage;
 	private string _progressText = string.Empty;
 	private string _resultSummaryText = string.Empty;
+	private int _lastReportedCompleted;
 
 	/// <summary>
 	/// <see cref="MainViewModel"/>を初期化する。
@@ -143,9 +144,20 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		var sourceFiles = Directory.EnumerateFiles(SourceFolder)
-			.Where(path => SupportedExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
-			.ToList();
+		List<string> sourceFiles;
+		try
+		{
+			sourceFiles = Directory.EnumerateFiles(SourceFolder)
+				.Where(path => SupportedExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
+				.ToList();
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			// AsyncRelayCommand.Executeはasync voidのため、ここで捕捉し損ねるとアプリ全体が
+			// クラッシュする。
+			ResultSummaryText = $"画像ファイルの一覧取得に失敗しました: {ex.Message}";
+			return;
+		}
 
 		if (sourceFiles.Count == 0)
 		{
@@ -161,6 +173,7 @@ public class MainViewModel : ObservableObject
 		ResultSummaryText = string.Empty;
 		ProgressPercentage = 0;
 		ProgressText = $"0 / {sourceFiles.Count}";
+		_lastReportedCompleted = 0;
 
 		try
 		{
@@ -181,6 +194,15 @@ public class MainViewModel : ObservableObject
 
 	private void OnProgressReported(BatchProgress progress)
 	{
+		// 並列処理のため、各ワーカースレッドからのReport呼び出しがどの順で処理されるかは保証されない。
+		// 完了件数が既に報告済みの値を下回る(=古い報告が後から届いた)場合は無視し、進捗表示が
+		// 一時的に後退して見えるのを防ぐ。
+		if (progress.Completed < _lastReportedCompleted)
+		{
+			return;
+		}
+
+		_lastReportedCompleted = progress.Completed;
 		ProgressPercentage = progress.Total == 0 ? 0 : progress.Completed * 100.0 / progress.Total;
 		ProgressText = $"{progress.Completed} / {progress.Total}";
 	}
