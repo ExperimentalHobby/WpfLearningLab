@@ -1,3 +1,4 @@
+using LogStreamAggregator.Models;
 using LogStreamAggregator.Tests.Fakes;
 using LogStreamAggregator.ViewModels;
 
@@ -39,5 +40,38 @@ public class MainViewModelTests
 		Assert.True(viewModel.StopCommand.CanExecute(null));
 
 		viewModel.StopCommand.Execute(null);
+	}
+
+	/// <summary>
+	/// パス条件: Producerで予期しない例外が発生してもクラッシュせず、ErrorMessageが設定され
+	/// IsRunningがfalseに戻ること(fire-and-forgetタスクの未処理例外対策の確認)。
+	/// </summary>
+	[Fact]
+	public async Task StartCommand_Producerが例外を投げてもクラッシュせずErrorMessageが設定される()
+	{
+		var callCount = 0;
+		LogEntry ThrowingGenerator()
+		{
+			callCount++;
+			if (callCount >= 2)
+			{
+				throw new InvalidOperationException("ログ生成に失敗しました");
+			}
+
+			return new LogEntry(DateTime.Now, LogLevel.Info, "ok");
+		}
+
+		var viewModel = new MainViewModel(new ImmediateUiDispatcher(), ThrowingGenerator);
+
+		viewModel.StartCommand.Execute(null);
+		var waited = 0;
+		while (viewModel.IsRunning && waited < 3000)
+		{
+			await Task.Delay(50);
+			waited += 50;
+		}
+
+		Assert.False(viewModel.IsRunning);
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
 	}
 }

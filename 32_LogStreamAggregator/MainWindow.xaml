@@ -4,10 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LogStreamAggregator"
+        xmlns:conv="clr-namespace:LogStreamAggregator.Converters"
         mc:Ignorable="d"
         Title="ログストリーム集計ツール" Height="560" Width="640">
+    <Window.Resources>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -24,7 +29,12 @@
                        AutomationProperties.AutomationId="TotalCountText"/>
         </StackPanel>
 
-        <GroupBox Grid.Row="1" Header="ログレベル別件数" Margin="0,0,0,8">
+        <TextBlock Grid.Row="1" Margin="0,0,0,8" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
+        <GroupBox Grid.Row="2" Header="ログレベル別件数" Margin="0,0,0,8">
             <ItemsControl ItemsSource="{Binding CountsByLevel}" AutomationProperties.AutomationId="CountsByLevelList">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -43,7 +53,7 @@
             </ItemsControl>
         </GroupBox>
 
-        <GroupBox Grid.Row="2" Header="キーワード出現回数" Margin="0,0,0,8">
+        <GroupBox Grid.Row="3" Header="キーワード出現回数" Margin="0,0,0,8">
             <ItemsControl ItemsSource="{Binding KeywordCounts}" AutomationProperties.AutomationId="KeywordCountsList">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -62,8 +72,8 @@
             </ItemsControl>
         </GroupBox>
 
-        <TextBlock Grid.Row="3" Text="直近のログ" FontWeight="Bold" Margin="0,0,0,4"/>
+        <TextBlock Grid.Row="4" Text="直近のログ" FontWeight="Bold" Margin="0,0,0,4"/>
 
-        <ListBox Grid.Row="4" ItemsSource="{Binding RecentLogs}" AutomationProperties.AutomationId="RecentLogsListBox"/>
+        <ListBox Grid.Row="5" ItemsSource="{Binding RecentLogs}" AutomationProperties.AutomationId="RecentLogsListBox"/>
     </Grid>
 </Window>

@@ -16,17 +16,25 @@ public class MainViewModel : ObservableObject
 	private const int MaxRecentLogs = 30;
 
 	private readonly IUiDispatcher _dispatcher;
+	private readonly Func<LogEntry> _generateLogEntry;
 	private CancellationTokenSource? _cancellationTokenSource;
 	private LogAggregator _aggregator = new();
 	private bool _isRunning;
 	private int _totalCount;
+	private string _errorMessage = string.Empty;
 
 	/// <summary>
 	/// <see cref="MainViewModel"/>を初期化する。
 	/// </summary>
-	public MainViewModel(IUiDispatcher dispatcher)
+	/// <param name="dispatcher">UIスレッドへのマーシャリング処理。</param>
+	/// <param name="logEntryGenerator">
+	/// ログ行の生成処理。省略時は既定の<see cref="DummyLogGenerator"/>を使う。
+	/// テストから例外を投げる生成処理を注入できるようにするための拡張ポイント。
+	/// </param>
+	public MainViewModel(IUiDispatcher dispatcher, Func<LogEntry>? logEntryGenerator = null)
 	{
 		_dispatcher = dispatcher;
+		_generateLogEntry = logEntryGenerator ?? new DummyLogGenerator(new Random()).Generate;
 		StartCommand = new RelayCommand(Start, () => !IsRunning);
 		StopCommand = new RelayCommand(Stop, () => IsRunning);
 
@@ -57,6 +65,9 @@ public class MainViewModel : ObservableObject
 	/// <summary>集計済みの総件数。</summary>
 	public int TotalCount { get => _totalCount; private set => SetProperty(ref _totalCount, value); }
 
+	/// <summary>直近の操作で発生したエラーメッセージ。エラーがなければ空文字列。</summary>
+	public string ErrorMessage { get => _errorMessage; private set => SetProperty(ref _errorMessage, value); }
+
 	/// <summary>ログレベル別件数(UI表示用)。</summary>
 	public ObservableCollection<KeyValuePair<LogLevel, int>> CountsByLevel { get; } = [];
 
@@ -74,18 +85,21 @@ public class MainViewModel : ObservableObject
 
 	private void Start()
 	{
-		_aggregator = new LogAggregator();
+		var aggregator = new LogAggregator();
+		_aggregator = aggregator;
 		TotalCount = 0;
+		ErrorMessage = string.Empty;
 		RecentLogs.Clear();
-		RefreshCountViews();
+		RefreshCountViews(aggregator);
 
 		var pipeline = new LogStreamPipeline(ChannelCapacity);
-		_cancellationTokenSource = new CancellationTokenSource();
-		var token = _cancellationTokenSource.Token;
+		var cts = new CancellationTokenSource();
+		_cancellationTokenSource = cts;
 		IsRunning = true;
 
-		_ = RunProducerAsync(pipeline, token);
-		_ = RunConsumerAsync(pipeline, token);
+		var producerTask = RunProducerAsync(pipeline, cts.Token);
+		var consumerTask = RunConsumerAsync(pipeline, aggregator, cts.Token);
+		_ = ObserveCompletionAsync(producerTask, consumerTask, cts);
 	}
 
 	private void Stop()
@@ -94,20 +108,51 @@ public class MainViewModel : ObservableObject
 		IsRunning = false;
 	}
 
-	private static async Task RunProducerAsync(LogStreamPipeline pipeline, CancellationToken token)
+	/// <summary>
+	/// Producer/Consumerタスクの完了を観測し、Stop操作以外の予期しない例外をUIへ反映する。
+	/// あわせて、両タスクが完了した後に<see cref="CancellationTokenSource"/>を破棄する
+	/// (Stop()自体はタスク完了を待たないため、後始末をここで行う)。
+	/// </summary>
+	private async Task ObserveCompletionAsync(Task producerTask, Task consumerTask, CancellationTokenSource cts)
 	{
-		var generator = new DummyLogGenerator(new Random());
 		try
 		{
-			while (!token.IsCancellationRequested)
-			{
-				await pipeline.Writer.WriteAsync(generator.Generate(), token);
-				await Task.Delay(ProduceInterval, token);
-			}
+			await Task.WhenAll(producerTask, consumerTask);
 		}
 		catch (OperationCanceledException)
 		{
 			// Stop操作による正常なキャンセル。
+		}
+		catch (Exception ex)
+		{
+			_dispatcher.Invoke(() =>
+			{
+				ErrorMessage = $"予期しないエラーが発生しました: {ex.Message}";
+				IsRunning = false;
+			});
+		}
+		finally
+		{
+			// 既に次のStart()で新しいCTSに差し替えられていた場合、現在稼働中の実行に影響しないよう
+			// フィールドのnull化は行わず、破棄のみ行う。
+			if (ReferenceEquals(_cancellationTokenSource, cts))
+			{
+				_cancellationTokenSource = null;
+			}
+
+			cts.Dispose();
+		}
+	}
+
+	private async Task RunProducerAsync(LogStreamPipeline pipeline, CancellationToken token)
+	{
+		try
+		{
+			while (!token.IsCancellationRequested)
+			{
+				await pipeline.Writer.WriteAsync(_generateLogEntry(), token);
+				await Task.Delay(ProduceInterval, token);
+			}
 		}
 		finally
 		{
@@ -115,26 +160,25 @@ public class MainViewModel : ObservableObject
 		}
 	}
 
-	private async Task RunConsumerAsync(LogStreamPipeline pipeline, CancellationToken token)
+	private async Task RunConsumerAsync(LogStreamPipeline pipeline, LogAggregator aggregator, CancellationToken token)
 	{
-		try
+		await foreach (var entry in pipeline.Reader.ReadAllAsync(token))
 		{
-			await foreach (var entry in pipeline.Reader.ReadAllAsync(token))
-			{
-				_aggregator.Add(entry);
-				_dispatcher.Invoke(() => OnEntryAggregated(entry));
-			}
-		}
-		catch (OperationCanceledException)
-		{
-			// Stop操作による正常なキャンセル。
+			aggregator.Add(entry);
+			_dispatcher.Invoke(() => OnEntryAggregated(entry, aggregator, token));
 		}
 	}
 
-	private void OnEntryAggregated(LogEntry entry)
+	private void OnEntryAggregated(LogEntry entry, LogAggregator aggregator, CancellationToken token)
 	{
-		TotalCount = _aggregator.TotalCount;
-		RefreshCountViews();
+		// 古い実行のConsumerからの遅延したUI更新が、既にStop済みの状態を上書きしないようにする。
+		if (token.IsCancellationRequested)
+		{
+			return;
+		}
+
+		TotalCount = aggregator.TotalCount;
+		RefreshCountViews(aggregator);
 
 		RecentLogs.Insert(0, $"[{entry.Timestamp:HH:mm:ss}] {entry.Level}: {entry.Message}");
 		while (RecentLogs.Count > MaxRecentLogs)
@@ -143,17 +187,19 @@ public class MainViewModel : ObservableObject
 		}
 	}
 
-	private void RefreshCountViews()
+	private void RefreshCountViews(LogAggregator aggregator)
 	{
+		var countsByLevel = aggregator.CountsByLevel;
+		var keywordCounts = aggregator.KeywordCounts;
 		for (var i = 0; i < CountsByLevel.Count; i++)
 		{
 			var level = CountsByLevel[i].Key;
-			CountsByLevel[i] = new KeyValuePair<LogLevel, int>(level, _aggregator.CountsByLevel[level]);
+			CountsByLevel[i] = new KeyValuePair<LogLevel, int>(level, countsByLevel[level]);
 		}
 		for (var i = 0; i < KeywordCounts.Count; i++)
 		{
 			var keyword = KeywordCounts[i].Key;
-			KeywordCounts[i] = new KeyValuePair<string, int>(keyword, _aggregator.KeywordCounts[keyword]);
+			KeywordCounts[i] = new KeyValuePair<string, int>(keyword, keywordCounts[keyword]);
 		}
 	}
 }

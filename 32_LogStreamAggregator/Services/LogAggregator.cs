@@ -11,8 +11,14 @@ public class LogAggregator
 	/// <summary>集計対象として監視するキーワード。</summary>
 	public static readonly IReadOnlyList<string> WatchedKeywords = ["Exception", "Timeout", "Retry"];
 
+	// Add()はバックグラウンドのConsumerスレッドから、各読み取りプロパティはUIスレッドから
+	// 呼ばれる想定。現状はIUiDispatcher.Invokeが同期ブロッキング(Dispatcher.Invoke)のため
+	// 実質的に直列化されているが、将来InvokeAsync等に変更された場合でも壊れないよう、
+	// ロックで保護し読み取りは辞書のコピーを返す。
+	private readonly Lock _lock = new();
 	private readonly Dictionary<LogLevel, int> _countsByLevel;
 	private readonly Dictionary<string, int> _keywordCounts;
+	private int _totalCount;
 
 	/// <summary>
 	/// <see cref="LogAggregator"/>を初期化する。
@@ -24,26 +30,56 @@ public class LogAggregator
 	}
 
 	/// <summary>集計した総件数。</summary>
-	public int TotalCount { get; private set; }
+	public int TotalCount
+	{
+		get
+		{
+			lock (_lock)
+			{
+				return _totalCount;
+			}
+		}
+	}
 
-	/// <summary>ログレベル別の件数。</summary>
-	public IReadOnlyDictionary<LogLevel, int> CountsByLevel => _countsByLevel;
+	/// <summary>ログレベル別の件数(呼び出し時点のスナップショット)。</summary>
+	public IReadOnlyDictionary<LogLevel, int> CountsByLevel
+	{
+		get
+		{
+			lock (_lock)
+			{
+				return new Dictionary<LogLevel, int>(_countsByLevel);
+			}
+		}
+	}
 
-	/// <summary>キーワード別の出現回数。</summary>
-	public IReadOnlyDictionary<string, int> KeywordCounts => _keywordCounts;
+	/// <summary>キーワード別の出現回数(呼び出し時点のスナップショット)。</summary>
+	public IReadOnlyDictionary<string, int> KeywordCounts
+	{
+		get
+		{
+			lock (_lock)
+			{
+				return new Dictionary<string, int>(_keywordCounts);
+			}
+		}
+	}
 
 	/// <summary>
 	/// 1件のログを集計に反映する。
 	/// </summary>
 	public void Add(LogEntry entry)
 	{
-		TotalCount++;
-		_countsByLevel[entry.Level]++;
-		foreach (var keyword in WatchedKeywords)
+		lock (_lock)
 		{
-			if (entry.Message.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+			_totalCount++;
+			_countsByLevel[entry.Level]++;
+			foreach (var keyword in WatchedKeywords)
 			{
-				_keywordCounts[keyword]++;
+				if (entry.Message.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+				{
+					_keywordCounts[keyword]++;
+				}
 			}
 		}
 	}
