@@ -16,11 +16,11 @@ public record FileEntry(string Name, long SizeBytes, DateTime LastWriteTime);
 /// </summary>
 public interface IFileSystem
 {
-    /// <summary>指定フォルダ直下のサブフォルダのフルパス一覧を取得する。</summary>
-    IReadOnlyList<string> GetDirectories(string path);
+	/// <summary>指定フォルダ直下のサブフォルダのフルパス一覧を取得する。</summary>
+	IReadOnlyList<string> GetDirectories(string path);
 
-    /// <summary>指定フォルダ直下のファイル一覧を取得する。</summary>
-    IReadOnlyList<FileEntry> GetFiles(string path);
+	/// <summary>指定フォルダ直下のファイル一覧を取得する。</summary>
+	IReadOnlyList<FileEntry> GetFiles(string path);
 }
 
 /// <summary>
@@ -28,21 +28,21 @@ public interface IFileSystem
 /// </summary>
 public class RealFileSystem : IFileSystem
 {
-    /// <inheritdoc />
-    public IReadOnlyList<string> GetDirectories(string path)
-    {
-        return Directory.GetDirectories(path);
-    }
+	/// <inheritdoc />
+	public IReadOnlyList<string> GetDirectories(string path)
+	{
+		return Directory.GetDirectories(path);
+	}
 
-    /// <inheritdoc />
-    public IReadOnlyList<FileEntry> GetFiles(string path)
-    {
-        return Directory.GetFiles(path)
-            .Select(f =>
-            {
-                var info = new FileInfo(f);
-                return new FileEntry(info.Name, info.Length, info.LastWriteTime);
-            })
-            .ToList();
-    }
+	/// <inheritdoc />
+	public IReadOnlyList<FileEntry> GetFiles(string path)
+	{
+		return Directory.GetFiles(path)
+			.Select(f =>
+			{
+				var info = new FileInfo(f);
+				return new FileEntry(info.Name, info.Length, info.LastWriteTime);
+			})
+			.ToList();
+	}
 }
