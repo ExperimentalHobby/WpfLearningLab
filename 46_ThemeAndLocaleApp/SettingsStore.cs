@@ -9,46 +9,53 @@ namespace ThemeAndLocaleApp;
 /// </summary>
 public class SettingsStore
 {
-    private readonly string _filePath;
+	private readonly string _filePath;
 
-    public SettingsStore(string filePath)
-    {
-        _filePath = filePath;
-    }
+	public SettingsStore(string filePath)
+	{
+		_filePath = filePath;
+	}
 
-    /// <summary>
-    /// 設定を読み込む。ファイルが存在しない、またはJSONとして不正な場合は既定値を返す。
-    /// </summary>
-    public AppSettings Load()
-    {
-        if (!File.Exists(_filePath))
-        {
-            return new AppSettings();
-        }
+	/// <summary>
+	/// 設定を読み込む。ファイルが存在しない、またはJSONとして不正な場合は既定値を返す。
+	/// </summary>
+	public AppSettings Load()
+	{
+		if (!File.Exists(_filePath))
+		{
+			return new AppSettings();
+		}
 
-        try
-        {
-            var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
-        }
-        catch (JsonException)
-        {
-            return new AppSettings();
-        }
-    }
+		try
+		{
+			var json = File.ReadAllText(_filePath);
+			return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+		}
+		catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+		{
+			return new AppSettings();
+		}
+	}
 
-    /// <summary>
-    /// 設定をJSONファイルへ保存する。
-    /// </summary>
-    public void Save(AppSettings settings)
-    {
-        var directory = Path.GetDirectoryName(_filePath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
+	/// <summary>
+	/// 設定をJSONファイルへ保存する。
+	/// </summary>
+	public void Save(AppSettings settings)
+	{
+		try
+		{
+			var directory = Path.GetDirectoryName(_filePath);
+			if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+			{
+				Directory.CreateDirectory(directory);
+			}
 
-        var json = JsonSerializer.Serialize(settings);
-        File.WriteAllText(_filePath, json);
-    }
+			var json = JsonSerializer.Serialize(settings);
+			File.WriteAllText(_filePath, json);
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			System.Diagnostics.Debug.WriteLine($"設定の保存に失敗しました: {ex.Message}");
+		}
+	}
 }

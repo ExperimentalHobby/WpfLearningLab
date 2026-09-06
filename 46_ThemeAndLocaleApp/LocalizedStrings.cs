@@ -13,25 +13,25 @@ namespace ThemeAndLocaleApp;
 /// </summary>
 public class LocalizedStrings : INotifyPropertyChanged
 {
-    private static readonly ResourceManager ResourceManagerInstance =
-        new("ThemeAndLocaleApp.Resources.Strings", typeof(LocalizedStrings).Assembly);
+	private static readonly ResourceManager ResourceManagerInstance =
+		new("ThemeAndLocaleApp.Resources.Strings", typeof(LocalizedStrings).Assembly);
 
-    /// <summary>アプリ全体で共有するインスタンス。</summary>
-    public static LocalizedStrings Instance { get; } = new();
+	/// <summary>アプリ全体で共有するインスタンス。</summary>
+	public static LocalizedStrings Instance { get; } = new();
 
-    /// <inheritdoc />
-    public event PropertyChangedEventHandler? PropertyChanged;
+	/// <inheritdoc />
+	public event PropertyChangedEventHandler? PropertyChanged;
 
-    /// <summary>
-    /// 指定したキーの文言を、現在の <see cref="CultureInfo.CurrentUICulture"/> で取得する。
-    /// </summary>
-    public string this[string key] => ResourceManagerInstance.GetString(key, CultureInfo.CurrentUICulture) ?? key;
+	/// <summary>
+	/// 指定したキーの文言を、現在の <see cref="CultureInfo.CurrentUICulture"/> で取得する。
+	/// </summary>
+	public string this[string key] => ResourceManagerInstance.GetString(key, CultureInfo.CurrentUICulture) ?? key;
 
-    /// <summary>
-    /// 言語切替後に呼び出し、バインドしている全ての文言を再評価させる。
-    /// </summary>
-    public void Refresh()
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item[]"));
-    }
+	/// <summary>
+	/// 言語切替後に呼び出し、バインドしている全ての文言を再評価させる。
+	/// </summary>
+	public void Refresh()
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item[]"));
+	}
 }

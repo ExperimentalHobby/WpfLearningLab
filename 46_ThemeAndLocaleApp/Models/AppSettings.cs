@@ -5,9 +5,9 @@ namespace ThemeAndLocaleApp.Models;
 /// </summary>
 public class AppSettings
 {
-    /// <summary>テーマ名("Light" または "Dark")。</summary>
-    public string Theme { get; set; } = "Light";
+	/// <summary>テーマ名("Light" または "Dark")。</summary>
+	public string Theme { get; set; } = "Light";
 
-    /// <summary>言語のカルチャコード("ja" または "en")。</summary>
-    public string Culture { get; set; } = "ja";
+	/// <summary>言語のカルチャコード("ja" または "en")。</summary>
+	public string Culture { get; set; } = "ja";
 }
