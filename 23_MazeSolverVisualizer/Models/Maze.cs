@@ -34,8 +34,11 @@ public class Maze
 	/// <summary>
 	/// 2つのセルの間の通路を開通させる(双方向)。
 	/// </summary>
+	/// <exception cref="ArgumentOutOfRangeException">いずれかのセルが盤面の範囲外の場合。</exception>
 	public void Connect((int X, int Y) a, (int X, int Y) b)
 	{
+		ValidateCell(a);
+		ValidateCell(b);
 		_connections[a].Add(b);
 		_connections[b].Add(a);
 	}
@@ -43,12 +46,31 @@ public class Maze
 	/// <summary>
 	/// 2つのセルが通路で直接繋がっているかどうかを返す。
 	/// </summary>
-	public bool IsConnected((int X, int Y) a, (int X, int Y) b) => _connections[a].Contains(b);
+	/// <exception cref="ArgumentOutOfRangeException">いずれかのセルが盤面の範囲外の場合。</exception>
+	public bool IsConnected((int X, int Y) a, (int X, int Y) b)
+	{
+		ValidateCell(a);
+		ValidateCell(b);
+		return _connections[a].Contains(b);
+	}
 
 	/// <summary>
 	/// 指定セルから通路で直接到達できる隣接セルを取得する。
 	/// </summary>
-	public IReadOnlyCollection<(int X, int Y)> GetConnectedNeighbors((int X, int Y) cell) => _connections[cell];
+	/// <exception cref="ArgumentOutOfRangeException">セルが盤面の範囲外の場合。</exception>
+	public IReadOnlyCollection<(int X, int Y)> GetConnectedNeighbors((int X, int Y) cell)
+	{
+		ValidateCell(cell);
+		return _connections[cell];
+	}
+
+	private void ValidateCell((int X, int Y) cell)
+	{
+		if (cell.X < 0 || cell.X >= Width || cell.Y < 0 || cell.Y >= Height)
+		{
+			throw new ArgumentOutOfRangeException(nameof(cell), cell, "盤面の範囲外のセルが指定されました。");
+		}
+	}
 
 	/// <summary>
 	/// 盤面内の上下左右の隣接セル座標(壁の有無に関わらず)を取得する。迷路生成アルゴリズムが未訪問セルを探すのに使う。
