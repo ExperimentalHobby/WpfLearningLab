@@ -13,9 +13,9 @@ public class CsvRow : Dictionary<string, string>
 /// </summary>
 public class CsvTable
 {
-    /// <summary>列名一覧(出現順)。</summary>
-    public List<string> Headers { get; } = new();
+	/// <summary>列名一覧(出現順)。</summary>
+	public List<string> Headers { get; } = new();
 
-    /// <summary>データ行一覧。</summary>
-    public List<CsvRow> Rows { get; } = new();
+	/// <summary>データ行一覧。</summary>
+	public List<CsvRow> Rows { get; } = new();
 }
