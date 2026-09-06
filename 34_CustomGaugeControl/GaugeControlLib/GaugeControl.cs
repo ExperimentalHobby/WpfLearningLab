@@ -18,11 +18,13 @@ public class GaugeControl : Control
 
 	/// <summary>ゲージの最小値。</summary>
 	public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(
-		nameof(Minimum), typeof(double), typeof(GaugeControl), new PropertyMetadata(0.0));
+		nameof(Minimum), typeof(double), typeof(GaugeControl),
+		new FrameworkPropertyMetadata(0.0, OnRangeChanged, CoerceMinimum));
 
 	/// <summary>ゲージの最大値。</summary>
 	public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(
-		nameof(Maximum), typeof(double), typeof(GaugeControl), new PropertyMetadata(100.0));
+		nameof(Maximum), typeof(double), typeof(GaugeControl),
+		new FrameworkPropertyMetadata(100.0, OnRangeChanged, CoerceMaximum));
 
 	/// <summary>
 	/// <see cref="ThresholdExceeded"/>イベントを発火させるしきい値。<see cref="double.NaN"/>の場合は判定しない。
@@ -101,6 +103,32 @@ public class GaugeControl : Control
 		{
 			gauge.RaiseEvent(new RoutedEventArgs(ThresholdExceededEvent, gauge));
 		}
+	}
+
+	/// <summary>
+	/// Minimum/Maximum変更時に、現在のValueに対する針の角度を再計算する。
+	/// (Value変更時のみ再計算していたため、範囲だけを変えても針が古い角度のままになる不具合の修正)
+	/// </summary>
+	private static void OnRangeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
+		var gauge = (GaugeControl)d;
+		gauge.AnimateNeedleTo(GaugeMath.ValueToAngle(gauge.Value, gauge.Minimum, gauge.Maximum));
+	}
+
+	/// <summary>MinimumがMaximumを超えないようにクランプする。</summary>
+	private static object CoerceMinimum(DependencyObject d, object baseValue)
+	{
+		var gauge = (GaugeControl)d;
+		var minimum = (double)baseValue;
+		return minimum > gauge.Maximum ? gauge.Maximum : minimum;
+	}
+
+	/// <summary>MaximumがMinimum未満にならないようにクランプする。</summary>
+	private static object CoerceMaximum(DependencyObject d, object baseValue)
+	{
+		var gauge = (GaugeControl)d;
+		var maximum = (double)baseValue;
+		return maximum < gauge.Minimum ? gauge.Minimum : maximum;
 	}
 
 	private void AnimateNeedleTo(double targetAngle)
