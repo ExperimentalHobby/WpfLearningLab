@@ -32,14 +32,8 @@ public partial class MainWindow : Window
 		UpdateCameraPosition();
 
 		_autoRotateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
-		_autoRotateTimer.Tick += (_, _) =>
-		{
-			if (_viewModel.IsAutoRotating)
-			{
-				_viewModel.Azimuth += 1;
-			}
-		};
-		_autoRotateTimer.Start();
+		_autoRotateTimer.Tick += (_, _) => _viewModel.Azimuth += 1;
+		// IsAutoRotating=falseの間はタイマー自体を止め、無駄にCPUを使い続けないようにする。
 		Closed += (_, _) => _autoRotateTimer.Stop();
 	}
 
@@ -55,6 +49,17 @@ public partial class MainWindow : Window
 			case nameof(MainViewModel.ObjectType):
 			case nameof(MainViewModel.MaterialColorName):
 				RebuildObjectVisual();
+				break;
+			case nameof(MainViewModel.IsAutoRotating):
+				if (_viewModel.IsAutoRotating)
+				{
+					_autoRotateTimer.Start();
+				}
+				else
+				{
+					_autoRotateTimer.Stop();
+				}
+
 				break;
 		}
 	}
@@ -79,7 +84,18 @@ public partial class MainWindow : Window
 			? MeshFactory.CreateCube(1.5)
 			: MeshFactory.CreateSphere(1, 24, 24);
 
-		var color = (Color)ColorConverter.ConvertFromString(_viewModel.MaterialColorName)!;
+		Color color;
+		try
+		{
+			color = (Color)ColorConverter.ConvertFromString(_viewModel.MaterialColorName)!;
+		}
+		catch (FormatException)
+		{
+			// 現状のUIは固定の色名ボタンのみで不正な値を入力する経路はないが、10/21番と同様に
+			// 防御的に捕捉する。変換に失敗した場合は前回描画時の色(既定はグレー)を維持する。
+			color = Colors.Gray;
+		}
+
 		var material = new DiffuseMaterial(new SolidColorBrush(color));
 		ObjectVisual.Content = new GeometryModel3D(mesh, material) { BackMaterial = material };
 	}
