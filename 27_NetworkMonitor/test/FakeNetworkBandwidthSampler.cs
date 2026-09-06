@@ -17,13 +17,25 @@ public class FakeNetworkBandwidthSampler : INetworkBandwidthSampler
 	/// <summary>Sampleが呼ばれた回数。</summary>
 	public int SampleCallCount { get; private set; }
 
+	/// <summary>設定すると<see cref="GetInstanceNames"/>呼び出し時にこの例外をスローする(テスト用)。</summary>
+	public Exception? GetInstanceNamesExceptionToThrow { get; set; }
+
+	/// <summary>設定すると<see cref="Sample"/>呼び出し時にこの例外をスローする(テスト用)。</summary>
+	public Exception? SampleExceptionToThrow { get; set; }
+
 	/// <inheritdoc/>
-	public IReadOnlyList<string> GetInstanceNames() => InstanceNames;
+	public IReadOnlyList<string> GetInstanceNames() =>
+		GetInstanceNamesExceptionToThrow is not null ? throw GetInstanceNamesExceptionToThrow : InstanceNames;
 
 	/// <inheritdoc/>
 	public (double SentBytesPerSec, double ReceivedBytesPerSec) Sample(string instanceName)
 	{
 		SampleCallCount++;
+		if (SampleExceptionToThrow is not null)
+		{
+			throw SampleExceptionToThrow;
+		}
+
 		return SampleQueue is { Count: > 0 } queue ? queue.Dequeue() : (100, 200);
 	}
 }

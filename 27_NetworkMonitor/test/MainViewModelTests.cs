@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using NetworkMonitor.ViewModels;
 using OxyPlot.Series;
 
@@ -113,5 +114,41 @@ public class MainViewModelTests
 
 		var sentSeries = viewModel.PlotModel.Series.OfType<LineSeries>().Single(s => s.Title == "送信");
 		Assert.Empty(sentSeries.Points);
+	}
+
+	/// <summary>
+	/// パス条件: コンストラクタでGetInstanceNamesが例外を投げてもクラッシュせず、
+	/// NetworkInterfacesが空になりErrorMessageが設定されること
+	/// </summary>
+	[Theory]
+	[InlineData(typeof(InvalidOperationException))]
+	[InlineData(typeof(UnauthorizedAccessException))]
+	[InlineData(typeof(Win32Exception))]
+	public void コンストラクタ_GetInstanceNames失敗時もクラッシュせずNetworkInterfacesが空になる(Type exceptionType)
+	{
+		var exception = (Exception)Activator.CreateInstance(exceptionType)!;
+		var sampler = new FakeNetworkBandwidthSampler { GetInstanceNamesExceptionToThrow = exception };
+
+		var viewModel = CreateViewModel(sampler);
+
+		Assert.Empty(viewModel.NetworkInterfaces);
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
+	}
+
+	/// <summary>
+	/// パス条件: Sample実行時に計測が失敗してもクラッシュせず、監視が停止しErrorMessageが設定されること
+	/// </summary>
+	[Fact]
+	public void Sample_計測失敗時もクラッシュせず監視が停止しErrorMessageが設定される()
+	{
+		var sampler = new FakeNetworkBandwidthSampler { SampleExceptionToThrow = new InvalidOperationException("インターフェースが見つかりません") };
+		var viewModel = CreateViewModel(sampler);
+		viewModel.SelectedInterface = "eth0";
+		viewModel.StartMonitoringCommand.Execute(null);
+
+		viewModel.Sample();
+
+		Assert.False(viewModel.IsMonitoring);
+		Assert.False(string.IsNullOrEmpty(viewModel.ErrorMessage));
 	}
 }

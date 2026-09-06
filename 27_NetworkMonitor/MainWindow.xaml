@@ -5,10 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NetworkMonitor"
         xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:conv="clr-namespace:NetworkMonitor.Converters"
         mc:Ignorable="d"
         Title="ネットワーク帯域モニター" Height="500" Width="700">
+    <Window.Resources>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -36,8 +41,14 @@
             </Grid>
         </GroupBox>
 
+        <!-- エラー表示 -->
+        <TextBlock Grid.Row="1" Margin="0,0,0,8" Foreground="#C62828" TextWrapping="Wrap"
+                   Text="{Binding ErrorMessage}"
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   AutomationProperties.AutomationId="ErrorMessageText"/>
+
         <!-- グラフ表示 -->
-        <oxy:PlotView Grid.Row="1" Model="{Binding PlotModel}"
+        <oxy:PlotView Grid.Row="2" Model="{Binding PlotModel}"
                       AutomationProperties.AutomationId="BandwidthPlotView"/>
     </Grid>
 </Window>
