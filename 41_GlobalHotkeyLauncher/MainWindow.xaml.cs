@@ -63,6 +63,7 @@ public partial class MainWindow : Window
 			}
 		}
 		_hwndSource?.RemoveHook(WndProc);
+		_hwndSource?.Dispose();
 
 		base.OnClosed(e);
 	}

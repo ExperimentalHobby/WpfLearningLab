@@ -170,6 +170,24 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: 登録済みIDでホットキー発火を処理した際にLauncherがfalse(起動失敗)を返すと、
+	/// ExecutionLogに失敗を示すメッセージが記録されること。
+	/// </summary>
+	[Fact]
+	public void HandleHotKeyTriggered_Launcherがfalseを返すと実行失敗がログに記録される()
+	{
+		var launcher = new FakeCommandLauncher { NextLaunchResult = false };
+		var viewModel = CreateViewModel(launcher: launcher);
+		SetValidInput(viewModel);
+		viewModel.AddHotKeyCommand.Execute(null);
+		var binding = viewModel.Bindings[0];
+
+		viewModel.HandleHotKeyTriggered(binding.Id);
+
+		Assert.Contains(viewModel.ExecutionLog, entry => entry.Contains("失敗") && entry.Contains("メモ帳を開く"));
+	}
+
+	/// <summary>
 	/// パス条件: 未登録のIDでホットキー発火を処理しても、例外にならずLauncherも呼ばれないこと
 	/// </summary>
 	[Fact]

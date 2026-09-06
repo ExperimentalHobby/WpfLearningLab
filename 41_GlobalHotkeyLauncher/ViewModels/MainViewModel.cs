@@ -126,8 +126,14 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		_launcher.Launch(binding.Target);
-		ExecutionLog.Insert(0, $"実行: {binding.Label} ({binding.Target})");
+		if (_launcher.Launch(binding.Target))
+		{
+			ExecutionLog.Insert(0, $"実行: {binding.Label} ({binding.Target})");
+		}
+		else
+		{
+			ExecutionLog.Insert(0, $"実行失敗: {binding.Label} ({binding.Target})");
+		}
 	}
 
 	private void AddHotKey()

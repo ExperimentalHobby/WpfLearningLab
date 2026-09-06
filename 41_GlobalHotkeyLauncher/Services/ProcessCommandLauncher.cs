@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace GlobalHotkeyLauncher.Services;
@@ -10,8 +11,23 @@ namespace GlobalHotkeyLauncher.Services;
 public sealed class ProcessCommandLauncher : ICommandLauncher
 {
 	/// <inheritdoc/>
-	public void Launch(string target)
+	public bool Launch(string target)
 	{
-		Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+		if (string.IsNullOrWhiteSpace(target))
+		{
+			return false;
+		}
+
+		try
+		{
+			Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+			return true;
+		}
+		catch (Win32Exception)
+		{
+			// 存在しないパス・関連付けなし・権限不足等。呼び出し元(WM_HOTKEY処理中のWndProc)を
+			// クラッシュさせないよう、ここで捕捉しfalseを返す。
+			return false;
+		}
 	}
 }
