@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using AccessibleNoteApp.Models;
@@ -29,11 +30,20 @@ public sealed class JsonMemoRepository : IMemoRepository
 		var memos = new List<Memo>();
 		foreach (var filePath in Directory.EnumerateFiles(_directoryPath, "*.json"))
 		{
-			var json = File.ReadAllText(filePath);
-			var memo = JsonSerializer.Deserialize<Memo>(json);
-			if (memo is not null)
+			try
 			{
-				memos.Add(memo);
+				var json = File.ReadAllText(filePath);
+				var memo = JsonSerializer.Deserialize<Memo>(json);
+				if (memo is not null)
+				{
+					memos.Add(memo);
+				}
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
+			{
+				// 1件の破損ファイル(不正なJSON等)が原因で他の正常なメモまで開けなくなることを防ぐため、
+				// このファイルはスキップして読み込みを継続する。
+				Debug.WriteLine($"メモファイルの読み込みに失敗しました: {filePath}, {ex.Message}");
 			}
 		}
 
@@ -43,16 +53,30 @@ public sealed class JsonMemoRepository : IMemoRepository
 	/// <inheritdoc/>
 	public void Save(Memo memo)
 	{
-		File.WriteAllText(GetFilePath(memo.Id), JsonSerializer.Serialize(memo, SerializerOptions));
+		try
+		{
+			File.WriteAllText(GetFilePath(memo.Id), JsonSerializer.Serialize(memo, SerializerOptions));
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			Debug.WriteLine($"メモファイルの保存に失敗しました: {memo.Id}, {ex.Message}");
+		}
 	}
 
 	/// <inheritdoc/>
 	public void Delete(string id)
 	{
-		var filePath = GetFilePath(id);
-		if (File.Exists(filePath))
+		try
 		{
-			File.Delete(filePath);
+			var filePath = GetFilePath(id);
+			if (File.Exists(filePath))
+			{
+				File.Delete(filePath);
+			}
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			Debug.WriteLine($"メモファイルの削除に失敗しました: {id}, {ex.Message}");
 		}
 	}
 

@@ -99,4 +99,23 @@ public class JsonMemoRepositoryTests : IDisposable
 
 		Assert.Null(exception);
 	}
+
+	/// <summary>
+	/// パス条件: 壊れたJSONファイルが1件混ざっていても、例外にならず他の正常なメモは読み込めること
+	/// (1件の破損ファイルが原因で起動時に全メモが開けなくなるクラッシュの回帰テスト)。
+	/// </summary>
+	[Fact]
+	public void LoadAll_壊れたJSONファイルが混ざっていても正常なメモは読み込める()
+	{
+		var repository = new JsonMemoRepository(_tempDirectory);
+		repository.Save(new Memo("id-ok", "正常なメモ", "本文", new DateTime(2026, 1, 1)));
+		File.WriteAllText(Path.Combine(_tempDirectory, "id-broken.json"), "{ this is not valid json");
+
+		var exception = Record.Exception(() => repository.LoadAll());
+
+		Assert.Null(exception);
+		var loaded = repository.LoadAll();
+		var result = Assert.Single(loaded);
+		Assert.Equal("id-ok", result.Id);
+	}
 }
