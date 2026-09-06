@@ -104,4 +104,30 @@ public class MainViewModelTests
 
 		Assert.Equal(ChartType.Bar, viewModel.SelectedChartType);
 	}
+
+	/// <summary>
+	/// パス条件: 実行環境のカルチャが小数点にカンマを使う場合でも、"."区切りの入力値が
+	/// 正しく解釈されデータ点が追加されること(カルチャに依存しない挙動になっていること)
+	/// </summary>
+	[Fact]
+	public void AddDataPointCommand_カルチャに依存せず小数点付きの値を解釈できる()
+	{
+		var originalCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+		System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
+		try
+		{
+			var viewModel = new MainViewModel();
+			viewModel.NewLabel = "1月";
+			viewModel.NewValueInput = "12.5";
+
+			Assert.True(viewModel.AddDataPointCommand.CanExecute(null));
+			viewModel.AddDataPointCommand.Execute(null);
+
+			Assert.Equal(new DataPoint("1月", 12.5), viewModel.DataPoints[0]);
+		}
+		finally
+		{
+			System.Threading.Thread.CurrentThread.CurrentCulture = originalCulture;
+		}
+	}
 }
