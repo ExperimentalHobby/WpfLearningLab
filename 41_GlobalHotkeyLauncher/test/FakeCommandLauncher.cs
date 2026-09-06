@@ -12,6 +12,13 @@ public class FakeCommandLauncher : ICommandLauncher
 	/// </summary>
 	public List<string> LaunchedTargets { get; } = [];
 
+	/// <summary>次回以降の<see cref="Launch"/>の戻り値。既定値は<see langword="true"/>(起動成功)。</summary>
+	public bool NextLaunchResult { get; set; } = true;
+
 	/// <inheritdoc/>
-	public void Launch(string target) => LaunchedTargets.Add(target);
+	public bool Launch(string target)
+	{
+		LaunchedTargets.Add(target);
+		return NextLaunchResult;
+	}
 }
