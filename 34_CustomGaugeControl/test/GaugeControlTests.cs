@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Threading;
 using GaugeControlLib;
 
 namespace GaugeControlLib.Tests;
@@ -52,5 +53,74 @@ public class GaugeControlTests
 		gauge.Value = 100;
 
 		Assert.False(raised);
+	}
+
+	/// <summary>
+	/// パス条件: MinimumにMaximumを超える値を設定すると、Maximumにクランプされること。
+	/// </summary>
+	[WpfFact]
+	public void Minimum_Maximumを超える値を設定するとMaximumにクランプされる()
+	{
+		var gauge = new GaugeControl { Minimum = 0, Maximum = 100 };
+
+		gauge.Minimum = 200;
+
+		Assert.Equal(100, gauge.Minimum);
+	}
+
+	/// <summary>
+	/// パス条件: MaximumにMinimum未満の値を設定すると、Minimumにクランプされること。
+	/// </summary>
+	[WpfFact]
+	public void Maximum_Minimum未満の値を設定するとMinimumにクランプされる()
+	{
+		var gauge = new GaugeControl { Minimum = 0, Maximum = 100 };
+
+		gauge.Maximum = -50;
+
+		Assert.Equal(0, gauge.Maximum);
+	}
+
+	/// <summary>
+	/// パス条件: Valueが同じままMinimum/Maximumが変わると、AnimatedAngleが新しい範囲に基づく
+	/// 角度へ再計算されること。
+	/// </summary>
+	[WpfFact]
+	public void Minimum変更_値に対する角度が再計算される()
+	{
+		var gauge = new GaugeControl { Minimum = 0, Maximum = 100, Value = 50 };
+		// WPFのアニメーションクロックは実際の描画対象(HwndTarget)が無いと進行しないため、
+		// 非表示でもWindowにアタッチしてレンダリングパイプラインに乗せる。
+		var window = new Window { Content = gauge, ShowInTaskbar = false, WindowStyle = WindowStyle.None, Width = 1, Height = 1 };
+		window.Show();
+		try
+		{
+			WaitAndPumpDispatcher(600);
+
+			gauge.Minimum = -100;
+			WaitAndPumpDispatcher(600);
+
+			var expectedAngle = GaugeMath.ValueToAngle(50, -100, 100);
+			Assert.Equal(expectedAngle, gauge.AnimatedAngle, precision: 0);
+		}
+		finally
+		{
+			window.Close();
+		}
+	}
+
+	/// <summary>
+	/// アニメーション(400ms)の収束を待つため、指定時間だけDispatcherの保留メッセージ
+	/// (レンダリングによるアニメーション更新を含む)を処理し続ける。
+	/// </summary>
+	private static void WaitAndPumpDispatcher(int milliseconds)
+	{
+		var endTime = DateTime.UtcNow.AddMilliseconds(milliseconds);
+		while (DateTime.UtcNow < endTime)
+		{
+			var frame = new DispatcherFrame();
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => frame.Continue = false));
+			Dispatcher.PushFrame(frame);
+		}
 	}
 }
