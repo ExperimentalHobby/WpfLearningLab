@@ -33,7 +33,7 @@ public class Win32MonitorInfoProvider : IMonitorInfoProvider
 	{
 		var monitors = new List<MonitorInfo>();
 
-		EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, (IntPtr hMonitor, IntPtr _, ref RECT rect, IntPtr _) =>
+		var succeeded = EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, (IntPtr hMonitor, IntPtr _, ref RECT rect, IntPtr _) =>
 		{
 			var scaleX = 1.0;
 			var scaleY = 1.0;
@@ -57,6 +57,11 @@ public class Win32MonitorInfoProvider : IMonitorInfoProvider
 			monitors.Add(new MonitorInfo(logicalBounds, physicalBounds, scaleX, scaleY));
 			return true;
 		}, IntPtr.Zero);
+
+		if (!succeeded)
+		{
+			throw new ScreenCaptureException("モニタ情報の取得に失敗しました。");
+		}
 
 		return monitors;
 	}
