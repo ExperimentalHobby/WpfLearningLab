@@ -31,8 +31,13 @@ public static class CollisionDetector
 			return false;
 		}
 
-		var overlapX = ball.Radius - Math.Abs(dx);
-		var overlapY = ball.Radius - Math.Abs(dy);
+		// 矩形の中心からの距離を使い、矩形の縦横比を反映したオーバーラップ量で反射軸を決める。
+		// 最近接点ベースの距離(dx, dy)だけでは、ボール中心が矩形内部にある場合に常にdx=dy=0となり、
+		// 矩形の形状を無視して軸を誤判定してしまうため。
+		var rectCenterX = (rect.Left + rect.Right) / 2;
+		var rectCenterY = (rect.Top + rect.Bottom) / 2;
+		var overlapX = (rect.Width / 2) + ball.Radius - Math.Abs(ball.Position.X - rectCenterX);
+		var overlapY = (rect.Height / 2) + ball.Radius - Math.Abs(ball.Position.Y - rectCenterY);
 
 		var vx = ball.Velocity.X;
 		var vy = ball.Velocity.Y;

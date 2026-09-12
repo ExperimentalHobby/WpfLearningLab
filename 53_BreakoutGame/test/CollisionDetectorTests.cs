@@ -69,6 +69,25 @@ public class CollisionDetectorTests
 	}
 
 	/// <summary>
+	/// パス条件: ボール中心が縦長矩形の内部に完全に入っている場合、矩形の薄い方の軸(この場合X軸)で
+	/// 反射されること(最近接点ベースの距離だけでは矩形の縦横比を無視してしまう不具合の確認)。
+	/// </summary>
+	[Fact]
+	public void TryReflect_BallFullyInsideNarrowRect_ReflectsAlongShorterAxis()
+	{
+		// 幅20・高さ50の縦長矩形。ボール中心は矩形の中心と一致し、完全に内包されている
+		var rect = new Rect(0, 0, 20, 50);
+		var ball = new Ball(new Point(10, 25), new Vector(50, 50), 3);
+
+		var reflected = CollisionDetector.TryReflect(ball, rect, out var velocity);
+
+		Assert.True(reflected);
+		// 幅(20)の方が高さ(50)より薄いため、X軸方向(vx)が反射されるべき
+		Assert.Equal(-50, velocity.X);
+		Assert.Equal(50, velocity.Y);
+	}
+
+	/// <summary>
 	/// パス条件: パドル中央に当たるとほぼ真上方向(水平速度が0に近い)に反射すること。
 	/// </summary>
 	[Fact]

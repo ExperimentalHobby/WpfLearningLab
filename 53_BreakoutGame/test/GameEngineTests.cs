@@ -41,6 +41,27 @@ public class GameEngineTests
 	}
 
 	/// <summary>
+	/// パス条件: 1フレームでブロックの厚みを大幅に超える距離を移動する極端に高速なボールでも、
+	/// ブロックをすり抜けずに衝突が検知されること(トンネリング対策の確認)。
+	/// </summary>
+	[Fact]
+	public void Update_FastBall_DoesNotTunnelThroughBlock()
+	{
+		var engine = new GameEngine(400, 500);
+		var target = engine.Blocks[0];
+
+		// ブロックのすぐ下から、1フレーム(0.05秒)で1000px移動する速度で真上に向かって当てる
+		// (ブロックの厚み16pxを大幅に超える移動量であり、1フレーム1回の終点判定だけではすり抜ける)
+		engine.ForceBallState(
+			new System.Windows.Point(target.Bounds.Left + (target.Bounds.Width / 2), target.Bounds.Bottom + 2),
+			new System.Windows.Vector(0, -20000));
+
+		engine.Update(0.05);
+
+		Assert.True(target.IsDestroyed);
+	}
+
+	/// <summary>
 	/// パス条件: 破壊済みのブロックには再度衝突しないこと。
 	/// </summary>
 	[Fact]
