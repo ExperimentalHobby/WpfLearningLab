@@ -23,4 +23,9 @@ public class LeakTracker
 	/// 現時点で生存している(GCされていない)追跡対象の数を返す。
 	/// </summary>
 	public int CountAlive() => _tracked.Count(wr => wr.IsAlive);
+
+	/// <summary>
+	/// 追跡対象をすべて解除する。呼び出し後は<see cref="TotalCount"/>/<see cref="CountAlive"/>ともに0になる。
+	/// </summary>
+	public void ClearTracking() => _tracked.Clear();
 }

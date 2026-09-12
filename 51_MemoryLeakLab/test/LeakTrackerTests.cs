@@ -52,6 +52,22 @@ public class LeakTrackerTests
 	}
 
 	/// <summary>
+	/// パス条件: ClearTrackingを呼ぶと、追跡リストが空になりTotalCount/CountAliveがともに0になること。
+	/// </summary>
+	[Fact]
+	public void ClearTracking_RemovesAllTrackedEntries()
+	{
+		var tracker = new LeakTracker();
+		tracker.Track(new object());
+		tracker.Track(new object());
+
+		tracker.ClearTracking();
+
+		Assert.Equal(0, tracker.TotalCount);
+		Assert.Equal(0, tracker.CountAlive());
+	}
+
+	/// <summary>
 	/// ローカル変数のスコープをテストメソッド本体から分離し、JITによる生存期間延長の影響を避ける。
 	/// </summary>
 	[MethodImpl(MethodImplOptions.NoInlining)]
