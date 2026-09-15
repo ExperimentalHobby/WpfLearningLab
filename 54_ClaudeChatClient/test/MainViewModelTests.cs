@@ -87,6 +87,62 @@ public class MainViewModelTests
 	}
 
 	/// <summary>
+	/// パス条件: SetupCommand実行中にApiKeyStoreExceptionが発生した場合、クラッシュせず
+	/// ErrorMessageに表示されIsUnlockedはfalseのままであること。
+	/// </summary>
+	[Fact]
+	public void SetupCommand_StoreThrows_ShowsErrorWithoutUnlocking()
+	{
+		var store = new FakeApiKeyStore { ExceptionToThrowOnSave = new ApiKeyStoreException("保存に失敗しました。", new IOException()) };
+		var (vm, _, _) = CreateViewModel(store);
+		vm.MasterPasswordInput = "master-password";
+		vm.ApiKeyInput = "sk-ant-test-key";
+
+		vm.SetupCommand.Execute(null);
+
+		Assert.False(vm.IsUnlocked);
+		Assert.Contains("保存に失敗しました。", vm.ErrorMessage);
+	}
+
+	/// <summary>
+	/// パス条件: SetupCommand成功後、平文コピーの露出を減らすためMasterPasswordInput/ApiKeyInputが
+	/// クリアされること。
+	/// </summary>
+	[Fact]
+	public void SetupCommand_Success_ClearsPlainTextInputs()
+	{
+		var (vm, _, _) = CreateViewModel();
+		vm.MasterPasswordInput = "master-password";
+		vm.ApiKeyInput = "sk-ant-test-key";
+
+		vm.SetupCommand.Execute(null);
+
+		Assert.Empty(vm.MasterPasswordInput);
+		Assert.Empty(vm.ApiKeyInput);
+	}
+
+	/// <summary>
+	/// パス条件: UnlockCommand成功後、平文コピーの露出を減らすためMasterPasswordInputがクリア
+	/// されること。
+	/// </summary>
+	[Fact]
+	public void UnlockCommand_Success_ClearsMasterPasswordInput()
+	{
+		var store = new FakeApiKeyStore();
+		var (setupVm, _, _) = CreateViewModel(store);
+		setupVm.MasterPasswordInput = "master-password";
+		setupVm.ApiKeyInput = "sk-ant-test-key";
+		setupVm.SetupCommand.Execute(null);
+
+		var (vm, _, _) = CreateViewModel(store);
+		vm.MasterPasswordInput = "master-password";
+
+		vm.UnlockCommand.Execute(null);
+
+		Assert.Empty(vm.MasterPasswordInput);
+	}
+
+	/// <summary>
 	/// パス条件: 送信するとUserメッセージが履歴に追加され、ストリーミング中のテキストが
 	/// Assistantメッセージとして逐次更新されること。
 	/// </summary>

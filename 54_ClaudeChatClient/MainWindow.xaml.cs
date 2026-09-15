@@ -46,6 +46,13 @@ public partial class MainWindow : Window
 			case nameof(MainViewModel.IsUnlocked):
 				LockPanel.Visibility = _viewModel.IsUnlocked ? Visibility.Collapsed : Visibility.Visible;
 				ChatPanel.Visibility = _viewModel.IsUnlocked ? Visibility.Visible : Visibility.Collapsed;
+				if (_viewModel.IsUnlocked)
+				{
+					// PasswordBox自体が保持している平文もクリアし、露出するコピーを減らす。
+					MasterPasswordBox.Clear();
+					ApiKeyPasswordBox.Clear();
+				}
+
 				break;
 			case nameof(MainViewModel.ErrorMessage):
 				LockErrorText.Text = _viewModel.ErrorMessage;
