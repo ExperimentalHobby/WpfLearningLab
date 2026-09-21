@@ -140,6 +140,26 @@ public class GameEngine
 
 	private void UpdateBall(double deltaSeconds)
 	{
+		// トンネリング(高速移動時にボールが薄いブロックを1フレームですり抜けてしまう)を防ぐため、
+		// 1ステップの移動距離がボールの直径を超えないようサブステップへ分割し、各ステップごとに
+		// 衝突判定を行う(継続的衝突判定の簡易版)。直径以下に制限することで、ボールの掃引軌跡に
+		// 隙間ができず、直径より薄い障害物をすり抜けなくなる。
+		var maxStepDistance = Ball.Radius * 2;
+		var distance = Ball.Velocity.Length * deltaSeconds;
+		var stepCount = distance <= maxStepDistance ? 1 : (int)Math.Ceiling(distance / maxStepDistance);
+		var stepDelta = deltaSeconds / stepCount;
+
+		// 元の実装(1フレーム1回判定)と同じく、1回のUpdate呼び出しで破壊されるブロックは最大1個までとする。
+		// サブステップ化しても、複数ブロックを同一フレームでまとめて破壊してしまわないようにするため。
+		var blockHitThisFrame = false;
+		for (var i = 0; i < stepCount; i++)
+		{
+			UpdateBallStep(stepDelta, ref blockHitThisFrame);
+		}
+	}
+
+	private void UpdateBallStep(double deltaSeconds, ref bool blockHitThisFrame)
+	{
 		var newPosition = new Point(
 			Ball.Position.X + (Ball.Velocity.X * deltaSeconds),
 			Ball.Position.Y + (Ball.Velocity.Y * deltaSeconds));
@@ -174,6 +194,11 @@ public class GameEngine
 			};
 		}
 
+		if (blockHitThisFrame)
+		{
+			return;
+		}
+
 		foreach (var block in _blocks)
 		{
 			if (block.IsDestroyed)
@@ -186,6 +211,7 @@ public class GameEngine
 				Ball = Ball with { Velocity = reflectedVelocity };
 				block.IsDestroyed = true;
 				Score += ScorePerBlock;
+				blockHitThisFrame = true;
 				break;
 			}
 		}

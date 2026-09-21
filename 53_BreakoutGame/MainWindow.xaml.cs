@@ -29,6 +29,7 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 		Loaded += MainWindow_Loaded;
+		Closed += MainWindow_Closed;
 	}
 
 	private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -36,6 +37,13 @@ public partial class MainWindow : Window
 		StartNewGame();
 		_stopwatch.Start();
 		CompositionTarget.Rendering += CompositionTarget_Rendering;
+	}
+
+	private void MainWindow_Closed(object? sender, EventArgs e)
+	{
+		// CompositionTarget.Renderingは静的イベントのため、購読解除しないとウィンドウを閉じても
+		// このインスタンスがGCされずメモリリークする。
+		CompositionTarget.Rendering -= CompositionTarget_Rendering;
 	}
 
 	private void StartNewGame()
