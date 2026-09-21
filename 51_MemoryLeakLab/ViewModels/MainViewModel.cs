@@ -12,8 +12,8 @@ public class MainViewModel : ObservableObject
 {
 	private const int GenerateCount = 10;
 
-	private readonly EventPublisher _publisher = new();
-	private readonly LeakTracker _tracker = new();
+	private readonly EventPublisher _publisher;
+	private readonly LeakTracker _tracker;
 
 	/// <summary>
 	/// <see cref="ReleaseReferencesCommand"/>で参照を切るための強参照リスト。
@@ -60,8 +60,20 @@ public class MainViewModel : ObservableObject
 	/// <summary>
 	/// <see cref="MainViewModel"/>を初期化する。
 	/// </summary>
-	public MainViewModel()
+	public MainViewModel() : this(new EventPublisher(), new LeakTracker())
 	{
+	}
+
+	/// <summary>
+	/// テスト用: 外部から<see cref="EventPublisher"/>/<see cref="LeakTracker"/>を注入するコンストラクタ。
+	/// </summary>
+	/// <param name="publisher">使用するPublisher。</param>
+	/// <param name="tracker">使用するTracker。</param>
+	internal MainViewModel(EventPublisher publisher, LeakTracker tracker)
+	{
+		_publisher = publisher;
+		_tracker = tracker;
+
 		GenerateCommand = new RelayCommand(Generate);
 		ReleaseReferencesCommand = new RelayCommand(ReleaseReferences);
 		CollectGarbageCommand = new RelayCommand(CollectGarbage);
@@ -78,6 +90,10 @@ public class MainViewModel : ObservableObject
 			_subscribers.Add(subscriber);
 			_tracker.Track(subscriber);
 		}
+
+		// Publisherが実際にイベントを発火する実運用コードパスを持たせる
+		// (これまでSomethingChangedはテストでのみ発火されており、実質デッドコードだったため)。
+		_publisher.RaiseSomethingChanged();
 
 		OnPropertyChanged(nameof(TotalCount));
 		OnPropertyChanged(nameof(AliveCount));

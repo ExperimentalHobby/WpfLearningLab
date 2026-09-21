@@ -1,4 +1,8 @@
+using System.Runtime.CompilerServices;
 using System.Windows;
+
+// テストプロジェクトから、生成した購読者を検証するための内部コンストラクタにアクセスできるようにする。
+[assembly: InternalsVisibleTo("MemoryLeakLab.Tests")]
 
 [assembly: ThemeInfo(
 	ResourceDictionaryLocation.None,            //where theme specific resource dictionaries are located

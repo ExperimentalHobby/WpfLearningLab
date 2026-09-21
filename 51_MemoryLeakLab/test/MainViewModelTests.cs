@@ -1,3 +1,4 @@
+using MemoryLeakLab.Services;
 using MemoryLeakLab.ViewModels;
 
 namespace MemoryLeakLab.Tests;
@@ -58,5 +59,21 @@ public class MainViewModelTests
 		vm.CollectGarbageCommand.Execute(null);
 
 		Assert.Equal(0, vm.AliveCount);
+	}
+
+	/// <summary>
+	/// パス条件: GenerateCommand実行時にPublisherへ通知が飛び、既存の生存中購読者のReceivedCountが
+	/// 増えること(EventPublisher.SomethingChangedがテスト専用の実質デッドコードでなくなることの確認)。
+	/// </summary>
+	[Fact]
+	public void GenerateCommand_RaisesPublisherEvent_ForExistingSubscriber()
+	{
+		var publisher = new EventPublisher();
+		var probe = new LeakySubscriberViewModel(publisher);
+		var vm = new MainViewModel(publisher, new LeakTracker()) { Mode = LeakMode.Bad };
+
+		vm.GenerateCommand.Execute(null);
+
+		Assert.Equal(1, probe.ReceivedCount);
 	}
 }
