@@ -144,10 +144,24 @@ public class MainViewModel : ObservableObject
 		var verification = _cryptoService.Encrypt(VerificationPlainText, key);
 		var encryptedApiKey = _cryptoService.Encrypt(ApiKeyInput, key);
 
-		_apiKeyStore.Save(new ApiKeyRecord(salt, verification, encryptedApiKey));
+		try
+		{
+			_apiKeyStore.Save(new ApiKeyRecord(salt, verification, encryptedApiKey));
+		}
+		catch (ApiKeyStoreException ex)
+		{
+			ErrorMessage = ex.Message;
+			return;
+		}
+
 		_claudeApiClient = _claudeApiClientFactory(ApiKeyInput);
 		IsUnlocked = true;
 		ErrorMessage = string.Empty;
+
+		// 平文で保持されるコピーの露出を減らすため、入力欄はクリアする
+		// (根本対応であるClaudeApiClient内の平文保持自体は、HTTPヘッダに使う都合上避けられないため見送り)。
+		MasterPasswordInput = string.Empty;
+		ApiKeyInput = string.Empty;
 	}
 
 	private void Unlock()
@@ -173,6 +187,9 @@ public class MainViewModel : ObservableObject
 			_claudeApiClient = _claudeApiClientFactory(apiKey);
 			IsUnlocked = true;
 			ErrorMessage = string.Empty;
+
+			// 平文で保持されるコピーの露出を減らすため、入力欄はクリアする。
+			MasterPasswordInput = string.Empty;
 		}
 		catch (CryptographicException)
 		{

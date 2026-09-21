@@ -20,28 +20,46 @@ public class FileApiKeyStore(string filePath) : IApiKeyStore
 			return false;
 		}
 
-		var json = File.ReadAllText(filePath);
-		var dto = JsonSerializer.Deserialize<StoredRecordDto>(json);
-		if (dto is null)
+		try
 		{
+			var json = File.ReadAllText(filePath);
+			var dto = JsonSerializer.Deserialize<StoredRecordDto>(json);
+			if (dto is null)
+			{
+				record = null;
+				return false;
+			}
+
+			record = new ApiKeyRecord(Convert.FromBase64String(dto.Salt), dto.Verification, dto.EncryptedApiKey);
+			return true;
+		}
+		catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException or FormatException)
+		{
+			// ファイル破損・権限エラー等は「未保存」として扱い、初回セットアップへ誘導する
+			// (1件の破損が起動そのものを止めないようにする)。
 			record = null;
 			return false;
 		}
-
-		record = new ApiKeyRecord(Convert.FromBase64String(dto.Salt), dto.Verification, dto.EncryptedApiKey);
-		return true;
 	}
 
 	/// <inheritdoc/>
 	public void Save(ApiKeyRecord record)
 	{
 		var dto = new StoredRecordDto(Convert.ToBase64String(record.Salt), record.VerificationCipherText, record.EncryptedApiKey);
-		var directory = Path.GetDirectoryName(filePath);
-		if (!string.IsNullOrEmpty(directory))
-		{
-			Directory.CreateDirectory(directory);
-		}
 
-		File.WriteAllText(filePath, JsonSerializer.Serialize(dto));
+		try
+		{
+			var directory = Path.GetDirectoryName(filePath);
+			if (!string.IsNullOrEmpty(directory))
+			{
+				Directory.CreateDirectory(directory);
+			}
+
+			File.WriteAllText(filePath, JsonSerializer.Serialize(dto));
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			throw new ApiKeyStoreException("APIキーの保存に失敗しました。保存先を確認してください。", ex);
+		}
 	}
 }
