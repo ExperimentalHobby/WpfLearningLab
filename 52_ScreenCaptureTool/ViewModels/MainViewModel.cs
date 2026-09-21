@@ -87,8 +87,15 @@ public class MainViewModel : ObservableObject
 
 	private void CaptureFullScreen()
 	{
-		PreviewImage = _captureService.CaptureFullScreen();
-		StatusMessage = "全画面をキャプチャしました。";
+		try
+		{
+			PreviewImage = _captureService.CaptureFullScreen();
+			StatusMessage = "全画面をキャプチャしました。";
+		}
+		catch (ScreenCaptureException ex)
+		{
+			StatusMessage = ex.Message;
+		}
 	}
 
 	private void StartRegionSelect()
@@ -100,8 +107,15 @@ public class MainViewModel : ObservableObject
 			return;
 		}
 
-		PreviewImage = _captureService.CaptureRegion(region);
-		StatusMessage = "選択範囲をキャプチャしました。";
+		try
+		{
+			PreviewImage = _captureService.CaptureRegion(region);
+			StatusMessage = "選択範囲をキャプチャしました。";
+		}
+		catch (ScreenCaptureException ex)
+		{
+			StatusMessage = ex.Message;
+		}
 	}
 
 	private void Save()

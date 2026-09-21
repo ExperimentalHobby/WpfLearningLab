@@ -1,4 +1,5 @@
 using ScreenCaptureTool.Models;
+using ScreenCaptureTool.Services;
 using ScreenCaptureTool.Tests.Fakes;
 using ScreenCaptureTool.ViewModels;
 
@@ -119,5 +120,38 @@ public class MainViewModelTests
 		vm.CopyCommand.Execute(null);
 
 		Assert.Same(vm.PreviewImage, clipboard.LastSetImage);
+	}
+
+	/// <summary>
+	/// パス条件: CaptureFullScreenCommand実行中にScreenCaptureExceptionが発生した場合、
+	/// クラッシュせずStatusMessageにエラー内容が表示されること。
+	/// </summary>
+	[Fact]
+	public void CaptureFullScreenCommand_ServiceThrows_ShowsErrorWithoutCrashing()
+	{
+		var (vm, capture, _, _, _, _) = CreateViewModel();
+		capture.ExceptionToThrow = new ScreenCaptureException("キャプチャに失敗しました。");
+
+		vm.CaptureFullScreenCommand.Execute(null);
+
+		Assert.Null(vm.PreviewImage);
+		Assert.Contains("キャプチャに失敗しました。", vm.StatusMessage);
+	}
+
+	/// <summary>
+	/// パス条件: StartRegionSelectCommand実行中にScreenCaptureExceptionが発生した場合、
+	/// クラッシュせずStatusMessageにエラー内容が表示されること。
+	/// </summary>
+	[Fact]
+	public void StartRegionSelectCommand_ServiceThrows_ShowsErrorWithoutCrashing()
+	{
+		var (vm, capture, selector, _, _, _) = CreateViewModel();
+		selector.ResultToReturn = new CaptureRegion(10, 20, 100, 200);
+		capture.ExceptionToThrow = new ScreenCaptureException("キャプチャに失敗しました。");
+
+		vm.StartRegionSelectCommand.Execute(null);
+
+		Assert.Null(vm.PreviewImage);
+		Assert.Contains("キャプチャに失敗しました。", vm.StatusMessage);
 	}
 }

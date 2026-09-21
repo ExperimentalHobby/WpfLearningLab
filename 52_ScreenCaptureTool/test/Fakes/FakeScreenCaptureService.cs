@@ -15,15 +15,30 @@ public class FakeScreenCaptureService : IScreenCaptureService
 
 	public CaptureRegion? LastRequestedRegion { get; private set; }
 
+	/// <summary>
+	/// 設定すると、次回の呼び出しでこの例外をスローする(異常系のテスト用)。
+	/// </summary>
+	public Exception? ExceptionToThrow { get; set; }
+
 	public BitmapSource CaptureFullScreen()
 	{
 		FullScreenCallCount++;
+		if (ExceptionToThrow is not null)
+		{
+			throw ExceptionToThrow;
+		}
+
 		return CreateDummyImage();
 	}
 
 	public BitmapSource CaptureRegion(CaptureRegion region)
 	{
 		LastRequestedRegion = region;
+		if (ExceptionToThrow is not null)
+		{
+			throw ExceptionToThrow;
+		}
+
 		return CreateDummyImage();
 	}
 

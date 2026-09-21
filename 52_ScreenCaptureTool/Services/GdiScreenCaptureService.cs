@@ -35,13 +35,26 @@ public class GdiScreenCaptureService(IMonitorInfoProvider monitorInfoProvider) :
 	/// <inheritdoc/>
 	public BitmapSource CaptureRegion(CaptureRegion region)
 	{
-		using var bitmap = new Bitmap(region.Width, region.Height);
-		using (var graphics = Graphics.FromImage(bitmap))
+		if (region.Width <= 0 || region.Height <= 0)
 		{
-			graphics.CopyFromScreen(region.Left, region.Top, 0, 0, new System.Drawing.Size(region.Width, region.Height));
+			throw new ScreenCaptureException(
+				$"キャプチャ範囲が不正です(幅={region.Width}, 高さ={region.Height})。範囲を選択し直してください。");
 		}
 
-		return ConvertToBitmapSource(bitmap);
+		try
+		{
+			using var bitmap = new Bitmap(region.Width, region.Height);
+			using (var graphics = Graphics.FromImage(bitmap))
+			{
+				graphics.CopyFromScreen(region.Left, region.Top, 0, 0, new System.Drawing.Size(region.Width, region.Height));
+			}
+
+			return ConvertToBitmapSource(bitmap);
+		}
+		catch (Exception ex) when (ex is ArgumentException or OutOfMemoryException)
+		{
+			throw new ScreenCaptureException("画面のキャプチャに失敗しました。範囲を選択し直してください。", ex);
+		}
 	}
 
 	private static BitmapSource ConvertToBitmapSource(Bitmap bitmap)
