@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="Contracts\PluginNoteApp.Contracts.csproj" />
+    <ProjectReference Include="..\Shared\WpfMvvmKit\WpfMvvmKit.csproj" />
   </ItemGroup>
 
 </Project>

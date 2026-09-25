@@ -1,5 +1,6 @@
 using MazeSolverVisualizer.Models;
 using MazeSolverVisualizer.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace MazeSolverVisualizer.ViewModels;
 

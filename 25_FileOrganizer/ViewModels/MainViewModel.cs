@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using FileOrganizer.Models;
 using FileOrganizer.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace FileOrganizer.ViewModels;
 

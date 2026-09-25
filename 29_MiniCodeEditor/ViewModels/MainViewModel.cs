@@ -1,5 +1,6 @@
 using System.IO;
 using MiniCodeEditor.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace MiniCodeEditor.ViewModels;
 

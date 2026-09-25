@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using MusicPlayer.Models;
 using MusicPlayer.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace MusicPlayer.ViewModels;
 

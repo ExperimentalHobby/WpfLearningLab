@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows.Media;
 using PaintTool.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace PaintTool.ViewModels;
 
