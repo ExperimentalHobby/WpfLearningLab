@@ -1,6 +1,6 @@
 ﻿# WPF Learning Lab
 
-C#(.NET 10) / WPF の学習用アプリを基本42個+発展編12個の計54個作成するプロジェクト集です。
+C#(.NET 10) / WPF の学習用アプリを基本42個+発展編14個の計56個作成するプロジェクト集です。
 
 ## 進め方
 1. 01〜10: XAML基本+イベント処理
@@ -8,6 +8,7 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編12個の計54個�
 3. 21〜30: 描画・並行処理・アーキテクチャ設計
 4. 31〜42: 並行処理・カスタムUI・アーキテクチャ・デバイス連携等の応用技術
 5. 43〜54: 発展編(画面遷移・階層データ・印刷・Rx/非同期バリデーション・IPC・低レベルWin32連携等、基本42個では未カバーの技術要素)
+6. 55〜56: サーバー/クライアントHTTP通信(自作HTTPサーバー・ASP.NET Core APIサーバーとWPFクライアントの組み合わせ)
 
 ## アプリ一覧・進捗チェックリスト
 
@@ -65,6 +66,8 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編12個の計54個�
 - [x] [52_ScreenCaptureTool](52_ScreenCaptureTool/README.md) - スクリーンキャプチャツール
 - [x] [53_BreakoutGame](53_BreakoutGame/README.md) - ブロック崩しゲーム
 - [x] [54_ClaudeChatClient](54_ClaudeChatClient/README.md) - Claude APIチャットクライアント
+- [x] [55_SelfHostedNoteSync](55_SelfHostedNoteSync/README.md) - 自作HTTPサーバー メモ同期アプリ
+- [ ] [56_TaskApiWorkbench](56_TaskApiWorkbench/README.md) - ASP.NET Core APIサーバー タスク管理ワークベンチ
 
 ## フォルダ構成
 各フォルダに独立した .csproj を配置し、ソリューションファイル `WpfLearningLab.slnx`(.NET 10 / Visual Studio 2026 のXML形式ソリューション)で全体を管理しています。

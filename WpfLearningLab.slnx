@@ -218,4 +218,10 @@
     <Project Path="54_ClaudeChatClient/ClaudeChatClient.csproj" />
     <Project Path="54_ClaudeChatClient/test/ClaudeChatClient.Tests.csproj" />
   </Folder>
+  <Folder Name="/55_SelfHostedNoteSync/">
+    <Project Path="55_SelfHostedNoteSync/Client/SelfHostedNoteSync.Client.csproj" />
+    <Project Path="55_SelfHostedNoteSync/Client/test/SelfHostedNoteSync.Client.Tests.csproj" />
+    <Project Path="55_SelfHostedNoteSync/Server/SelfHostedNoteSync.Server.csproj" />
+    <Project Path="55_SelfHostedNoteSync/Server/test/SelfHostedNoteSync.Server.Tests.csproj" />
+  </Folder>
 </Solution>
