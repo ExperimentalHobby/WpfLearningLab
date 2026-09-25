@@ -218,4 +218,10 @@
     <Project Path="54_ClaudeChatClient/ClaudeChatClient.csproj" />
     <Project Path="54_ClaudeChatClient/test/ClaudeChatClient.Tests.csproj" />
   </Folder>
+  <Folder Name="/56_TaskApiWorkbench/">
+    <Project Path="56_TaskApiWorkbench/Client/TaskApiWorkbench.Client.csproj" />
+    <Project Path="56_TaskApiWorkbench/Client/test/TaskApiWorkbench.Client.Tests.csproj" />
+    <Project Path="56_TaskApiWorkbench/Server/TaskApiWorkbench.Server.csproj" />
+    <Project Path="56_TaskApiWorkbench/Server/test/TaskApiWorkbench.Server.Tests.csproj" />
+  </Folder>
 </Solution>

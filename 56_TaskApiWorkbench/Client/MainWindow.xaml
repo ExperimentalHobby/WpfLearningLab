@@ -1,0 +1,71 @@
+<Window x:Class="TaskApiWorkbench.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:TaskApiWorkbench.Client.Converters"
+        Title="56_TaskApiWorkbench" Height="450" Width="700">
+    <Window.Resources>
+        <conv:BoolToStatusConverter x:Key="BoolToStatusConverter" />
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="再読み込み" Command="{Binding LoadCommand}" Padding="8,4" Margin="0,0,8,0"
+                    AutomationProperties.AutomationId="LoadButton" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" VerticalAlignment="Center"
+                       AutomationProperties.AutomationId="ErrorMessageText" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ListBox Grid.Column="0" Margin="0,0,10,0"
+                     ItemsSource="{Binding Tasks}"
+                     SelectedItem="{Binding SelectedTask}"
+                     DisplayMemberPath="Title"
+                     AutomationProperties.AutomationId="TaskListBox" />
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="タイトル" Margin="0,0,0,4" />
+                <TextBox Grid.Row="1" Margin="0,0,0,10" Text="{Binding TitleInput, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.AutomationId="TitleTextBox" />
+
+                <TextBlock Grid.Row="2" Text="説明" Margin="0,0,0,4" />
+                <TextBox Grid.Row="3" Margin="0,0,0,10" Height="80"
+                         Text="{Binding DescriptionInput, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         AutomationProperties.AutomationId="DescriptionTextBox" />
+
+                <TextBlock Grid.Row="4" AutomationProperties.AutomationId="StatusText"
+                           Text="{Binding SelectedTask.IsCompleted, Converter={StaticResource BoolToStatusConverter}}" />
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+            <Button Content="追加" Command="{Binding AddCommand}" Padding="8,4" Margin="0,0,8,0"
+                    AutomationProperties.AutomationId="AddButton" />
+            <Button Content="更新" Command="{Binding UpdateCommand}" Padding="8,4" Margin="0,0,8,0"
+                    AutomationProperties.AutomationId="UpdateButton" />
+            <Button Content="完了切替" Command="{Binding ToggleCompleteCommand}" Padding="8,4" Margin="0,0,8,0"
+                    AutomationProperties.AutomationId="ToggleCompleteButton" />
+            <Button Content="削除" Command="{Binding DeleteCommand}" Padding="8,4"
+                    AutomationProperties.AutomationId="DeleteButton" />
+        </StackPanel>
+    </Grid>
+</Window>
