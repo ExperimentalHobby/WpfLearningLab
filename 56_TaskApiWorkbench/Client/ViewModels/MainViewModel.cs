@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text.Json;
 using TaskApiWorkbench.Client.Models;
 using TaskApiWorkbench.Client.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace TaskApiWorkbench.Client.ViewModels;
 

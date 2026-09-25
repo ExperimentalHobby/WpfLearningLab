@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text.Json;
 using SelfHostedNoteSync.Client.Models;
 using SelfHostedNoteSync.Client.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace SelfHostedNoteSync.Client.ViewModels;
 

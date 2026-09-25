@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using MemoryLeakLab.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace MemoryLeakLab.ViewModels;
 
