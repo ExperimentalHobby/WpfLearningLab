@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using LocalTaskScheduler.Models;
 using LocalTaskScheduler.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace LocalTaskScheduler.ViewModels;
 

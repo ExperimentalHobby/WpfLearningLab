@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using LogStreamAggregator.Models;
 using LogStreamAggregator.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace LogStreamAggregator.ViewModels;
 

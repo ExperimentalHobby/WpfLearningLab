@@ -16,4 +16,8 @@
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\WpfMvvmKit\WpfMvvmKit.csproj" />
+  </ItemGroup>
+
 </Project>

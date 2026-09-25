@@ -1,4 +1,5 @@
 using GameOfLife.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace GameOfLife.ViewModels;
 

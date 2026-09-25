@@ -2,6 +2,7 @@ using System.ComponentModel;
 using NetworkMonitor.Models;
 using NetworkMonitor.Services;
 using OxyPlot;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace NetworkMonitor.ViewModels;
 

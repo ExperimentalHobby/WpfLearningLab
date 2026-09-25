@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows.Input;
 using ParallelImageProcessor.Models;
 using ParallelImageProcessor.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ParallelImageProcessor.ViewModels;
 

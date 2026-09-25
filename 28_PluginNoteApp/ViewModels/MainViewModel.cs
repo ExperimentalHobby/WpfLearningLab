@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using PluginNoteApp.Contracts;
 using PluginNoteApp.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace PluginNoteApp.ViewModels;
 

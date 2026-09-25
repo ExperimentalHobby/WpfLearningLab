@@ -4,6 +4,7 @@ using System.Linq;
 using ChartVisualization.Models;
 using ChartVisualization.Services;
 using OxyPlot;
+using WpfLearningLab.Shared.Mvvm;
 using DataPoint = ChartVisualization.Models.DataPoint;
 
 namespace ChartVisualization.ViewModels;
