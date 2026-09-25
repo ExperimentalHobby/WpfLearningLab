@@ -55,8 +55,21 @@ public class ImageBatchProcessor : IImageBatchProcessor
 		IProgress<BatchProgress>? progress,
 		CancellationToken cancellationToken)
 	{
-		Directory.CreateDirectory(destinationFolder);
 		var stopwatch = Stopwatch.StartNew();
+		try
+		{
+			Directory.CreateDirectory(destinationFolder);
+		}
+		catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+		{
+			// 保存先パスの一部が既にファイルとして存在する等の理由で作成に失敗しても、
+			// 呼び出し元のMainViewModel.StartAsyncはOperationCanceledExceptionしか捕捉しておらず、
+			// AsyncRelayCommand.Execute(async void)にも捕捉箇所がないため、ここで捕捉し損ねると
+			// 未処理例外でアプリ全体がクラッシュしてしまう。
+			var failure = new ImageProcessResult(destinationFolder, Success: false, ErrorMessage: $"保存先フォルダを作成できませんでした。\n{ex.Message}");
+			return new BatchProcessResult(0, sourceFiles.Count, stopwatch.Elapsed, [failure]);
+		}
+
 		var completed = 0;
 		var successCount = 0;
 		var failures = new ConcurrentBag<ImageProcessResult>();

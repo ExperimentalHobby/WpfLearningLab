@@ -137,6 +137,29 @@ public class ImageBatchProcessorTests : IDisposable
 	}
 
 	/// <summary>
+	/// パス条件: 保存先フォルダを作成できない場合、例外を投げず全件失敗として結果に記録されること。
+	/// </summary>
+	[Fact]
+	public async Task ProcessBatchAsync_保存先フォルダを作成できない場合全件失敗として記録されクラッシュしない()
+	{
+		var sourceFiles = new List<string> { CreateSampleImage("img0.png") };
+		// 既存の「ファイル」をパスの途中に挟むことで、Directory.CreateDirectoryが
+		// IOException(パスの一部がファイルとして存在する)を投げる状況を再現する。
+		var blockerFilePath = Path.Combine(_tempDir, "blocker");
+		File.WriteAllText(blockerFilePath, "dummy");
+		var destFolder = Path.Combine(blockerFilePath, "dest");
+		var options = new ImageProcessingOptions(false, 0, 0, false);
+		var sut = new ImageBatchProcessor();
+
+		var result = await sut.ProcessBatchAsync(sourceFiles, destFolder, options, progress: null, CancellationToken.None);
+
+		Assert.Equal(0, result.SuccessCount);
+		Assert.Equal(1, result.FailureCount);
+		Assert.Single(result.Failures);
+		Assert.NotNull(result.Failures[0].ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: 処理中にキャンセルすると、全件処理が完了する前に中断されること。
 	/// </summary>
 	[Fact]
