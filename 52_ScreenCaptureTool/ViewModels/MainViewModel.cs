@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using ScreenCaptureTool.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ScreenCaptureTool.ViewModels;
 

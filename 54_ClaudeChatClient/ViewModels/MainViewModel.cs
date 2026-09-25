@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Input;
 using ClaudeChatClient.Models;
 using ClaudeChatClient.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ClaudeChatClient.ViewModels;
 
