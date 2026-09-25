@@ -1,21 +1,22 @@
 using System.Windows.Input;
 
-namespace HouseholdBudget.ViewModels;
+namespace WpfLearningLab.Shared.Mvvm;
 
 /// <summary>
-/// デリゲートを受け取って <see cref="ICommand"/> を実装する汎用コマンドクラス。
+/// 型付きパラメータを受け取るデリゲートで <see cref="ICommand"/> を実装する汎用コマンドクラス。
 /// </summary>
-public class RelayCommand : ICommand
+/// <typeparam name="T">コマンドパラメータの型。</typeparam>
+public class RelayCommand<T> : ICommand
 {
-	private readonly Action _execute;
-	private readonly Func<bool>? _canExecute;
+	private readonly Action<T?> _execute;
+	private readonly Func<T?, bool>? _canExecute;
 
 	/// <summary>
 	/// コマンドを初期化する。
 	/// </summary>
 	/// <param name="execute">実行するデリゲート。</param>
 	/// <param name="canExecute">実行可能かどうかを判定するデリゲート(省略時は常に実行可能)。</param>
-	public RelayCommand(Action execute, Func<bool>? canExecute = null)
+	public RelayCommand(Action<T?> execute, Func<T?, bool>? canExecute = null)
 	{
 		_execute = execute;
 		_canExecute = canExecute;
@@ -25,10 +26,10 @@ public class RelayCommand : ICommand
 	public event EventHandler? CanExecuteChanged;
 
 	/// <inheritdoc/>
-	public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
+	public bool CanExecute(object? parameter) => _canExecute?.Invoke((T?)parameter) ?? true;
 
 	/// <inheritdoc/>
-	public void Execute(object? parameter) => _execute();
+	public void Execute(object? parameter) => _execute((T?)parameter);
 
 	/// <summary>
 	/// <see cref="CanExecuteChanged"/> を発火し、コマンドの実行可否をUIに再評価させる。

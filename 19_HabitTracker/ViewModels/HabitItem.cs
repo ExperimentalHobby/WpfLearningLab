@@ -1,3 +1,5 @@
+using WpfLearningLab.Shared.Mvvm;
+
 namespace HabitTracker.ViewModels;
 
 /// <summary>

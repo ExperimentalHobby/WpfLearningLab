@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Text.Json;
 using WeatherApp.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace WeatherApp.ViewModels;
 

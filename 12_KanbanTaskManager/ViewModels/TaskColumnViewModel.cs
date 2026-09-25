@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using KanbanTaskManager.Models;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace KanbanTaskManager.ViewModels;
 

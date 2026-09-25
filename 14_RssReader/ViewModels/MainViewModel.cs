@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Xml;
 using RssReader.Models;
 using RssReader.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace RssReader.ViewModels;
 

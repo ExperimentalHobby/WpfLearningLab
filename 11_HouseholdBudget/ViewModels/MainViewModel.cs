@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using HouseholdBudget.Data;
 using HouseholdBudget.Models;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace HouseholdBudget.ViewModels;
 

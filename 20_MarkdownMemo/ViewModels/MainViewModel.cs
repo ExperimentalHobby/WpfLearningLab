@@ -3,6 +3,7 @@ using System.IO;
 using MarkdownMemo.Data;
 using MarkdownMemo.Models;
 using MarkdownMemo.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace MarkdownMemo.ViewModels;
 

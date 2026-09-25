@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text.Json;
 using ExchangeRateMonitor.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ExchangeRateMonitor.ViewModels;
 

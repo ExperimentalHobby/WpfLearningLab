@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using HabitTracker.Data;
 using HabitTracker.Models;
 using HabitTracker.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace HabitTracker.ViewModels;
 

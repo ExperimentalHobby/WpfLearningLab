@@ -1,6 +1,4 @@
-using HabitTracker.ViewModels;
-
-namespace HabitTracker.Tests;
+namespace WpfLearningLab.Shared.Mvvm.Tests;
 
 /// <summary>
 /// <see cref="RelayCommand{T}"/> の単体テスト。
@@ -16,9 +14,9 @@ public class RelayCommandOfTTests
 		string? received = null;
 		var command = new RelayCommand<string>(value => received = value);
 
-		command.Execute("運動");
+		command.Execute("USD/JPY");
 
-		Assert.Equal("運動", received);
+		Assert.Equal("USD/JPY", received);
 	}
 
 	/// <summary>
@@ -26,12 +24,12 @@ public class RelayCommandOfTTests
 	/// </summary>
 	[Theory]
 	[InlineData("", false)]
-	[InlineData("運動", true)]
-	public void CanExecute_型付きパラメータで判定結果が変わる(string name, bool expected)
+	[InlineData("USD/JPY", true)]
+	public void CanExecute_型付きパラメータで判定結果が変わる(string pair, bool expected)
 	{
 		var command = new RelayCommand<string>(_ => { }, value => !string.IsNullOrWhiteSpace(value));
 
-		var result = command.CanExecute(name);
+		var result = command.CanExecute(pair);
 
 		Assert.Equal(expected, result);
 	}

@@ -1,4 +1,5 @@
 using System.Windows.Media;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ImageViewer.ViewModels;
 

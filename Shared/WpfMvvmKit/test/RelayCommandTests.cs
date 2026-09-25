@@ -1,6 +1,4 @@
-using KanbanTaskManager.ViewModels;
-
-namespace KanbanTaskManager.Tests;
+namespace WpfLearningLab.Shared.Mvvm.Tests;
 
 /// <summary>
 /// <see cref="RelayCommand"/> の単体テスト。
@@ -8,7 +6,21 @@ namespace KanbanTaskManager.Tests;
 public class RelayCommandTests
 {
 	/// <summary>
-	/// パス条件: CanExecuteが条件を満たさない場合falseを返すこと
+	/// パス条件: Executeを呼ぶとデリゲートが実行されること
+	/// </summary>
+	[Fact]
+	public void Execute_呼ぶとデリゲートが実行される()
+	{
+		var executed = false;
+		var command = new RelayCommand(() => executed = true);
+
+		command.Execute(null);
+
+		Assert.True(executed);
+	}
+
+	/// <summary>
+	/// パス条件: CanExecuteがfalseを返す条件でCanExecuteを呼ぶとfalseが返ること
 	/// </summary>
 	[Fact]
 	public void CanExecute_条件を満たさない場合falseを返す()

@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using LocalChatApp.Models;
 using LocalChatApp.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace LocalChatApp.ViewModels;
 
