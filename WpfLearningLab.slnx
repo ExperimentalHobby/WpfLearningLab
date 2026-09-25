@@ -224,4 +224,10 @@
     <Project Path="55_SelfHostedNoteSync/Server/SelfHostedNoteSync.Server.csproj" />
     <Project Path="55_SelfHostedNoteSync/Server/test/SelfHostedNoteSync.Server.Tests.csproj" />
   </Folder>
+  <Folder Name="/56_TaskApiWorkbench/">
+    <Project Path="56_TaskApiWorkbench/Client/TaskApiWorkbench.Client.csproj" />
+    <Project Path="56_TaskApiWorkbench/Client/test/TaskApiWorkbench.Client.Tests.csproj" />
+    <Project Path="56_TaskApiWorkbench/Server/TaskApiWorkbench.Server.csproj" />
+    <Project Path="56_TaskApiWorkbench/Server/test/TaskApiWorkbench.Server.Tests.csproj" />
+  </Folder>
 </Solution>

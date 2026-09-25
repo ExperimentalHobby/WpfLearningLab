@@ -67,7 +67,7 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編14個の計56個�
 - [x] [53_BreakoutGame](53_BreakoutGame/README.md) - ブロック崩しゲーム
 - [x] [54_ClaudeChatClient](54_ClaudeChatClient/README.md) - Claude APIチャットクライアント
 - [x] [55_SelfHostedNoteSync](55_SelfHostedNoteSync/README.md) - 自作HTTPサーバー メモ同期アプリ
-- [ ] [56_TaskApiWorkbench](56_TaskApiWorkbench/README.md) - ASP.NET Core APIサーバー タスク管理ワークベンチ
+- [x] [56_TaskApiWorkbench](56_TaskApiWorkbench/README.md) - ASP.NET Core APIサーバー タスク管理ワークベンチ
 
 ## フォルダ構成
 各フォルダに独立した .csproj を配置し、ソリューションファイル `WpfLearningLab.slnx`(.NET 10 / Visual Studio 2026 のXML形式ソリューション)で全体を管理しています。
