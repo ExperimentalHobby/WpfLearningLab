@@ -66,7 +66,7 @@ C#(.NET 10) / WPF の学習用アプリを基本42個+発展編14個の計56個�
 - [x] [52_ScreenCaptureTool](52_ScreenCaptureTool/README.md) - スクリーンキャプチャツール
 - [x] [53_BreakoutGame](53_BreakoutGame/README.md) - ブロック崩しゲーム
 - [x] [54_ClaudeChatClient](54_ClaudeChatClient/README.md) - Claude APIチャットクライアント
-- [ ] [55_SelfHostedNoteSync](55_SelfHostedNoteSync/README.md) - 自作HTTPサーバー メモ同期アプリ
+- [x] [55_SelfHostedNoteSync](55_SelfHostedNoteSync/README.md) - 自作HTTPサーバー メモ同期アプリ
 - [x] [56_TaskApiWorkbench](56_TaskApiWorkbench/README.md) - ASP.NET Core APIサーバー タスク管理ワークベンチ
 
 ## フォルダ構成
