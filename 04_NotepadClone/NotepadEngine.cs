@@ -3,16 +3,12 @@ using System.IO;
 namespace NotepadClone;
 
 /// <summary>
-/// メモ帳クローンのテキスト内容・ファイルパス・未保存状態を管理し、
-/// ウィンドウタイトルの生成を行うエンジン。実際のファイルI/O・ダイアログ表示は行わない。
+/// メモ帳クローンのファイルパス・未保存状態を管理し、ウィンドウタイトルの生成を行うエンジン。
+/// テキスト内容の実体はWPFの<see cref="System.Windows.Controls.TextBox"/>が保持するため、
+/// ここでは二重管理を避けて保持しない。実際のファイルI/O・ダイアログ表示も行わない。
 /// </summary>
 public class NotepadEngine
 {
-	/// <summary>
-	/// 現在編集中のテキスト内容。
-	/// </summary>
-	public string Text { get; private set; } = string.Empty;
-
 	/// <summary>
 	/// 現在編集中のファイルの保存先パス。未保存(無題)の場合は null。
 	/// </summary>
@@ -35,23 +31,19 @@ public class NotepadEngine
 	}
 
 	/// <summary>
-	/// 編集中のテキストを更新し、未保存状態にする。
+	/// 本文が編集されたことを反映し、未保存状態にする。
 	/// </summary>
-	/// <param name="text">更新後のテキスト内容。</param>
-	public void UpdateText(string text)
+	public void MarkDirty()
 	{
-		Text = text;
 		IsDirty = true;
 	}
 
 	/// <summary>
-	/// ファイルから読み込んだ内容を反映する。読み込み直後は未保存の変更がない状態になる。
+	/// ファイルを読み込んだことを反映する。読み込み直後は未保存の変更がない状態になる。
 	/// </summary>
 	/// <param name="filePath">読み込んだファイルのパス。</param>
-	/// <param name="content">読み込んだファイルの内容。</param>
-	public void Load(string filePath, string content)
+	public void Load(string filePath)
 	{
-		Text = content;
 		FilePath = filePath;
 		IsDirty = false;
 	}
@@ -67,11 +59,10 @@ public class NotepadEngine
 	}
 
 	/// <summary>
-	/// 編集内容・ファイルパス・未保存状態を初期状態にリセットする。
+	/// ファイルパス・未保存状態を初期状態にリセットする。
 	/// </summary>
 	public void New()
 	{
-		Text = string.Empty;
 		FilePath = null;
 		IsDirty = false;
 	}
