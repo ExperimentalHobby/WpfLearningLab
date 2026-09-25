@@ -9,4 +9,13 @@
     <BaseOutputPath>$(MSBuildThisFileDirectory)bin\$(MSBuildProjectName)\</BaseOutputPath>
   </PropertyGroup>
 
+  <!--
+    .NETアナライザーを全プロジェクトで有効化する(#121)。
+    導入時点でリポジトリ全体をビルドし、新規警告が0件であることを確認済み。
+  -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
 </Project>
