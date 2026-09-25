@@ -119,6 +119,23 @@ public class FileOrganizerServiceTests : IDisposable
 	}
 
 	/// <summary>
+	/// パス条件: 監視フォルダが存在しない場合、例外を投げずエラーとして結果に記録されること
+	/// </summary>
+	[Fact]
+	public async Task OrganizeExistingFilesAsync_監視フォルダが存在しない場合エラーとして記録されクラッシュしない()
+	{
+		var missingFolder = Path.Combine(_watchFolder, "not-exist");
+		var rules = new List<SortingRule> { new(".jpg", "Images") };
+		var service = new FileOrganizerService();
+
+		var results = await service.OrganizeExistingFilesAsync(missingFolder, rules);
+
+		Assert.Single(results);
+		Assert.False(results[0].Moved);
+		Assert.NotNull(results[0].ErrorMessage);
+	}
+
+	/// <summary>
 	/// パス条件: 移動対象ファイルが一時的に排他ロックされていても(コピー未完了を想定)、
 	/// リトライの末にロック解除後は移動が成功すること
 	/// </summary>
