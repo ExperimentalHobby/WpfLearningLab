@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Input;
 using VirtualizedLogViewer.Models;
 using VirtualizedLogViewer.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace VirtualizedLogViewer.ViewModels;
 

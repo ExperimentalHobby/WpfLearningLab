@@ -2,6 +2,7 @@ using System.IO;
 using System.Security;
 using System.Windows.Input;
 using SystemTrayUtility.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace SystemTrayUtility.ViewModels;
 
@@ -75,7 +76,7 @@ public class MainViewModel : ObservableObject
 				// フィールドは変えていないが、双方向バインディングされたチェックボックスの表示を
 				// 実際の値へ戻すため、通知だけを発火する。
 				StatusText = $"スタートアップ設定の変更に失敗しました: {ex.Message}";
-				RaisePropertyChanged();
+				OnPropertyChanged();
 				return;
 			}
 

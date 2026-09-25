@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using Simple3DViewer.Models;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace Simple3DViewer.ViewModels;
 

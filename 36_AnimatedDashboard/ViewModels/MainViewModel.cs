@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using AnimatedDashboard.Models;
 using AnimatedDashboard.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace AnimatedDashboard.ViewModels;
 

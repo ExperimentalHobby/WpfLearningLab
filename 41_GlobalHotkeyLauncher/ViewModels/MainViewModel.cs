@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using GlobalHotkeyLauncher.Models;
 using GlobalHotkeyLauncher.Services;
+using WpfLearningLab.Shared.Mvvm;
 using Key = System.Windows.Input.Key;
 
 namespace GlobalHotkeyLauncher.ViewModels;

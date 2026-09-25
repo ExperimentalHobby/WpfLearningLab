@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace CustomGaugeControl.ViewModels;
 

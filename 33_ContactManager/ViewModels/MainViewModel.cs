@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ContactManager.Data;
 using ContactManager.Models;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ContactManager.ViewModels;
 
