@@ -139,6 +139,53 @@ public class CalculatorEngineTests
 	}
 
 	/// <summary>
+	/// パス条件: decimal の範囲(29桁)を超える桁数を入力して演算子を押すと、
+	/// 例外を投げずに Display が "Error" になること。
+	/// </summary>
+	[Fact]
+	public void InputOperator_OperandExceedsDecimalRange_ShowsError()
+	{
+		var engine = new CalculatorEngine();
+		var hugeNumber = new string('9', 30);
+
+		foreach (var digit in hugeNumber)
+		{
+			engine.InputDigit(digit.ToString());
+		}
+
+		engine.InputOperator("+");
+
+		Assert.Equal("Error", engine.Display);
+	}
+
+	/// <summary>
+	/// パス条件: 演算結果自体が decimal の範囲を超える場合、例外を投げずに
+	/// Display が "Error" になること。
+	/// </summary>
+	[Fact]
+	public void InputEquals_ResultExceedsDecimalRange_ShowsError()
+	{
+		var engine = new CalculatorEngine();
+		var hugeNumber = new string('9', 20);
+
+		foreach (var digit in hugeNumber)
+		{
+			engine.InputDigit(digit.ToString());
+		}
+
+		engine.InputOperator("×");
+
+		foreach (var digit in hugeNumber)
+		{
+			engine.InputDigit(digit.ToString());
+		}
+
+		engine.InputEquals();
+
+		Assert.Equal("Error", engine.Display);
+	}
+
+	/// <summary>
 	/// パス条件: 数字・演算子を入力した状態で Clear すると、初期状態(Display = "0")に戻ること。
 	/// </summary>
 	[Fact]

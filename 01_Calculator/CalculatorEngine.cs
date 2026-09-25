@@ -79,9 +79,12 @@ public class CalculatorEngine
 			Compute();
 		}
 
-		_accumulator = decimal.Parse(Display, CultureInfo.InvariantCulture);
-		_pendingOperator = op;
-		_shouldResetDisplayOnNextDigit = true;
+		if (TryParseDisplay(out var value))
+		{
+			_accumulator = value;
+			_pendingOperator = op;
+			_shouldResetDisplayOnNextDigit = true;
+		}
 	}
 
 	/// <summary>
@@ -116,8 +119,11 @@ public class CalculatorEngine
 			return;
 		}
 
-		_memory += decimal.Parse(Display, CultureInfo.InvariantCulture);
-		_shouldResetDisplayOnNextDigit = true;
+		if (TryParseDisplay(out var value))
+		{
+			_memory += value;
+			_shouldResetDisplayOnNextDigit = true;
+		}
 	}
 
 	/// <summary>
@@ -132,8 +138,11 @@ public class CalculatorEngine
 			return;
 		}
 
-		_memory -= decimal.Parse(Display, CultureInfo.InvariantCulture);
-		_shouldResetDisplayOnNextDigit = true;
+		if (TryParseDisplay(out var value))
+		{
+			_memory -= value;
+			_shouldResetDisplayOnNextDigit = true;
+		}
 	}
 
 	/// <summary>
@@ -165,30 +174,73 @@ public class CalculatorEngine
 			return;
 		}
 
-		var operand = decimal.Parse(Display, CultureInfo.InvariantCulture);
+		if (!TryParseDisplay(out var operand))
+		{
+			return;
+		}
 
 		// decimal の除算はゼロ除算で DivideByZeroException を送出するため、
 		// 例外に頼らず先に判定して "Error" 表示に倒す。
 		if (_pendingOperator == "÷" && operand == 0)
 		{
-			Display = "Error";
-			_accumulator = null;
-			_pendingOperator = null;
-			_shouldResetDisplayOnNextDigit = true;
+			SetError();
 			return;
 		}
 
-		var result = _pendingOperator switch
+		decimal result;
+		try
 		{
-			"+" => _accumulator.Value + operand,
-			"-" => _accumulator.Value - operand,
-			"×" => _accumulator.Value * operand,
-			"÷" => _accumulator.Value / operand,
-			_ => operand,
-		};
+			result = _pendingOperator switch
+			{
+				"+" => _accumulator.Value + operand,
+				"-" => _accumulator.Value - operand,
+				"×" => _accumulator.Value * operand,
+				"÷" => _accumulator.Value / operand,
+				_ => operand,
+			};
+		}
+		catch (OverflowException)
+		{
+			// 演算結果自体が decimal の範囲(約7.9×10^28)を超える場合に発生する。
+			SetError();
+			return;
+		}
 
 		Display = result.ToString(CultureInfo.InvariantCulture);
 		_accumulator = result;
+		_shouldResetDisplayOnNextDigit = true;
+	}
+
+	/// <summary>
+	/// Display の文字列を decimal に変換する。桁数が decimal の範囲(約7.9×10^28)を
+	/// 超えている場合は例外を投げず、Display を "Error" にして false を返す。
+	/// </summary>
+	/// <param name="value">変換できた場合の値。</param>
+	/// <returns>変換できた場合は true。</returns>
+	private bool TryParseDisplay(out decimal value)
+	{
+		try
+		{
+			value = decimal.Parse(Display, CultureInfo.InvariantCulture);
+			return true;
+		}
+		catch (OverflowException)
+		{
+			SetError();
+			value = 0;
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// 電卓の状態をエラー表示に倒す。ゼロ除算・decimal範囲超過など、
+	/// 計算を継続できない場合に呼ぶ。
+	/// </summary>
+	private void SetError()
+	{
+		Display = "Error";
+		_accumulator = null;
+		_pendingOperator = null;
 		_shouldResetDisplayOnNextDigit = true;
 	}
 }
