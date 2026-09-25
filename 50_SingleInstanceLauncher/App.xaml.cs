@@ -1,5 +1,3 @@
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
