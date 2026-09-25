@@ -4,13 +4,15 @@
 
 ## プロジェクト概要
 
-C#（.NET 10）/ WPF の学習用アプリを 42 個作成するプロジェクト集。
+C#（.NET 10）/ WPF の学習用アプリを 56 個作成するプロジェクト集。
 
-- 各フォルダ（`01_Calculator` 〜 `42_AccessibleNoteApp`）に独立した `.csproj` を配置し、ソリューションファイル `WpfLearningLab.slnx`（.NET 10 / Visual Studio 2026 のXML形式ソリューション、リポジトリルートに配置）で全体を管理する
+- 各フォルダ（`01_Calculator` 〜 `56_TaskApiWorkbench`）に独立した `.csproj` を配置し、ソリューションファイル `WpfLearningLab.slnx`（.NET 10 / Visual Studio 2026 のXML形式ソリューション、リポジトリルートに配置）で全体を管理する
 - 01〜10: XAML 基本 + イベント処理
 - 11〜20: MVVM パターン + 外部リソース連携（API/DB）
 - 21〜30: 描画・並行処理・アーキテクチャ設計
-- 31〜42: 並行処理・カスタムUI・アーキテクチャ・デバイス連携等の応用技術（`31_ParallelImageProcessor` 〜 `42_AccessibleNoteApp`。この範囲のみ、リポジトリ全体の連番でIssue番号が採番された都合上、**フォルダ番号とGitHub Issue番号が一致しない**（例: フォルダ `31_ParallelImageProcessor` の実装Issueは `#57`）。実装時は `Closes #<Issue番号>` に正しい実番号を使うこと）
+- 31〜42: 並行処理・カスタムUI・アーキテクチャ・デバイス連携等の応用技術
+- 43〜56: 画面遷移・ファイル操作・外部プロセス連携・自作サーバー等のさらなる応用技術（`43_SetupWizard` 〜 `56_TaskApiWorkbench`）
+- 31番以降は、リポジトリ全体の連番でIssue番号が採番された都合上、**フォルダ番号とGitHub Issue番号が一致しない**（例: フォルダ `31_ParallelImageProcessor` の実装Issueは `#57`）。実装時は `Closes #<Issue番号>` に正しい実番号を使うこと（`55_SelfHostedNoteSync`・`56_TaskApiWorkbench` は会話内で直接承認され起票されなかったため、紐づくIssueが存在しない）
 
 ### プロジェクト構成の規約
 
@@ -18,6 +20,7 @@ C#（.NET 10）/ WPF の学習用アプリを 42 個作成するプロジェク�
 - テストプロジェクトは本体と同じ `NN_AppName` フォルダ配下の `test` サブフォルダに `AppName.Tests.csproj`（xUnit）として配置し、本体プロジェクトを参照する（`NN_AppName.Tests` のようにトップレベルで別フォルダに分けると管理対象フォルダ数が倍になるため、本体フォルダの子にまとめる）。本体側の `.csproj` には `<Compile Remove="test\**" />` を追加し、既定の再帰 glob でテストコードを二重コンパイルしないようにする
 - ビルド成果物（bin）はルートの `Directory.Build.props` により `bin/<プロジェクト名>/<Configuration>/<TargetFramework>/...` に統一される（各プロジェクトフォルダ配下には出力されない）。中間生成物（obj）は従来通り各プロジェクトフォルダ配下に残る。新規プロジェクト追加時は個別設定不要
 - 各アプリの実装は GitHub Issue 単位で管理する。実装前にプランを Issue コメントとして記録し、完了条件をチェックして PR 本文に `Closes #<Issue番号>` を記載する。Issue のスコープ外の追加実装（例: 学習ポイントにない機能追加）が発生した場合は別 Issue を起票し、元 Issue とは分けて追跡する
+- MVVM共通ヘルパー（`ObservableObject`/`RelayCommand`/`RelayCommandOfT`/`AsyncRelayCommand`）は各アプリ配下に重複実装せず、`Shared/WpfMvvmKit` の共通実装を参照する。MVVMパターンを使う新規アプリの `.csproj` には `<ProjectReference Include="..\Shared\WpfMvvmKit\WpfMvvmKit.csproj" />`（本体フォルダから1段深い場所にある場合は `..\..\Shared\...`）を追加し、`using WpfLearningLab.Shared.Mvvm;` で参照する（Issue #121 対応でリポジトリ内の既存アプリは全て移行済み）
 
 ## よくある落とし穴
 
