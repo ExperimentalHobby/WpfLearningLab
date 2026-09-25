@@ -1,6 +1,4 @@
-using ExchangeRateMonitor.ViewModels;
-
-namespace ExchangeRateMonitor.Tests;
+namespace WpfLearningLab.Shared.Mvvm.Tests;
 
 /// <summary>
 /// <see cref="AsyncRelayCommand"/> の単体テスト。
@@ -55,24 +53,22 @@ public class AsyncRelayCommandTests
 	}
 
 	/// <summary>
-	/// パス条件: 実行中に(CanExecuteを確認せず)再度Executeを呼んでも、多重実行されないこと
-	/// (DispatcherTimer.Tickから直接Execute(null)を呼ぶような使い方でも、
-	/// 前回の実行が完了していなければ多重実行してはならないため)
+	/// パス条件: CanExecuteを確認せずにExecuteを直接呼んでも(DispatcherTimer.Tick等を想定)、
+	/// 実行中の多重呼び出しではデリゲートが再実行されないこと
 	/// </summary>
 	[Fact]
-	public async Task Execute_実行中に再度Executeを呼んでも多重実行されない()
+	public async Task Execute_CanExecuteを確認せず直接呼んでも実行中は多重実行されない()
 	{
-		var executionCount = 0;
 		var tcs = new TaskCompletionSource();
-		var command = new AsyncRelayCommand(async () =>
+		var executionCount = 0;
+		var command = new AsyncRelayCommand(() =>
 		{
 			executionCount++;
-			await tcs.Task;
+			return tcs.Task;
 		});
 
 		command.Execute(null);
 		command.Execute(null);
-
 		tcs.SetResult();
 		await Task.Delay(10);
 

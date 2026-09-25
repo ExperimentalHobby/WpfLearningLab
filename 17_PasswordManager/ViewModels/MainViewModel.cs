@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using PasswordManager.Data;
 using PasswordManager.Models;
 using PasswordManager.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace PasswordManager.ViewModels;
 

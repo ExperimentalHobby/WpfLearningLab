@@ -1,3 +1,5 @@
+using WpfLearningLab.Shared.Mvvm;
+
 namespace ExchangeRateMonitor.ViewModels;
 
 /// <summary>

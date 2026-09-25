@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace RssReader.ViewModels;
+namespace WpfLearningLab.Shared.Mvvm;
 
 /// <summary>
 /// <see cref="INotifyPropertyChanged"/> を実装するViewModelの基底クラス。
@@ -32,7 +32,8 @@ public abstract class ObservableObject : INotifyPropertyChanged
 
 	/// <summary>
 	/// 指定したプロパティ名で <see cref="PropertyChanged"/> を発火する。
-	/// フィールドを持たない算出プロパティの変更通知に使う。
+	/// フィールドを持たない算出プロパティの変更通知や、内部状態を変更せず
+	/// (双方向バインディングされたUIの表示を実際の値へ戻すために)通知だけを送りたい場合に使う。
 	/// </summary>
 	/// <param name="propertyName">通知するプロパティ名。</param>
 	protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

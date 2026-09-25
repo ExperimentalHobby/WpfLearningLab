@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using ImageViewer.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace ImageViewer.ViewModels;
 
