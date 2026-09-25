@@ -74,7 +74,7 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		_engine.Load(dialog.FileName, content);
+		_engine.Load(dialog.FileName);
 		SetEditorTextWithoutMarkingDirty(content);
 		UpdateTitle();
 	}
@@ -105,7 +105,7 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		_engine.UpdateText(EditorTextBox.Text);
+		_engine.MarkDirty();
 		UpdateTitle();
 	}
 

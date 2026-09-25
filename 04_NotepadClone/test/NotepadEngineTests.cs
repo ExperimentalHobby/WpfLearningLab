@@ -1,21 +1,10 @@
 namespace NotepadClone.Tests;
 
 /// <summary>
-/// <see cref="NotepadEngine"/> のテキスト状態管理・ウィンドウタイトル生成に関するテスト。
+/// <see cref="NotepadEngine"/> のファイルパス・未保存状態管理・ウィンドウタイトル生成に関するテスト。
 /// </summary>
 public class NotepadEngineTests
 {
-	/// <summary>
-	/// パス条件: 何も編集していない初期状態で Text が空であること。
-	/// </summary>
-	[Fact]
-	public void InitialText_IsEmpty()
-	{
-		var engine = new NotepadEngine();
-
-		Assert.Equal(string.Empty, engine.Text);
-	}
-
 	/// <summary>
 	/// パス条件: 何も編集していない初期状態で FilePath が null であること。
 	/// </summary>
@@ -50,44 +39,42 @@ public class NotepadEngineTests
 	}
 
 	/// <summary>
-	/// パス条件: UpdateText を呼ぶと Text が更新され IsDirty が true になること。
+	/// パス条件: MarkDirty を呼ぶと IsDirty が true になること。
 	/// </summary>
 	[Fact]
-	public void UpdateText_SetsTextAndMarksDirty()
+	public void MarkDirty_SetsIsDirtyTrue()
 	{
 		var engine = new NotepadEngine();
 
-		engine.UpdateText("こんにちは");
+		engine.MarkDirty();
 
-		Assert.Equal("こんにちは", engine.Text);
 		Assert.True(engine.IsDirty);
 	}
 
 	/// <summary>
-	/// パス条件: UpdateText を呼んだ後の GetWindowTitle が未保存マーク付きで「無題」を返すこと。
+	/// パス条件: MarkDirty を呼んだ後の GetWindowTitle が未保存マーク付きで「無題」を返すこと。
 	/// </summary>
 	[Fact]
-	public void UpdateText_TitleShowsDirtyMark()
+	public void MarkDirty_TitleShowsDirtyMark()
 	{
 		var engine = new NotepadEngine();
 
-		engine.UpdateText("こんにちは");
+		engine.MarkDirty();
 
 		Assert.Equal("*無題 - メモ帳", engine.GetWindowTitle());
 	}
 
 	/// <summary>
-	/// パス条件: Load を呼ぶと Text/FilePath が読み込んだ内容に更新され、IsDirty が false になること。
+	/// パス条件: Load を呼ぶと FilePath が読み込んだファイルのパスに更新され、IsDirty が false になること。
 	/// </summary>
 	[Fact]
-	public void Load_SetsTextFilePathAndClearsDirty()
+	public void Load_SetsFilePathAndClearsDirty()
 	{
 		var engine = new NotepadEngine();
-		engine.UpdateText("編集前");
+		engine.MarkDirty();
 
-		engine.Load(@"C:\memo\日記.txt", "読み込んだ内容");
+		engine.Load(@"C:\memo\日記.txt");
 
-		Assert.Equal("読み込んだ内容", engine.Text);
 		Assert.Equal(@"C:\memo\日記.txt", engine.FilePath);
 		Assert.False(engine.IsDirty);
 	}
@@ -100,7 +87,7 @@ public class NotepadEngineTests
 	{
 		var engine = new NotepadEngine();
 
-		engine.Load(@"C:\memo\日記.txt", "読み込んだ内容");
+		engine.Load(@"C:\memo\日記.txt");
 
 		Assert.Equal("日記.txt - メモ帳", engine.GetWindowTitle());
 	}
@@ -112,7 +99,7 @@ public class NotepadEngineTests
 	public void MarkSaved_SetsFilePathAndClearsDirty()
 	{
 		var engine = new NotepadEngine();
-		engine.UpdateText("保存する内容");
+		engine.MarkDirty();
 
 		engine.MarkSaved(@"C:\memo\新規.txt");
 
@@ -127,7 +114,7 @@ public class NotepadEngineTests
 	public void MarkSaved_TitleShowsFileNameWithoutMark()
 	{
 		var engine = new NotepadEngine();
-		engine.UpdateText("保存する内容");
+		engine.MarkDirty();
 
 		engine.MarkSaved(@"C:\memo\新規.txt");
 
@@ -135,18 +122,17 @@ public class NotepadEngineTests
 	}
 
 	/// <summary>
-	/// パス条件: New を呼ぶと Text/FilePath/IsDirty が初期状態にリセットされること。
+	/// パス条件: New を呼ぶと FilePath/IsDirty が初期状態にリセットされること。
 	/// </summary>
 	[Fact]
-	public void New_ResetsTextFilePathAndDirty()
+	public void New_ResetsFilePathAndDirty()
 	{
 		var engine = new NotepadEngine();
-		engine.Load(@"C:\memo\日記.txt", "内容");
-		engine.UpdateText("編集した内容");
+		engine.Load(@"C:\memo\日記.txt");
+		engine.MarkDirty();
 
 		engine.New();
 
-		Assert.Equal(string.Empty, engine.Text);
 		Assert.Null(engine.FilePath);
 		Assert.False(engine.IsDirty);
 	}
@@ -159,7 +145,7 @@ public class NotepadEngineTests
 	public void New_TitleReturnsUntitledWithoutMark()
 	{
 		var engine = new NotepadEngine();
-		engine.UpdateText("編集した内容");
+		engine.MarkDirty();
 
 		engine.New();
 
@@ -167,16 +153,16 @@ public class NotepadEngineTests
 	}
 
 	/// <summary>
-	/// パス条件: Load でファイルを開いた後に UpdateText で編集すると、
+	/// パス条件: Load でファイルを開いた後に MarkDirty で編集すると、
 	/// GetWindowTitle がファイル名付きで未保存マークを表示すること。
 	/// </summary>
 	[Fact]
-	public void UpdateText_AfterLoad_TitleShowsFileNameWithMark()
+	public void MarkDirty_AfterLoad_TitleShowsFileNameWithMark()
 	{
 		var engine = new NotepadEngine();
-		engine.Load(@"C:\memo\日記.txt", "内容");
+		engine.Load(@"C:\memo\日記.txt");
 
-		engine.UpdateText("編集した内容");
+		engine.MarkDirty();
 
 		Assert.Equal("*日記.txt - メモ帳", engine.GetWindowTitle());
 	}
