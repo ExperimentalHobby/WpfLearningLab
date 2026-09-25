@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using AccessibleNoteApp.Models;
 using AccessibleNoteApp.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace AccessibleNoteApp.ViewModels;
 

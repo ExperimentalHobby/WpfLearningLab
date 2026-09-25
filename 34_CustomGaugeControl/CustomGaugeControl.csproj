@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="GaugeControlLib\GaugeControlLib.csproj" />
+    <ProjectReference Include="..\Shared\WpfMvvmKit\WpfMvvmKit.csproj" />
   </ItemGroup>
 
 </Project>

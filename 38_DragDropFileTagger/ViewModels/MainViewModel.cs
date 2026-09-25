@@ -4,6 +4,7 @@ using System.Windows.Input;
 using DragDropFileTagger.Data;
 using DragDropFileTagger.Models;
 using DragDropFileTagger.Services;
+using WpfLearningLab.Shared.Mvvm;
 
 namespace DragDropFileTagger.ViewModels;
 

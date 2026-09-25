@@ -21,4 +21,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\WpfMvvmKit\WpfMvvmKit.csproj" />
+  </ItemGroup>
+
 </Project>
