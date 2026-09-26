@@ -13,11 +13,13 @@ public class EfHabitRepositoryTests : IDisposable
 {
 	private readonly string _dbPath;
 
+	/// <summary>テスト用の一時DBファイルパスを準備する。</summary>
 	public EfHabitRepositoryTests()
 	{
 		_dbPath = Path.Combine(Path.GetTempPath(), $"HabitTrackerTests_{Guid.NewGuid():N}.db");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		SqliteConnection.ClearAllPools();

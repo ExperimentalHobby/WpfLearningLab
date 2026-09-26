@@ -8,10 +8,16 @@ namespace RssReader.Tests;
 /// </summary>
 public class FakeRssFeedClient : IRssFeedClient
 {
+	/// <summary><see cref="FetchAsync"/>が返す値(テスト用)。</summary>
 	public IReadOnlyList<RssArticle> ArticlesToReturn { get; set; } = [];
+
+	/// <summary>設定すると<see cref="FetchAsync"/>呼び出し時にこの例外をスローする(テスト用)。</summary>
 	public Exception? ExceptionToThrow { get; set; }
+
+	/// <summary>設定すると<see cref="FetchAsync"/>がこのTaskの完了まで待機する(テスト用)。</summary>
 	public TaskCompletionSource? Gate { get; set; }
 
+	/// <inheritdoc/>
 	public async Task<IReadOnlyList<RssArticle>> FetchAsync(string feedUrl)
 	{
 		if (Gate is not null)

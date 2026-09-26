@@ -13,16 +13,20 @@ public class FakeHabitRepository : IHabitRepository
 	private int _nextHabitId = 1;
 	private int _nextLogId = 1;
 
+	/// <inheritdoc/>
 	public IReadOnlyList<Habit> GetAllWithLogs() => _habits.Select(Clone).ToList();
 
+	/// <inheritdoc/>
 	public void AddHabit(Habit habit)
 	{
 		habit.Id = _nextHabitId++;
 		_habits.Add(habit);
 	}
 
+	/// <inheritdoc/>
 	public void DeleteHabit(int habitId) => _habits.RemoveAll(h => h.Id == habitId);
 
+	/// <inheritdoc/>
 	public void SetLog(int habitId, DateOnly date, bool isCompleted)
 	{
 		var habit = _habits.FirstOrDefault(h => h.Id == habitId);

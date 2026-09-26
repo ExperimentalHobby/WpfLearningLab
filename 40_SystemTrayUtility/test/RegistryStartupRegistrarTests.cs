@@ -10,12 +10,14 @@ public class RegistryStartupRegistrarTests : IDisposable
 {
 	private readonly RegistryStartupRegistrar _registrar;
 
+	/// <summary>テスト専用の一意な値名でレジストラを準備する。</summary>
 	public RegistryStartupRegistrarTests()
 	{
 		var valueName = $"SystemTrayUtilityTests_{Guid.NewGuid():N}";
 		_registrar = new RegistryStartupRegistrar(valueName, @"C:\dummy\SystemTrayUtility.exe");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		_registrar.Unregister();

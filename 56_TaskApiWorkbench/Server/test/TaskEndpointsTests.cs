@@ -16,6 +16,7 @@ public class TaskEndpointsTests : IDisposable
 	private readonly TaskApiFactory _factory = new();
 	private readonly HttpClient _client;
 
+	/// <summary>テストごとに独立したサーバーとHTTPクライアントを準備する。</summary>
 	public TaskEndpointsTests()
 	{
 		_client = _factory.CreateClient();

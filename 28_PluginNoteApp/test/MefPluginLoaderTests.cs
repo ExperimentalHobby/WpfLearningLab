@@ -10,12 +10,14 @@ public class MefPluginLoaderTests : IDisposable
 {
 	private readonly string _tempDirectory;
 
+	/// <summary>テスト用の一時フォルダを作成する。</summary>
 	public MefPluginLoaderTests()
 	{
 		_tempDirectory = Path.Combine(Path.GetTempPath(), $"PluginNoteAppTests_{Guid.NewGuid():N}");
 		Directory.CreateDirectory(_tempDirectory);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_tempDirectory))

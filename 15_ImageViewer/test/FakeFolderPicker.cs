@@ -7,7 +7,9 @@ namespace ImageViewer.Tests;
 /// </summary>
 public class FakeFolderPicker : IFolderPicker
 {
+	/// <summary><see cref="PickFolder"/>が返す値(テスト用)。</summary>
 	public string? FolderToReturn { get; set; }
 
+	/// <inheritdoc/>
 	public string? PickFolder() => FolderToReturn;
 }

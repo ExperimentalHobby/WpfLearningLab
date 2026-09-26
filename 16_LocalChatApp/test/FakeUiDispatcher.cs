@@ -7,5 +7,6 @@ namespace LocalChatApp.Tests;
 /// </summary>
 public class FakeUiDispatcher : IUiDispatcher
 {
+	/// <inheritdoc/>
 	public void Invoke(Action action) => action();
 }

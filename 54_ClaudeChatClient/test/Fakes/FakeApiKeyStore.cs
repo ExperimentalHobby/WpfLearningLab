@@ -14,12 +14,14 @@ public class FakeApiKeyStore : IApiKeyStore
 	/// </summary>
 	public Exception? ExceptionToThrowOnSave { get; set; }
 
+	/// <inheritdoc/>
 	public bool TryLoad(out ApiKeyRecord? record)
 	{
 		record = _record;
 		return _record is not null;
 	}
 
+	/// <inheritdoc/>
 	public void Save(ApiKeyRecord record)
 	{
 		if (ExceptionToThrowOnSave is not null)

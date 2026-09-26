@@ -11,8 +11,10 @@ public class FakeDelayedActionScheduler : IDelayedActionScheduler
 {
 	private readonly List<(TimeSpan Delay, Action Action)> _scheduled = [];
 
+	/// <summary>スケジュールされた遅延時間の一覧(テスト用)。</summary>
 	public IReadOnlyList<TimeSpan> ScheduledDelays => _scheduled.Select(s => s.Delay).ToList();
 
+	/// <inheritdoc/>
 	public void Schedule(TimeSpan delay, Action action) => _scheduled.Add((delay, action));
 
 	/// <summary>スケジュール済みの全コールバックを今すぐ実行する(実時間の経過をシミュレートする)。</summary>

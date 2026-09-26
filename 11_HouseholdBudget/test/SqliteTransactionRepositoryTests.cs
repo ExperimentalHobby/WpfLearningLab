@@ -12,11 +12,13 @@ public class SqliteTransactionRepositoryTests : IDisposable
 {
 	private readonly string _dbPath;
 
+	/// <summary>テスト用の一時DBファイルパスを準備する。</summary>
 	public SqliteTransactionRepositoryTests()
 	{
 		_dbPath = Path.Combine(Path.GetTempPath(), $"HouseholdBudgetTests_{Guid.NewGuid():N}.db");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		// SqliteConnectionは既定でコネクションプーリングを行うため、

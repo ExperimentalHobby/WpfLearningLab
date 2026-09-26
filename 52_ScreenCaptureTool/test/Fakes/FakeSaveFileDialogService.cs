@@ -7,8 +7,10 @@ namespace ScreenCaptureTool.Tests.Fakes;
 /// </summary>
 public class FakeSaveFileDialogService : ISaveFileDialogService
 {
+	/// <summary><see cref="TryGetSavePath"/>が返す値(テスト用)。</summary>
 	public string? PathToReturn { get; set; }
 
+	/// <inheritdoc/>
 	public bool TryGetSavePath(out string? path)
 	{
 		path = PathToReturn;

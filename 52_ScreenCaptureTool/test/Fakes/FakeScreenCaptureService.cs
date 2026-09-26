@@ -11,8 +11,10 @@ namespace ScreenCaptureTool.Tests.Fakes;
 /// </summary>
 public class FakeScreenCaptureService : IScreenCaptureService
 {
+	/// <summary><see cref="CaptureFullScreen"/>が呼ばれた回数(テスト用)。</summary>
 	public int FullScreenCallCount { get; private set; }
 
+	/// <summary>直近の領域指定キャプチャ呼び出し引数(テスト用)。</summary>
 	public CaptureRegion? LastRequestedRegion { get; private set; }
 
 	/// <summary>
@@ -20,6 +22,7 @@ public class FakeScreenCaptureService : IScreenCaptureService
 	/// </summary>
 	public Exception? ExceptionToThrow { get; set; }
 
+	/// <inheritdoc/>
 	public BitmapSource CaptureFullScreen()
 	{
 		FullScreenCallCount++;
@@ -31,6 +34,7 @@ public class FakeScreenCaptureService : IScreenCaptureService
 		return CreateDummyImage();
 	}
 
+	/// <inheritdoc/>
 	public BitmapSource CaptureRegion(CaptureRegion region)
 	{
 		LastRequestedRegion = region;

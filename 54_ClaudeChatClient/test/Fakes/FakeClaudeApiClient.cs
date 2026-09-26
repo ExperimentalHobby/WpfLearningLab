@@ -17,12 +17,16 @@ public class FakeClaudeApiClient : IClaudeApiClient
 	private readonly TaskCompletionSource _waitingAtGate = new();
 	private readonly TaskCompletionSource _gate = new();
 
+	/// <summary><see cref="StreamMessageAsync"/>が順にyieldするチャンク一覧(テスト用)。</summary>
 	public List<string> ChunksToYield { get; set; } = [];
 
+	/// <summary>直近の<see cref="StreamMessageAsync"/>呼び出しに渡された履歴(テスト用)。</summary>
 	public IReadOnlyList<ChatMessage>? LastHistory { get; private set; }
 
+	/// <summary>直近の<see cref="StreamMessageAsync"/>呼び出しに渡されたキャンセルトークン(テスト用)。</summary>
 	public CancellationToken LastCancellationToken { get; private set; }
 
+	/// <summary>有効にすると、1件目のチャンクyield後に<see cref="ReleaseGate"/>まで停止する(テスト用)。</summary>
 	public bool UseGateAfterFirstChunk { get; set; }
 
 	/// <summary>
@@ -35,6 +39,7 @@ public class FakeClaudeApiClient : IClaudeApiClient
 	/// </summary>
 	public void ReleaseGate() => _gate.TrySetResult();
 
+	/// <inheritdoc/>
 	public async IAsyncEnumerable<string> StreamMessageAsync(
 		IReadOnlyList<ChatMessage> history,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)

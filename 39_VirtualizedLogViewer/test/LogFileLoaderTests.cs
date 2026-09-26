@@ -9,11 +9,13 @@ public class LogFileLoaderTests : IDisposable
 {
 	private readonly string _filePath;
 
+	/// <summary>テスト用の一時ファイルパスを準備する。</summary>
 	public LogFileLoaderTests()
 	{
 		_filePath = Path.Combine(Path.GetTempPath(), $"VirtualizedLogViewerLoadTests_{Guid.NewGuid():N}.log");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (File.Exists(_filePath))

@@ -3,6 +3,9 @@ using SelfHostedNoteSync.Server.Models;
 
 namespace SelfHostedNoteSync.Server.Tests;
 
+/// <summary>
+/// <see cref="NoteStore"/>の単体テスト。
+/// </summary>
 public class NoteStoreTests
 {
 	/// <summary>

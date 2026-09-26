@@ -2,6 +2,9 @@ using ClaudeChatClient.Services;
 
 namespace ClaudeChatClient.Tests;
 
+/// <summary>
+/// <see cref="AesApiKeyCryptoService"/>の単体テスト。
+/// </summary>
 public class AesApiKeyCryptoServiceTests
 {
 	/// <summary>

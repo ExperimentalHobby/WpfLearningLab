@@ -4,6 +4,9 @@ using SelfHostedNoteSync.Server.Models;
 
 namespace SelfHostedNoteSync.Server.Tests;
 
+/// <summary>
+/// <see cref="NoteApiHandler"/>の単体テスト。
+/// </summary>
 public class NoteApiHandlerTests
 {
 	/// <summary>

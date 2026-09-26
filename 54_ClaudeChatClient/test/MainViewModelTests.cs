@@ -4,6 +4,9 @@ using ClaudeChatClient.ViewModels;
 
 namespace ClaudeChatClient.Tests;
 
+/// <summary>
+/// <see cref="MainViewModel"/>の単体テスト。
+/// </summary>
 public class MainViewModelTests
 {
 	private static (MainViewModel vm, FakeApiKeyStore store, FakeClaudeApiClient apiClient) CreateViewModel(

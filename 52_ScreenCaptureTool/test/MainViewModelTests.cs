@@ -5,6 +5,9 @@ using ScreenCaptureTool.ViewModels;
 
 namespace ScreenCaptureTool.Tests;
 
+/// <summary>
+/// <see cref="MainViewModel"/>の単体テスト。
+/// </summary>
 public class MainViewModelTests
 {
 	private static (MainViewModel vm, FakeScreenCaptureService capture, FakeRegionSelector selector,

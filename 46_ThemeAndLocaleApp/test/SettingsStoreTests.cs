@@ -111,6 +111,7 @@ public class SettingsStoreTests : IDisposable
 		Assert.Null(exception);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (File.Exists(_filePath))

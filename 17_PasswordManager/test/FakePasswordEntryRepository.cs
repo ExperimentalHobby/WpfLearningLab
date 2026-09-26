@@ -12,14 +12,17 @@ public class FakePasswordEntryRepository : IPasswordEntryRepository
 	private readonly List<PasswordEntry> _entries = [];
 	private int _nextId = 1;
 
+	/// <inheritdoc/>
 	public IReadOnlyList<PasswordEntry> GetAll() => _entries.ToList();
 
+	/// <inheritdoc/>
 	public void Add(PasswordEntry entry)
 	{
 		entry.Id = _nextId++;
 		_entries.Add(entry);
 	}
 
+	/// <inheritdoc/>
 	public void Update(PasswordEntry entry)
 	{
 		var index = _entries.FindIndex(e => e.Id == entry.Id);
@@ -29,5 +32,6 @@ public class FakePasswordEntryRepository : IPasswordEntryRepository
 		}
 	}
 
+	/// <inheritdoc/>
 	public void Delete(int id) => _entries.RemoveAll(e => e.Id == id);
 }

@@ -4,6 +4,9 @@ using MemoryLeakLab.ViewModels;
 
 namespace MemoryLeakLab.Tests;
 
+/// <summary>
+/// <see cref="EventPublisher"/>の購読に関する単体テスト。
+/// </summary>
 public class EventPublisherSubscriptionTests
 {
 	/// <summary>
