@@ -3,6 +3,9 @@ using BreakoutGame.Models;
 
 namespace BreakoutGame.Tests;
 
+/// <summary>
+/// <see cref="GameEngine"/>の単体テスト。
+/// </summary>
 public class GameEngineTests
 {
 	/// <summary>

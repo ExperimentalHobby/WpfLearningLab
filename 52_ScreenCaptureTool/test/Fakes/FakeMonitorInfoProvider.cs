@@ -8,7 +8,9 @@ namespace ScreenCaptureTool.Tests.Fakes;
 /// </summary>
 public class FakeMonitorInfoProvider : IMonitorInfoProvider
 {
+	/// <summary><see cref="GetMonitors"/>が返す値(テスト用)。</summary>
 	public IReadOnlyList<MonitorInfo> MonitorsToReturn { get; set; } = [];
 
+	/// <inheritdoc/>
 	public IReadOnlyList<MonitorInfo> GetMonitors() => MonitorsToReturn;
 }

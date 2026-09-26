@@ -10,11 +10,13 @@ public class FileMemoRepositoryTests : IDisposable
 {
 	private readonly string _folderPath;
 
+	/// <summary>テスト用の一時フォルダパスを準備する。</summary>
 	public FileMemoRepositoryTests()
 	{
 		_folderPath = Path.Combine(Path.GetTempPath(), $"MarkdownMemoTests_{Guid.NewGuid():N}");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_folderPath))

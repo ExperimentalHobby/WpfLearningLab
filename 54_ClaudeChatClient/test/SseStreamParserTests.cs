@@ -2,6 +2,9 @@ using ClaudeChatClient.Services;
 
 namespace ClaudeChatClient.Tests;
 
+/// <summary>
+/// <see cref="SseStreamParser"/>の単体テスト。
+/// </summary>
 public class SseStreamParserTests
 {
 	private static async Task<List<string>> CollectAsync(string sseText)

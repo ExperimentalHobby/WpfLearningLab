@@ -9,12 +9,14 @@ public class MainViewModelTests : IDisposable
 {
 	private readonly string _tempDir;
 
+	/// <summary>テスト用の一時フォルダを作成する。</summary>
 	public MainViewModelTests()
 	{
 		_tempDir = Path.Combine(Path.GetTempPath(), "DragDropFileTaggerVmTests_" + Guid.NewGuid());
 		Directory.CreateDirectory(_tempDir);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_tempDir))

@@ -16,6 +16,7 @@ public class TcpChatConnectionTests : IAsyncLifetime
 	private TcpChatConnection _clientSideConnection = null!;
 	private TcpChatConnection _serverSideConnection = null!;
 
+	/// <inheritdoc/>
 	public async Task InitializeAsync()
 	{
 		_listener = new TcpListener(IPAddress.Loopback, 0);
@@ -31,6 +32,7 @@ public class TcpChatConnectionTests : IAsyncLifetime
 		_serverSideConnection = new TcpChatConnection(_serverSideClient);
 	}
 
+	/// <inheritdoc/>
 	public Task DisposeAsync()
 	{
 		_clientSideConnection.Dispose();

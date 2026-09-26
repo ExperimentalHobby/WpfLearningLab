@@ -7,12 +7,14 @@ public class DummyObservableObject : ObservableObject
 {
 	private string _name = string.Empty;
 
+	/// <summary>テスト用のダミープロパティ。</summary>
 	public string Name
 	{
 		get => _name;
 		set => SetProperty(ref _name, value);
 	}
 
+	/// <summary>フィールドを変更せず<see cref="Name"/>の変更通知だけを発火する(テスト用)。</summary>
 	public void RaiseNameChanged() => OnPropertyChanged(nameof(Name));
 }
 

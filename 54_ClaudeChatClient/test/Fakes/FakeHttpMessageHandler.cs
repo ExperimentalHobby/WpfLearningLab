@@ -8,14 +8,19 @@ namespace ClaudeChatClient.Tests.Fakes;
 /// </summary>
 public class FakeHttpMessageHandler : HttpMessageHandler
 {
+	/// <summary>返却するステータスコード(テスト用)。</summary>
 	public HttpStatusCode StatusCodeToReturn { get; set; } = HttpStatusCode.OK;
 
+	/// <summary>返却するレスポンス本文(テスト用)。</summary>
 	public string ContentToReturn { get; set; } = string.Empty;
 
+	/// <summary>直近に送信されたリクエスト(テスト用)。</summary>
 	public HttpRequestMessage? LastRequest { get; private set; }
 
+	/// <summary>直近に送信されたリクエスト本文(テスト用)。</summary>
 	public string? LastRequestBody { get; private set; }
 
+	/// <inheritdoc/>
 	protected override async Task<HttpResponseMessage> SendAsync(
 		HttpRequestMessage request, CancellationToken cancellationToken)
 	{

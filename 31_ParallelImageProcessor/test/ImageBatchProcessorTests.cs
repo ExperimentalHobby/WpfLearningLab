@@ -13,12 +13,14 @@ public class ImageBatchProcessorTests : IDisposable
 {
 	private readonly string _tempDir;
 
+	/// <summary>テスト用の一時フォルダを作成する。</summary>
 	public ImageBatchProcessorTests()
 	{
 		_tempDir = Path.Combine(Path.GetTempPath(), "ParallelImageProcessorTests_" + Guid.NewGuid());
 		Directory.CreateDirectory(_tempDir);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_tempDir))

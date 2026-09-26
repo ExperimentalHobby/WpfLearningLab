@@ -10,12 +10,14 @@ public class ImageFileScannerTests : IDisposable
 {
 	private readonly string _tempDir;
 
+	/// <summary>テスト用の一時フォルダを作成する。</summary>
 	public ImageFileScannerTests()
 	{
 		_tempDir = Path.Combine(Path.GetTempPath(), $"ImageViewerTests_{Guid.NewGuid():N}");
 		Directory.CreateDirectory(_tempDir);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_tempDir))

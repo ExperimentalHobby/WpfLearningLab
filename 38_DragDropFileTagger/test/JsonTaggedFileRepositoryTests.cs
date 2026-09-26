@@ -10,11 +10,13 @@ public class JsonTaggedFileRepositoryTests : IDisposable
 {
 	private readonly string _filePath;
 
+	/// <summary>テスト用の一時ファイルパスを準備する。</summary>
 	public JsonTaggedFileRepositoryTests()
 	{
 		_filePath = Path.Combine(Path.GetTempPath(), $"DragDropFileTaggerTests_{Guid.NewGuid():N}.json");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (File.Exists(_filePath))

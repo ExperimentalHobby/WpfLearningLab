@@ -5,6 +5,9 @@ using ClaudeChatClient.Tests.Fakes;
 
 namespace ClaudeChatClient.Tests;
 
+/// <summary>
+/// <see cref="ClaudeApiClient"/>の単体テスト。
+/// </summary>
 public class ClaudeApiClientTests
 {
 	private static readonly IReadOnlyList<ChatMessage> SampleHistory =

@@ -3,6 +3,9 @@ using MemoryLeakLab.ViewModels;
 
 namespace MemoryLeakLab.Tests;
 
+/// <summary>
+/// <see cref="MainViewModel"/>の単体テスト。
+/// </summary>
 public class MainViewModelTests
 {
 	/// <summary>

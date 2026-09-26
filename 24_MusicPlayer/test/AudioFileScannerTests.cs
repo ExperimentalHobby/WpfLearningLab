@@ -10,12 +10,14 @@ public class AudioFileScannerTests : IDisposable
 {
 	private readonly string _folderPath;
 
+	/// <summary>テスト用の一時フォルダを作成する。</summary>
 	public AudioFileScannerTests()
 	{
 		_folderPath = Path.Combine(Path.GetTempPath(), $"MusicPlayerTests_{Guid.NewGuid():N}");
 		Directory.CreateDirectory(_folderPath);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_folderPath))

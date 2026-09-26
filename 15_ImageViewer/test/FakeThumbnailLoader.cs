@@ -10,9 +10,13 @@ namespace ImageViewer.Tests;
 /// </summary>
 public class FakeThumbnailLoader : IThumbnailLoader
 {
+	/// <summary><see cref="LoadAsync"/>で要求されたファイルパスの履歴(テスト用)。</summary>
 	public List<string> RequestedFilePaths { get; } = [];
+
+	/// <summary>設定すると<see cref="LoadAsync"/>がこのTaskの完了まで待機する(テスト用)。</summary>
 	public TaskCompletionSource? Gate { get; set; }
 
+	/// <inheritdoc/>
 	public async Task<ImageSource?> LoadAsync(string filePath)
 	{
 		RequestedFilePaths.Add(filePath);

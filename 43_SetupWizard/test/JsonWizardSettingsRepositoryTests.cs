@@ -11,11 +11,13 @@ public class JsonWizardSettingsRepositoryTests : IDisposable
 {
 	private readonly string _filePath;
 
+	/// <summary>テスト用の一時ファイルパスを準備する。</summary>
 	public JsonWizardSettingsRepositoryTests()
 	{
 		_filePath = Path.Combine(Path.GetTempPath(), $"SetupWizardTests_{Guid.NewGuid():N}.json");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (File.Exists(_filePath))

@@ -7,7 +7,9 @@ namespace MusicPlayer.Tests;
 /// </summary>
 public class FakeFolderPicker : IFolderPicker
 {
+	/// <summary><see cref="PickFolder"/>が返す値(テスト用)。</summary>
 	public string? PathToReturn { get; set; }
 
+	/// <inheritdoc/>
 	public string? PickFolder() => PathToReturn;
 }

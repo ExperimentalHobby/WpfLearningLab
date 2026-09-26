@@ -12,6 +12,7 @@ namespace TaskApiWorkbench.Server.Tests;
 /// </summary>
 public class TaskApiFactory : WebApplicationFactory<Program>
 {
+	/// <inheritdoc/>
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
 		// AddDbContextのoptionsActionはDbContextOptionsがスコープ(リクエスト)ごとに解決されるたびに

@@ -10,12 +10,16 @@ public class FakeMasterKeyStore : IMasterKeyStore
 	private byte[]? _salt;
 	private string? _verificationValue;
 
+	/// <inheritdoc/>
 	public bool IsInitialized() => _salt is not null;
 
+	/// <inheritdoc/>
 	public byte[] GetSalt() => _salt ?? throw new InvalidOperationException("マスターキーが初期設定されていません。");
 
+	/// <inheritdoc/>
 	public string GetVerificationValue() => _verificationValue ?? throw new InvalidOperationException("マスターキーが初期設定されていません。");
 
+	/// <inheritdoc/>
 	public void Initialize(byte[] salt, string verificationValue)
 	{
 		_salt = salt;

@@ -10,11 +10,13 @@ public class JsonMemoRepositoryTests : IDisposable
 {
 	private readonly string _tempDirectory;
 
+	/// <summary>テスト用の一時フォルダパスを準備する。</summary>
 	public JsonMemoRepositoryTests()
 	{
 		_tempDirectory = Path.Combine(Path.GetTempPath(), $"AccessibleNoteAppTests_{Guid.NewGuid():N}");
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_tempDirectory))

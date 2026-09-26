@@ -8,7 +8,9 @@ namespace ScreenCaptureTool.Tests.Fakes;
 /// </summary>
 public class FakeClipboardImageService : IClipboardImageService
 {
+	/// <summary>直近に<see cref="SetImage"/>で設定された画像(テスト用)。</summary>
 	public BitmapSource? LastSetImage { get; private set; }
 
+	/// <inheritdoc/>
 	public void SetImage(BitmapSource image) => LastSetImage = image;
 }

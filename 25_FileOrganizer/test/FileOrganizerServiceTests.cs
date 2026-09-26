@@ -11,12 +11,14 @@ public class FileOrganizerServiceTests : IDisposable
 {
 	private readonly string _watchFolder;
 
+	/// <summary>テスト用の一時フォルダを作成する。</summary>
 	public FileOrganizerServiceTests()
 	{
 		_watchFolder = Path.Combine(Path.GetTempPath(), $"FileOrganizerTests_{Guid.NewGuid():N}");
 		Directory.CreateDirectory(_watchFolder);
 	}
 
+	/// <inheritdoc/>
 	public void Dispose()
 	{
 		if (Directory.Exists(_watchFolder))

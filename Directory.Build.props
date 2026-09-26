@@ -18,4 +18,12 @@
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
+  <!--
+    公開/internalメンバーへのXMLドキュメントコメント記載を全プロジェクトで強制する(#121)。
+    導入前に既存の欠落・誤り(フェーズ0〜2)をすべて解消し、新規警告が0件であることを確認済み。
+  -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
 </Project>

@@ -4,6 +4,9 @@ using ScreenCaptureTool.Tests.Fakes;
 
 namespace ScreenCaptureTool.Tests;
 
+/// <summary>
+/// <see cref="GdiScreenCaptureService"/>の単体テスト。
+/// </summary>
 public class GdiScreenCaptureServiceTests
 {
 	/// <summary>

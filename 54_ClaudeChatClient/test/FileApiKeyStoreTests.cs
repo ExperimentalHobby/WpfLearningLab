@@ -2,6 +2,9 @@ using ClaudeChatClient.Services;
 
 namespace ClaudeChatClient.Tests;
 
+/// <summary>
+/// <see cref="FileApiKeyStore"/>の単体テスト。
+/// </summary>
 public class FileApiKeyStoreTests
 {
 	/// <summary>

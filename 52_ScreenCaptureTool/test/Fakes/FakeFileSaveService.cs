@@ -8,10 +8,13 @@ namespace ScreenCaptureTool.Tests.Fakes;
 /// </summary>
 public class FakeFileSaveService : IFileSaveService
 {
+	/// <summary>直近に<see cref="Save"/>で保存された画像(テスト用)。</summary>
 	public BitmapSource? LastSavedImage { get; private set; }
 
+	/// <summary>直近に<see cref="Save"/>で保存されたパス(テスト用)。</summary>
 	public string? LastSavedPath { get; private set; }
 
+	/// <inheritdoc/>
 	public void Save(BitmapSource image, string path)
 	{
 		LastSavedImage = image;

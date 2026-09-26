@@ -4,6 +4,9 @@ using ScreenCaptureTool.Services;
 
 namespace ScreenCaptureTool.Tests;
 
+/// <summary>
+/// <see cref="MonitorDpiCoordinateConverter"/>の単体テスト。
+/// </summary>
 public class MonitorDpiCoordinateConverterTests
 {
 	/// <summary>

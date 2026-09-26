@@ -4,6 +4,9 @@ using BreakoutGame.Models;
 
 namespace BreakoutGame.Tests;
 
+/// <summary>
+/// <see cref="CollisionDetector"/>の単体テスト。
+/// </summary>
 public class CollisionDetectorTests
 {
 	/// <summary>

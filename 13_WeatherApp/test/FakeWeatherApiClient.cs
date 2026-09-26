@@ -9,11 +9,19 @@ namespace WeatherApp.Tests;
 /// </summary>
 public class FakeWeatherApiClient : IWeatherApiClient
 {
+	/// <summary><see cref="SearchLocationAsync"/>が返す値(テスト用)。</summary>
 	public GeocodingResult? SearchLocationResult { get; set; }
+
+	/// <summary><see cref="GetCurrentWeatherAsync"/>が返す値(テスト用)。</summary>
 	public CurrentWeather? CurrentWeatherResult { get; set; }
+
+	/// <summary>設定すると各メソッド呼び出し時にこの例外をスローする(テスト用)。</summary>
 	public Exception? ExceptionToThrow { get; set; }
+
+	/// <summary>設定すると<see cref="SearchLocationAsync"/>がこのTaskの完了まで待機する(テスト用)。</summary>
 	public TaskCompletionSource? SearchLocationGate { get; set; }
 
+	/// <inheritdoc/>
 	public async Task<GeocodingResult?> SearchLocationAsync(string placeName)
 	{
 		if (SearchLocationGate is not null)
@@ -29,6 +37,7 @@ public class FakeWeatherApiClient : IWeatherApiClient
 		return SearchLocationResult;
 	}
 
+	/// <inheritdoc/>
 	public Task<CurrentWeather> GetCurrentWeatherAsync(double latitude, double longitude)
 	{
 		if (ExceptionToThrow is not null)

@@ -7,7 +7,9 @@ namespace PaintTool.Tests;
 /// </summary>
 public class FakeSaveFileDialogService : ISaveFileDialogService
 {
+	/// <summary><see cref="PromptForSavePath"/>が返す値(テスト用)。</summary>
 	public string? PathToReturn { get; set; }
 
+	/// <inheritdoc/>
 	public string? PromptForSavePath(string defaultExtension, string filter) => PathToReturn;
 }

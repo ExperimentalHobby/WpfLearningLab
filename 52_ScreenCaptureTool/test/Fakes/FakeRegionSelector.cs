@@ -8,7 +8,9 @@ namespace ScreenCaptureTool.Tests.Fakes;
 /// </summary>
 public class FakeRegionSelector : IRegionSelector
 {
+	/// <summary><see cref="SelectRegion"/>が返す値(テスト用)。</summary>
 	public CaptureRegion? ResultToReturn { get; set; }
 
+	/// <inheritdoc/>
 	public CaptureRegion? SelectRegion() => ResultToReturn;
 }

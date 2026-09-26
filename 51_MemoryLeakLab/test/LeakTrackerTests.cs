@@ -3,6 +3,9 @@ using MemoryLeakLab.ViewModels;
 
 namespace MemoryLeakLab.Tests;
 
+/// <summary>
+/// <see cref="LeakTracker"/>の単体テスト。
+/// </summary>
 public class LeakTrackerTests
 {
 	/// <summary>

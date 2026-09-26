@@ -16,12 +16,14 @@ public class FakeMemoRepository : IMemoRepository
 	/// <summary>次回のLoad呼び出しでスローする例外(外部からファイルが削除された状況等を模擬する)。</summary>
 	public Exception? LoadExceptionToThrow { get; set; }
 
+	/// <inheritdoc/>
 	public IReadOnlyList<MemoSummary> GetAll() =>
 		_memos.Keys
 			.Select(title => new MemoSummary(title, _lastModified[title]))
 			.OrderByDescending(memo => memo.LastModified)
 			.ToList();
 
+	/// <inheritdoc/>
 	public string Load(string title)
 	{
 		if (LoadExceptionToThrow is not null)
@@ -32,6 +34,7 @@ public class FakeMemoRepository : IMemoRepository
 		return _memos[title];
 	}
 
+	/// <inheritdoc/>
 	public void Save(string title, string content)
 	{
 		_memos[title] = content;
@@ -39,6 +42,7 @@ public class FakeMemoRepository : IMemoRepository
 		_lastModified[title] = new DateTime(2026, 1, 1).AddSeconds(_sequence++);
 	}
 
+	/// <inheritdoc/>
 	public void Delete(string title)
 	{
 		_memos.Remove(title);
