@@ -10,6 +10,18 @@
   </PropertyGroup>
 
   <!--
+    全プロジェクト共通のプロパティを集約する(#121)。
+    Nullable/ImplicitUsingsは全121プロジェクトで同一設定のため無条件に適用する。
+    TargetFrameworkは既定値のみを示し、非WPF系プロジェクト(ASP.NET Core等)や
+    Windows SDKバージョン指定が必要なプロジェクトは各.csprojで個別に上書きする。
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
     .NETアナライザーを全プロジェクトで有効化する(#121)。
     導入時点でリポジトリ全体をビルドし、新規警告が0件であることを確認済み。
   -->

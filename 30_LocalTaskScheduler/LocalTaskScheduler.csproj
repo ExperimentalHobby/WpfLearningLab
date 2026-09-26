@@ -5,8 +5,6 @@
     <!-- CommunityToolkit.WinUI.NotificationsのShow()拡張メソッド(Windows Runtime依存)を解決するため、
          他アプリの"net10.0-windows"と異なりWindows SDKバージョン付きのTFMを指定する -->
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <!-- System.Drawing.Commonへの明示的なバージョン上書き(脆弱性回避目的)に対する
          「プラットフォーム提供パッケージのため不要」という誤検知(NU1510)のみを抑制する -->
