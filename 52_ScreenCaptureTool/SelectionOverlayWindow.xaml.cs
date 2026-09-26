@@ -18,6 +18,7 @@ public partial class SelectionOverlayWindow : Window
 	/// </summary>
 	public Rect? SelectedLogicalRect { get; private set; }
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public SelectionOverlayWindow()
 	{
 		InitializeComponent();

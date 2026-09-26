@@ -12,6 +12,10 @@ app.MapTaskEndpoints();
 
 app.Run();
 
+/// <summary>
+/// トップレベルステートメントのエントリーポイントを、統合テストの<c>WebApplicationFactory&lt;Program&gt;</c>から
+/// 参照できるようにするための部分クラス宣言。
+/// </summary>
 public partial class Program
 {
 }

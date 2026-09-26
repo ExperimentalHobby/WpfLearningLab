@@ -19,6 +19,7 @@ public partial class MainWindow : Window
 	private Win32HotKeyRegistrar? _registrar;
 	private HwndSource? _hwndSource;
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

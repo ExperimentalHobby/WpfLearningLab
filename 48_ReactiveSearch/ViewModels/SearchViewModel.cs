@@ -45,6 +45,7 @@ public partial class SearchViewModel : ObservableObject, INotifyDataErrorInfo, I
     /// <inheritdoc />
     public bool HasErrors => _currentErrors.Count > 0;
 
+    /// <summary>ViewModelを初期化する。</summary>
     public SearchViewModel()
         : this(
             new Debouncer(new DispatcherTimerScheduler(), DebounceDelay),

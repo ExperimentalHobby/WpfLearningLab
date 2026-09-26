@@ -7,6 +7,8 @@ public class SearchService
 {
     private readonly IReadOnlyList<string> _candidates;
 
+    /// <summary>検索サービスを初期化する。</summary>
+    /// <param name="candidates">検索対象の候補一覧。</param>
     public SearchService(IReadOnlyList<string> candidates)
     {
         _candidates = candidates;

@@ -17,6 +17,7 @@ public partial class MainWindow : Window
 	private readonly MainViewModel _viewModel;
 	private readonly DispatcherTimer _timer = new() { Interval = RefreshInterval };
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

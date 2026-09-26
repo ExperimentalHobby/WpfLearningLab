@@ -9,6 +9,8 @@ namespace ContactManager;
 /// </summary>
 public partial class MainWindow : Window
 {
+	/// <summary>ウィンドウを初期化する。</summary>
+	/// <param name="viewModel">DataContextに設定するViewModel。</param>
 	public MainWindow(MainViewModel viewModel)
 	{
 		InitializeComponent();

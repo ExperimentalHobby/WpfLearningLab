@@ -10,6 +10,9 @@ public class Debouncer : IDisposable
     private readonly TimeSpan _delay;
     private IDisposable? _pending;
 
+    /// <summary>Debouncerを初期化する。</summary>
+    /// <param name="scheduler">遅延実行に使うスケジューラ。</param>
+    /// <param name="delay">debounceの遅延時間。</param>
     public Debouncer(IScheduler scheduler, TimeSpan delay)
     {
         _scheduler = scheduler;

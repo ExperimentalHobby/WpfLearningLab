@@ -9,8 +9,10 @@ namespace BehaviorGallery;
 /// </summary>
 public partial class MainWindow : Window
 {
+    /// <summary>Enterキー入力送信時に実行されるコマンド。</summary>
     public ICommand SubmitCommand { get; }
 
+    /// <summary>ウィンドウを初期化する。</summary>
     public MainWindow()
     {
         SubmitCommand = new DelegateCommand(OnSubmit);

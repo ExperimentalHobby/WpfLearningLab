@@ -21,6 +21,7 @@ public partial class MainWindow : Window
 	private readonly DispatcherTimer _reminderTimer = new();
 	private bool _isExitRequested;
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

@@ -15,6 +15,7 @@ public partial class MainWindow : Window
 	private readonly IUiDispatcher _dispatcher = new WpfUiDispatcher();
 	private readonly MainViewModel _viewModel;
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

@@ -12,6 +12,7 @@ public partial class MainWindow : Window
 {
     private readonly ObservableCollection<string> _messages = new();
 
+    /// <summary>ウィンドウを初期化する。</summary>
     public MainWindow()
     {
         InitializeComponent();

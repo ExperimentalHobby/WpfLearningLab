@@ -11,6 +11,8 @@ public class SettingsStore
 {
 	private readonly string _filePath;
 
+	/// <summary>ストアを初期化する。</summary>
+	/// <param name="filePath">設定を保存するJSONファイルのパス。</param>
 	public SettingsStore(string filePath)
 	{
 		_filePath = filePath;

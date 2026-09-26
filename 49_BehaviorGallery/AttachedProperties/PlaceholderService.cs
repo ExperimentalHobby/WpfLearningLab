@@ -38,8 +38,13 @@ public static class PlaceholderService
         typeof(PlaceholderVisualCache),
         typeof(PlaceholderService));
 
+    /// <summary><see cref="TextProperty"/>の値を取得する。</summary>
+    /// <param name="obj">取得対象の依存関係オブジェクト。</param>
     public static string GetText(DependencyObject obj) => (string)obj.GetValue(TextProperty);
 
+    /// <summary><see cref="TextProperty"/>の値を設定する。</summary>
+    /// <param name="obj">設定対象の依存関係オブジェクト。</param>
+    /// <param name="value">プレースホルダーとして表示する文言。</param>
     public static void SetText(DependencyObject obj, string value) => obj.SetValue(TextProperty, value);
 
     private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

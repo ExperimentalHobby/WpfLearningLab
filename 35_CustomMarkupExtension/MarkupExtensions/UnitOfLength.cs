@@ -5,7 +5,12 @@ namespace CustomMarkupExtension.MarkupExtensions;
 /// </summary>
 public enum UnitOfLength
 {
+	/// <summary>ピクセル。</summary>
 	Pixel,
+
+	/// <summary>センチメートル。</summary>
 	Centimeter,
+
+	/// <summary>インチ。</summary>
 	Inch,
 }

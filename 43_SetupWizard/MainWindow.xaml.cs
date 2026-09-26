@@ -19,6 +19,7 @@ public partial class MainWindow : Window
 			"WpfLearningLab.SetupWizard",
 			"wizard-settings.json"));
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

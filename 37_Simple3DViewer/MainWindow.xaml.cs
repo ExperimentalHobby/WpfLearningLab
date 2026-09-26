@@ -20,6 +20,7 @@ public partial class MainWindow : Window
 	private readonly DispatcherTimer _autoRotateTimer;
 	private Point? _lastMousePosition;
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

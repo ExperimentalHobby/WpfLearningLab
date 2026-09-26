@@ -9,6 +9,8 @@ public class FileSystemBrowserEngine
 {
 	private readonly IFileSystem _fileSystem;
 
+	/// <summary>エンジンを初期化する。</summary>
+	/// <param name="fileSystem">実際のファイルシステムアクセスに使う実装。</param>
 	public FileSystemBrowserEngine(IFileSystem fileSystem)
 	{
 		_fileSystem = fileSystem;

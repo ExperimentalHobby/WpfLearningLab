@@ -17,6 +17,7 @@ public partial class App : Application
     private SingleInstanceGuard? _guard;
     private CancellationTokenSource? _serverCts;
 
+    /// <inheritdoc/>
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -75,6 +76,7 @@ public partial class App : Application
         }
     }
 
+    /// <inheritdoc/>
     protected override void OnExit(ExitEventArgs e)
     {
         _serverCts?.Cancel();

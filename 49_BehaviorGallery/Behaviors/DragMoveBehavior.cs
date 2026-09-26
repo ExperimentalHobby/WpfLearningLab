@@ -13,6 +13,7 @@ public class DragMoveBehavior : Behavior<FrameworkElement>
     private Point _lastPosition;
     private bool _isDragging;
 
+    /// <inheritdoc/>
     protected override void OnAttached()
     {
         base.OnAttached();
@@ -21,6 +22,7 @@ public class DragMoveBehavior : Behavior<FrameworkElement>
         AssociatedObject.MouseLeftButtonUp += OnMouseLeftButtonUp;
     }
 
+    /// <inheritdoc/>
     protected override void OnDetaching()
     {
         AssociatedObject.MouseLeftButtonDown -= OnMouseLeftButtonDown;

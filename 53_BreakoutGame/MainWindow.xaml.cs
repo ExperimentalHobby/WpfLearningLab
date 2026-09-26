@@ -25,6 +25,7 @@ public partial class MainWindow : Window
 	private Ellipse? _ballShape;
 	private readonly Stopwatch _stopwatch = new();
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

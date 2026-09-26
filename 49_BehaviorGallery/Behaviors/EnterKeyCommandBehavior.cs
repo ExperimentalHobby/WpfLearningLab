@@ -13,18 +13,21 @@ public class EnterKeyCommandBehavior : Behavior<UIElement>
     public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command), typeof(ICommand), typeof(EnterKeyCommandBehavior));
 
+    /// <summary>Enterキー押下時に実行するコマンド。</summary>
     public ICommand? Command
     {
         get => (ICommand?)GetValue(CommandProperty);
         set => SetValue(CommandProperty, value);
     }
 
+    /// <inheritdoc/>
     protected override void OnAttached()
     {
         base.OnAttached();
         AssociatedObject.PreviewKeyDown += OnPreviewKeyDown;
     }
 
+    /// <inheritdoc/>
     protected override void OnDetaching()
     {
         AssociatedObject.PreviewKeyDown -= OnPreviewKeyDown;
