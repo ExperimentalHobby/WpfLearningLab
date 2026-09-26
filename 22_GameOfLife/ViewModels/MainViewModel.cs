@@ -16,13 +16,13 @@ public class MainViewModel : ObservableObject
 	private bool _isRunning;
 	private int _intervalMilliseconds = 300;
 
+	private readonly GameOfLifeEngine _engine;
+
 	/// <summary>
 	/// ViewModelを初期化する。
 	/// </summary>
 	/// <param name="width">盤面の幅(セル数)。</param>
 	/// <param name="height">盤面の高さ(セル数)。</param>
-	private readonly GameOfLifeEngine _engine;
-
 	public MainViewModel(int width, int height)
 	{
 		_engine = new GameOfLifeEngine(width, height);

@@ -4,7 +4,7 @@ using WeatherApp.Services;
 namespace WeatherApp.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実通信を行わない<see cref="IWeatherApiClient"/>実装。
+/// <see cref="WeatherApp.ViewModels.MainViewModel"/> のテスト用に、実通信を行わない<see cref="IWeatherApiClient"/>実装。
 /// 各メソッドの戻り値・例外を差し替え可能にする。
 /// </summary>
 public class FakeWeatherApiClient : IWeatherApiClient

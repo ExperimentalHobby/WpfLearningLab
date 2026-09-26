@@ -4,7 +4,7 @@ using PasswordManager.Models;
 namespace PasswordManager.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に使う<see cref="IPasswordEntryRepository"/>のフェイク実装。
+/// <see cref="PasswordManager.ViewModels.MainViewModel"/> のテスト用に使う<see cref="IPasswordEntryRepository"/>のフェイク実装。
 /// メモリ上のリストでCRUDを模倣する。
 /// </summary>
 public class FakePasswordEntryRepository : IPasswordEntryRepository

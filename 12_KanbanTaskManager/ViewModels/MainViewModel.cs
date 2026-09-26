@@ -4,7 +4,7 @@ using WpfLearningLab.Shared.Mvvm;
 namespace KanbanTaskManager.ViewModels;
 
 /// <summary>
-/// ドラッグ&ドロップで発生した「タスクを指定カラムへ移動する」要求。
+/// ドラッグ&amp;ドロップで発生した「タスクを指定カラムへ移動する」要求。
 /// <see cref="Behaviors.DragDropBehavior"/> から <see cref="MainViewModel.MoveTaskCommand"/> へ渡される。
 /// </summary>
 /// <param name="Task">移動対象のタスク。</param>
@@ -13,7 +13,7 @@ public record MoveTaskRequest(TaskItem Task, KanbanStatus TargetStatus);
 
 /// <summary>
 /// カンバンボード全体のViewModel。Todo/InProgress/Doneの3カラムを保持し、
-/// ドラッグ&ドロップによるカラム間のタスク移動を処理する。
+/// ドラッグ&amp;ドロップによるカラム間のタスク移動を処理する。
 /// </summary>
 public class MainViewModel : ObservableObject
 {
@@ -50,7 +50,7 @@ public class MainViewModel : ObservableObject
 	public TaskColumnViewModel DoneColumn { get; }
 
 	/// <summary>
-	/// ドラッグ&ドロップの結果を受け取り、カラム間のタスク移動を行うコマンド。
+	/// ドラッグ&amp;ドロップの結果を受け取り、カラム間のタスク移動を行うコマンド。
 	/// <see cref="Behaviors.DragDropBehavior"/> のドロップ処理から実行される。
 	/// </summary>
 	public RelayCommand<MoveTaskRequest> MoveTaskCommand { get; }

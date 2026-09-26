@@ -3,7 +3,7 @@ using PasswordManager.Services;
 namespace PasswordManager.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実時間を待たずに検証できる
+/// <see cref="PasswordManager.ViewModels.MainViewModel"/> のテスト用に、実時間を待たずに検証できる
 /// <see cref="IDelayedActionScheduler"/>のフェイク実装。スケジュールされたコールバックを
 /// 記録するだけで、<see cref="RunAll"/>を呼ぶまで実行しない。
 /// </summary>

@@ -8,7 +8,7 @@ using ScreenCaptureTool.Models;
 namespace ScreenCaptureTool.Services;
 
 /// <summary>
-/// GDI(<see cref="Graphics.CopyFromScreen"/>)による画面キャプチャの実装。
+/// GDI(<see cref="Graphics.CopyFromScreen(int, int, int, int, System.Drawing.Size)"/>)による画面キャプチャの実装。
 /// </summary>
 public class GdiScreenCaptureService(IMonitorInfoProvider monitorInfoProvider) : IScreenCaptureService
 {

@@ -8,7 +8,7 @@ namespace KanbanTaskManager.Behaviors;
 
 /// <summary>
 /// WPFのDragDrop API(マウスイベント・<see cref="DragDrop"/>)をICommandに橋渡しする添付ビヘイビア。
-/// コードビハインドやView側にドラッグ&ドロップのロジックを書かせないために使う。
+/// コードビハインドやView側にドラッグ&amp;ドロップのロジックを書かせないために使う。
 /// <list type="bullet">
 /// <item><see cref="IsDragSourceProperty"/>: タスク一覧の<c>ItemsControl</c>に設定し、ドラッグ開始を検知する。</item>
 /// <item><see cref="DropCommandProperty"/> / <see cref="DropTargetStatusProperty"/>: ドロップ先のコンテナに設定し、

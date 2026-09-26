@@ -3,7 +3,7 @@ using System.Net;
 namespace WeatherApp.Tests;
 
 /// <summary>
-/// <see cref="OpenMeteoWeatherApiClient"/>等のテスト用に、実ネットワーク通信をせず
+/// <see cref="WeatherApp.Services.OpenMeteoWeatherApiClient"/>等のテスト用に、実ネットワーク通信をせず
 /// 差し替えたJSON文字列をそのまま返す<see cref="HttpMessageHandler"/>。
 /// </summary>
 public class FakeHttpMessageHandler : HttpMessageHandler

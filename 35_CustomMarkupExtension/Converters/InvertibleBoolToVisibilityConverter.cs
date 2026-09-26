@@ -7,7 +7,7 @@ namespace CustomMarkupExtension.Converters;
 /// <summary>
 /// <see langword="bool"/>を<see cref="Visibility"/>に変換する。
 /// 標準の<see cref="System.Windows.Controls.BooleanToVisibilityConverter"/>と異なり、
-/// <paramref name="parameter"/>に<see langword="true"/>を渡すことで結果を反転できる。
+/// <c>parameter</c>に<see langword="true"/>を渡すことで結果を反転できる。
 /// </summary>
 public class InvertibleBoolToVisibilityConverter : IValueConverter
 {

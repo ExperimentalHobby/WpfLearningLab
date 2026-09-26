@@ -3,7 +3,7 @@ using System.Windows;
 namespace FileOrganizer.Services;
 
 /// <summary>
-/// WPFの<see cref="Application.Dispatcher"/>を使った<see cref="IUiDispatcher"/>の実装。
+/// WPFの<see cref="System.Windows.Threading.Dispatcher"/>を使った<see cref="IUiDispatcher"/>の実装。
 /// </summary>
 public class WpfUiDispatcher : IUiDispatcher
 {

@@ -5,7 +5,7 @@ using WpfLearningLab.Shared.Mvvm;
 namespace MazeSolverVisualizer.ViewModels;
 
 /// <summary>
-/// 迷路生成&探索ビジュアライザのメイン画面のViewModel。迷路の生成・探索実行・
+/// 迷路生成・探索ビジュアライザのメイン画面のViewModel。迷路の生成・探索実行・
 /// アニメーション再生位置(ステップindex)を管理する。実際の描画はView層が担う。
 /// </summary>
 public class MainViewModel : ObservableObject
