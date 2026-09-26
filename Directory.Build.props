@@ -38,4 +38,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <!--
+    警告をエラー扱いにする(#121)。EnableNETAnalyzers/GenerateDocumentationFileの
+    警告が0件であることを確認した後に導入し、以後の新規警告をビルド時に検知する。
+  -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
 </Project>
