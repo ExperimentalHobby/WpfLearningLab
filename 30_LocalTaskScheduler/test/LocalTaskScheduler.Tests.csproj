@@ -3,8 +3,6 @@
   <PropertyGroup>
     <!-- 本体プロジェクト(LocalTaskScheduler.csproj)と同じWindows SDKバージョン付きTFMに合わせる -->
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <!-- LocalTaskScheduler.csproj(CommunityToolkit.WinUI.Notifications経由)と同様、
          System.Drawing.Commonの明示的なバージョン上書きに対する誤検知(NU1510)のみを抑制する -->
