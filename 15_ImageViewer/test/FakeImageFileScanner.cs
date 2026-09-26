@@ -3,7 +3,7 @@ using ImageViewer.Services;
 namespace ImageViewer.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実ファイルシステムを使わない<see cref="IImageFileScanner"/>実装。
+/// <see cref="ImageViewer.ViewModels.MainViewModel"/> のテスト用に、実ファイルシステムを使わない<see cref="IImageFileScanner"/>実装。
 /// </summary>
 public class FakeImageFileScanner : IImageFileScanner
 {

@@ -3,7 +3,7 @@ using System.Net;
 namespace RssReader.Tests;
 
 /// <summary>
-/// <see cref="RssFeedClient"/>等のテスト用に、実ネットワーク通信をせず
+/// <see cref="RssReader.Services.RssFeedClient"/>等のテスト用に、実ネットワーク通信をせず
 /// 差し替えた応答本文をそのまま返す<see cref="HttpMessageHandler"/>。
 /// </summary>
 public class FakeHttpMessageHandler : HttpMessageHandler

@@ -4,7 +4,7 @@ using RssReader.Services;
 namespace RssReader.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実通信を行わない<see cref="IRssFeedClient"/>実装。
+/// <see cref="RssReader.ViewModels.MainViewModel"/> のテスト用に、実通信を行わない<see cref="IRssFeedClient"/>実装。
 /// </summary>
 public class FakeRssFeedClient : IRssFeedClient
 {

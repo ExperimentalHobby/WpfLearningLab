@@ -4,7 +4,7 @@ using ContactManager.Models;
 namespace ContactManager.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/>のテストで実DBを使わずに済むようにする<see cref="IContactRepository"/>のフェイク。
+/// <see cref="ContactManager.ViewModels.MainViewModel"/>のテストで実DBを使わずに済むようにする<see cref="IContactRepository"/>のフェイク。
 /// </summary>
 internal class FakeContactRepository : IContactRepository
 {

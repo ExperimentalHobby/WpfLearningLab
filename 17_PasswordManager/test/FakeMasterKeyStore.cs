@@ -3,7 +3,7 @@ using PasswordManager.Data;
 namespace PasswordManager.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に使う<see cref="IMasterKeyStore"/>のフェイク実装。
+/// <see cref="PasswordManager.ViewModels.MainViewModel"/> のテスト用に使う<see cref="IMasterKeyStore"/>のフェイク実装。
 /// </summary>
 public class FakeMasterKeyStore : IMasterKeyStore
 {

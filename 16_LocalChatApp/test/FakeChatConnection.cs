@@ -3,7 +3,7 @@ using LocalChatApp.Services;
 namespace LocalChatApp.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実ネットワーク通信を行わない<see cref="IChatConnection"/>実装。
+/// <see cref="LocalChatApp.ViewModels.MainViewModel"/> のテスト用に、実ネットワーク通信を行わない<see cref="IChatConnection"/>実装。
 /// </summary>
 public class FakeChatConnection : IChatConnection
 {

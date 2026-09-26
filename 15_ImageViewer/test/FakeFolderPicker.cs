@@ -3,7 +3,7 @@ using ImageViewer.Services;
 namespace ImageViewer.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実際にダイアログを開かない<see cref="IFolderPicker"/>実装。
+/// <see cref="ImageViewer.ViewModels.MainViewModel"/> のテスト用に、実際にダイアログを開かない<see cref="IFolderPicker"/>実装。
 /// </summary>
 public class FakeFolderPicker : IFolderPicker
 {

@@ -7,7 +7,7 @@ namespace ImageViewer.Services;
 /// <summary>
 /// バックグラウンドスレッドで縮小デコードしたサムネイルを生成する<see cref="IThumbnailLoader"/>実装。
 /// UIスレッドをブロックしないよう<see cref="Task.Run(Action)"/>内でデコードし、
-/// 生成した<see cref="BitmapImage"/>は<see cref="Freezable.Freeze"/>してスレッド間で安全に受け渡す。
+/// 生成した<see cref="BitmapImage"/>は<see cref="System.Windows.Freezable.Freeze()"/>してスレッド間で安全に受け渡す。
 /// </summary>
 public class ThumbnailLoader : IThumbnailLoader
 {

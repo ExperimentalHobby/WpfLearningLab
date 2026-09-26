@@ -4,7 +4,7 @@ using HouseholdBudget.Models;
 namespace HouseholdBudget.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、メモリ上でCRUDを行う<see cref="ITransactionRepository"/>実装。
+/// <see cref="HouseholdBudget.ViewModels.MainViewModel"/> のテスト用に、メモリ上でCRUDを行う<see cref="ITransactionRepository"/>実装。
 /// </summary>
 public class FakeTransactionRepository : ITransactionRepository
 {

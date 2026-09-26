@@ -5,8 +5,8 @@ using ImageViewer.Services;
 namespace ImageViewer.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実ファイルをデコードしない<see cref="IThumbnailLoader"/>実装。
-/// 呼び出された<see cref="FilePath"/>を記録し、ダミーの<see cref="ImageSource"/>を返す。
+/// <see cref="ImageViewer.ViewModels.MainViewModel"/> のテスト用に、実ファイルをデコードしない<see cref="IThumbnailLoader"/>実装。
+/// 呼び出されたファイルパスを記録し、ダミーの<see cref="ImageSource"/>を返す。
 /// </summary>
 public class FakeThumbnailLoader : IThumbnailLoader
 {

@@ -3,7 +3,7 @@ using LocalChatApp.Services;
 namespace LocalChatApp.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に、実際に待ち受けを行わない<see cref="IChatServer"/>実装。
+/// <see cref="LocalChatApp.ViewModels.MainViewModel"/> のテスト用に、実際に待ち受けを行わない<see cref="IChatServer"/>実装。
 /// </summary>
 public class FakeChatServer : IChatServer
 {

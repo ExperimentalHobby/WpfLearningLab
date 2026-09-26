@@ -3,7 +3,7 @@ using PasswordManager.Services;
 namespace PasswordManager.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/> のテスト用に使う<see cref="IClipboardService"/>のフェイク実装。
+/// <see cref="PasswordManager.ViewModels.MainViewModel"/> のテスト用に使う<see cref="IClipboardService"/>のフェイク実装。
 /// </summary>
 public class FakeClipboardService : IClipboardService
 {

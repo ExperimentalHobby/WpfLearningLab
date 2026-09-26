@@ -4,7 +4,7 @@ using DragDropFileTagger.Models;
 namespace DragDropFileTagger.Tests;
 
 /// <summary>
-/// <see cref="MainViewModel"/>のテストで実ファイルI/Oを行わずに済む<see cref="ITaggedFileRepository"/>のフェイク。
+/// <see cref="DragDropFileTagger.ViewModels.MainViewModel"/>のテストで実ファイルI/Oを行わずに済む<see cref="ITaggedFileRepository"/>のフェイク。
 /// </summary>
 internal class FakeTaggedFileRepository : ITaggedFileRepository
 {
