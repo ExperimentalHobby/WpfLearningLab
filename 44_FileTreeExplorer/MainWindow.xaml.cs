@@ -13,6 +13,7 @@ public partial class MainWindow : Window
 {
 	private readonly FileSystemBrowserEngine _engine = new(new RealFileSystem());
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

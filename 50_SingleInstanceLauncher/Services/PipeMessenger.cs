@@ -13,6 +13,8 @@ public class PipeMessenger
 {
     private readonly string _pipeName;
 
+    /// <summary>メッセンジャーを初期化する。</summary>
+    /// <param name="pipeName">使用するNamed Pipeの名前。</param>
     public PipeMessenger(string pipeName)
     {
         _pipeName = pipeName;

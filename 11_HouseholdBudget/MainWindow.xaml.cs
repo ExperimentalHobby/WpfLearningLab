@@ -16,6 +16,7 @@ public partial class MainWindow : Window
 		"WpfLearningLab.HouseholdBudget",
 		"budget.db");
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

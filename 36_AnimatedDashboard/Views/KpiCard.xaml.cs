@@ -36,6 +36,7 @@ public partial class KpiCard : UserControl
 	public static readonly DependencyProperty UnitProperty = DependencyProperty.Register(
 		nameof(Unit), typeof(string), typeof(KpiCard), new PropertyMetadata(string.Empty));
 
+	/// <summary>コントロールを初期化する。</summary>
 	public KpiCard()
 	{
 		InitializeComponent();

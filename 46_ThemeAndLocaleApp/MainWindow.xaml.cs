@@ -18,6 +18,7 @@ public partial class MainWindow : Window
 	private readonly SettingsStore _settingsStore = new(SettingsFilePath);
 	private AppSettings _settings = new();
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		_settings = _settingsStore.Load();

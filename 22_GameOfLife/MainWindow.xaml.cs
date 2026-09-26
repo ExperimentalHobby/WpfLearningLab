@@ -28,6 +28,7 @@ public partial class MainWindow : Window
 	// 全セルを強制的に塗り直すために使う。2回目以降は値が変化したセルのみ更新する。
 	private readonly bool?[,] _lastRendered = new bool?[GridWidth, GridHeight];
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

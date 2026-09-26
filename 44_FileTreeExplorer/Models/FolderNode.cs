@@ -25,6 +25,11 @@ public class FolderNode
 	/// <summary>実際のサブフォルダを読み込み済みかどうか。</summary>
 	public bool IsLoaded { get; private set; }
 
+	/// <summary>ノードを初期化する。</summary>
+	/// <param name="name">フォルダ名(表示用)。</param>
+	/// <param name="fullPath">フォルダのフルパス。</param>
+	/// <param name="addPlaceholder">未展開状態を表すダミー子ノードを追加するかどうか。</param>
+	/// <param name="isPlaceholder">このノード自体がダミーノードかどうか。</param>
 	public FolderNode(string name, string fullPath, bool addPlaceholder = true, bool isPlaceholder = false)
 	{
 		Name = name;

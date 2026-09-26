@@ -15,6 +15,7 @@ public partial class MainWindow : Window
 	private readonly MainViewModel _viewModel;
 	private readonly HttpClient _httpClient = new();
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

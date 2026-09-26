@@ -5,7 +5,12 @@ namespace CustomMarkupExtension.Models;
 /// </summary>
 public enum Priority
 {
+	/// <summary>低優先度。</summary>
 	Low,
+
+	/// <summary>中優先度。</summary>
 	Medium,
+
+	/// <summary>高優先度。</summary>
 	High,
 }

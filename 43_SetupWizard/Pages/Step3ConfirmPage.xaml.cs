@@ -14,6 +14,9 @@ public partial class Step3ConfirmPage : Page
 	private readonly WizardState _state;
 	private readonly IWizardSettingsRepository _repository;
 
+	/// <summary>ページを初期化する。</summary>
+	/// <param name="state">ウィザード全体で共有する入力状態。</param>
+	/// <param name="repository">設定の保存に使うリポジトリ。</param>
 	public Step3ConfirmPage(WizardState state, IWizardSettingsRepository repository)
 	{
 		InitializeComponent();

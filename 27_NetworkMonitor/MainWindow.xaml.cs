@@ -15,6 +15,7 @@ public partial class MainWindow : Window
 	private readonly MainViewModel _viewModel;
 	private readonly DispatcherTimer _sampleTimer = new() { Interval = TimeSpan.FromSeconds(1) };
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

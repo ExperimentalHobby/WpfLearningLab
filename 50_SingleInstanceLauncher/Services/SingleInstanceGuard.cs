@@ -10,6 +10,8 @@ public class SingleInstanceGuard : IDisposable
     /// <summary>自分が最初のインスタンスであれば true。</summary>
     public bool IsFirstInstance { get; }
 
+    /// <summary>ガードを初期化する。</summary>
+    /// <param name="mutexName">多重起動判定に使う名前付きMutexの名前。</param>
     public SingleInstanceGuard(string mutexName)
     {
         // 「自分が最初のインスタンスか」の判定にはcreatedNewのみを使い、Mutexの所有(取得)は
@@ -20,6 +22,7 @@ public class SingleInstanceGuard : IDisposable
         IsFirstInstance = createdNew;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         _mutex.Dispose();

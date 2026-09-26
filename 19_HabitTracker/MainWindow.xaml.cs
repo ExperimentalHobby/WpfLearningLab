@@ -17,6 +17,7 @@ public partial class MainWindow : Window
 		"WpfLearningLab.HabitTracker",
 		"habits.db");
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

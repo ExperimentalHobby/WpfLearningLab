@@ -21,6 +21,7 @@ public partial class MainWindow : Window
 	private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(60) };
 	private Rectangle[,] _cellRects = new Rectangle[0, 0];
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

@@ -18,6 +18,7 @@ public partial class MainWindow : Window
 	private ICollectionView? _view;
 	private CsvTable? _table;
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();

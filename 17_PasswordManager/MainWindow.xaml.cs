@@ -21,6 +21,7 @@ public partial class MainWindow : Window
 
 	private readonly MainViewModel _viewModel;
 
+	/// <summary>ウィンドウを初期化する。</summary>
 	public MainWindow()
 	{
 		InitializeComponent();
